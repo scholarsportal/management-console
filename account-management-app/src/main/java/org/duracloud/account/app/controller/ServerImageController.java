@@ -60,7 +60,10 @@ public class ServerImageController extends AbstractRootCrudController<ServerImag
                                                          form.getDescription(),
                                                          form.getPassword(),
                                                          form.isLatest(),
-                                                         form.getIamRole());
+                                                         form.getIamRole(), 
+                                                         form.getCfKeyPath(),
+                                                         form.getCfAccountId(),
+                                                         form.getCfKeyId());
         
     }
 
@@ -79,6 +82,10 @@ public class ServerImageController extends AbstractRootCrudController<ServerImag
         form.setPassword(entity.getDcRootPassword());
         form.setLatest(entity.isLatest());
         form.setIamRole(entity.getIamRole());
+        form.setCfKeyPath(entity.getCfKeyPath());
+        form.setCfAccountId(entity.getCfAccountId());
+        form.setCfKeyId(entity.getCfKeyId());
+
         return form;
     }
 
@@ -90,7 +97,10 @@ public class ServerImageController extends AbstractRootCrudController<ServerImag
                                                        form.getDescription(),
                                                        form.getPassword(),
                                                        form.isLatest(),
-                                                       form.getIamRole());        
+                                                       form.getIamRole(), 
+                                                       form.getCfKeyPath(),
+                                                       form.getCfAccountId(),
+                                                       form.getCfKeyId());        
     }
 
     @Override

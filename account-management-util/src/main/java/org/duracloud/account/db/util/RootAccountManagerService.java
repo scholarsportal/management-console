@@ -94,13 +94,20 @@ public interface RootAccountManagerService {
      * @param password
      * @param latest
      * @param iamRole 
+     * @param cfKeyPath 
+     * @param cfAccountId 
+     * @param cfKeyId 
      */
     @Secured({"role:ROLE_ROOT, scope:ANY"})
     public void createServerImage(String providerImageId,
                                   String version,
                                   String description,
                                   String password,
-                                  boolean latest, String iamRole);
+                                  boolean latest, 
+                                  String iamRole, 
+                                  String cfKeyPath, 
+                                  String cfAccountId, 
+                                  String cfKeyId);
     /**
      * Edits a service image in the system
      *
@@ -111,6 +118,9 @@ public interface RootAccountManagerService {
      * @param password
      * @param latest
      * @param iamRole
+     * @param cfKeyPath 
+     * @param cfAccountId 
+     * @param cfKeyId 
      */
     @Secured({"role:ROLE_ROOT, scope:ANY"})
     public void editServerImage(Long id,
@@ -119,7 +129,10 @@ public interface RootAccountManagerService {
                                 String description,
                                 String password,
                                 boolean latest,
-                                String iamRole);
+                                String iamRole, 
+                                String cfKeyPath, 
+                                String cfAccountId, 
+                                String cfKeyId);
 
     /**
      * Gets a server image from the system

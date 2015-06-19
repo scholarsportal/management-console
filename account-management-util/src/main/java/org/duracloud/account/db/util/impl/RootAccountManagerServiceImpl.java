@@ -269,7 +269,10 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
                                   String description,
                                   String password,
                                   boolean latest,
-                                  String iamRole) {
+                                  String iamRole,
+                                  String cfKeyPath, 
+                                  String cfAccountId, 
+                                  String cfKeyId) {
         DuracloudServerImageRepo imageRepo = getServerImageRepo();
         if(latest) {
             //Remove current latest
@@ -293,7 +296,9 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         serverImage.setDcRootPassword(password);
         serverImage.setLatest(latest);
         serverImage.setIamRole(iamRole);
-
+        serverImage.setCfKeyPath(cfKeyPath);
+        serverImage.setCfAccountId(cfAccountId);
+        serverImage.setCfKeyId(cfKeyId);
         getServerImageRepo().save(serverImage);
     }
 
@@ -304,7 +309,10 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
                                 String description,
                                 String password,
                                 boolean latest,
-                                String iamRole) {
+                                String iamRole, 
+                                String cfKeyPath, 
+                                String cfAccountId, 
+                                String cfKeyId) {
 
         ServerImage serverImage = getServerImageRepo().findOne(id);
 
@@ -324,6 +332,9 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         serverImage.setDescription(description);
         serverImage.setDcRootPassword(password);
         serverImage.setIamRole(iamRole);
+        serverImage.setCfKeyPath(cfKeyPath);
+        serverImage.setCfAccountId(cfAccountId);
+        serverImage.setCfKeyId(cfKeyId);
         getServerImageRepo().save(serverImage);
     }
 

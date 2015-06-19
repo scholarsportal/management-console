@@ -62,49 +62,6 @@
                  element="div" />               
               </li>
 	            
-              <c:if test="${param.storageProviderType eq 'AMAZON_S3'}">
-                <li>
-                  <form:label
-                   cssErrorClass="error"
-                   path="${param.storageProvider}.properties['CF_ACCOUNT_ID']"><spring:message code="storageprovider.cf.accountid"/></form:label>
-                  <form:input
-                   cssErrorClass="error"
-                   path="${param.storageProvider}.properties['CF_ACCOUNT_ID']"
-                   onclick="same(this.form)"/>
-                  <form:errors
-                   path="${param.storageProvider}.properties['CF_ACCOUNT_ID']"
-                   cssClass="error"
-                   element="div" />               
-                </li>
-                <li>
-                  <form:label
-                   cssErrorClass="error"
-                   path="${param.storageProvider}.properties['CF_KEY_ID']"><spring:message code="storageprovider.cf.keyid"/></form:label>
-                  <form:input
-                   cssErrorClass="error"
-                   path="${param.storageProvider}.properties['CF_KEY_ID']"
-                   onclick="same(this.form)"/>
-                  <form:errors
-                   path="${param.storageProvider}.properties['CF_KEY_ID']"
-                   cssClass="error"
-                   element="div" />               
-                </li>
-                <li>
-                  <form:label
-                   cssErrorClass="error"
-                   path="${param.storageProvider}.properties['CF_KEY_PATH']"><spring:message code="storageprovider.cf.keypath"/></form:label>
-                  <form:input
-                   cssErrorClass="error"
-                   path="${param.storageProvider}.properties['CF_KEY_PATH']"
-                   onclick="same(this.form)"/>
-                  <form:errors
-                   path="${param.storageProvider}.properties['CF_KEY_PATH']"
-                   cssClass="error"
-                   element="div" />               
-                </li>
-
-              </c:if>
-
 	            <c:if test="${param.storageProviderType eq 'SNAPSHOT'}">
 	              <li>
 	                <form:label

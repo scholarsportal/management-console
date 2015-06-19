@@ -27,6 +27,40 @@ public class ServerImageForm {
     @NotBlank(message = "You must specify an IAM Role")
     private String iamRole;
 
+    @NotBlank(message = "You must specify a CloudFront Key Path")
+    private String cfKeyPath;
+
+    @NotBlank(message = "You must specify a CloudFront Account Id")
+    private String cfAccountId;
+
+    @NotBlank(message = "You must specify a Cloud Key Id")
+    private String cfKeyId;
+
+    
+    public String getCfKeyPath() {
+        return cfKeyPath;
+    }
+
+    public void setCfKeyPath(String cfKeyPath) {
+        this.cfKeyPath = cfKeyPath;
+    }
+
+    public String getCfAccountId() {
+        return cfAccountId;
+    }
+
+    public void setCfAccountId(String cfAccountId) {
+        this.cfAccountId = cfAccountId;
+    }
+
+    public String getCfKeyId() {
+        return cfKeyId;
+    }
+
+    public void setCfKeyId(String cfKeyId) {
+        this.cfKeyId = cfKeyId;
+    }
+
     private boolean latest;
 
     public String getProviderImageId() {
