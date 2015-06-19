@@ -181,7 +181,7 @@
                               <td>${p.providerType}</td>
 
                               <td>(Secondary)</td>
-                              <td>${primaryProvider.storageLimit} TB Limit</td>
+                              <td>${p.storageLimit} TB Limit</td>
                               <td>
                                 <sec:authorize access="hasAnyRole('ROLE_ROOT')">
                                     <form
