@@ -31,7 +31,7 @@
 <link rel="shortcut icon"
 	href="${pageContext.request.contextPath}/static/img/favicon.ico" />
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/static/jquery/jquery.js"><!-- --></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/jquery/jquery.min.js"><!-- --></script>
 
 <script>
 	$(function(){
