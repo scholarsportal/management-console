@@ -84,7 +84,7 @@ public class UsersController extends AbstractRootController{
         log.debug("resetting user {}'s password.", id);    
         getRootAccountManagerService().resetUsersPassword(id);
         DuracloudUser user = getUserService().loadDuracloudUserByIdInternal(id);
-        String message = MessageFormat.format("The {0}'s password has been reset.", user.getUsername());
+        String message = MessageFormat.format("{0}'s password has been reset.", user.getUsername());
         setSuccessFeedback(message, redirectAttributes);
         return createRedirectMav(BASE_VIEW);
     }
