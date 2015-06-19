@@ -158,7 +158,7 @@
                     
                   </td>
                   <td>
-                    <a
+                    <a target="_blank"
                       href="${currentUri}/byid/${a.id}/setup"
                       class="button configure"> 
                       <spring:message code="account.configureproviders" />
