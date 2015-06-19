@@ -58,8 +58,6 @@ button,
 	background-color:#515151;
 	background: -moz-linear-gradient(top, #797979, #515151);
 	background: -webkit-gradient(linear, left top, left bottom, from(#797979), to(#515151)); 	/* For WebKit (Safari, Google Chrome etc) */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#FF797979, endColorstr=#FF515151); /* For Internet Explorer 5.5 - 7 */
-	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#FF797979, endColorstr=#FF515151)";	/* For Internet Explorer 8 */
 	cursor:pointer;
 	height:25px;
 	margin-right:2px;
@@ -78,8 +76,6 @@ button.featured,
 	background-color:#999999;
 	background: -moz-linear-gradient(top, #e4e4e4, #999999);
 	background: -webkit-gradient(linear, left top, left bottom, from(#e4e4e4), to(#999999)); 	/* For WebKit (Safari, Google Chrome etc) */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#FFe4e4e4, endColorstr=#FF999999); /* For Internet Explorer 5.5 - 7 */
-	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#FFe4e4e4, endColorstr=#FF999999)";	/* For Internet Explorer 8 */
 	color:#444;
 }
 
@@ -90,8 +86,6 @@ button.primary,
 	background-color:#2375b2;
 	background: -moz-linear-gradient(top, #37a9de, #2375b2);
 	background: -webkit-gradient(linear, left top, left bottom, from(#37a9de), to(#2375b2)); 	/* For WebKit (Safari, Google Chrome etc) */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#FF37a9de, endColorstr=#FF2375b2); /* For Internet Explorer 5.5 - 7 */
-	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#FF37a9de, endColorstr=#FF2375b2)";	/* For Internet Explorer 8 */
 	color:#56ffff;
     width:122px;
 }
@@ -103,8 +97,6 @@ button.primary:hover,
 	background-color:#3793d6;
 	background: -moz-linear-gradient(top, #4db6e8, #3793d6);
 	background: -webkit-gradient(linear, left top, left bottom, from(#4db6e8), to(#3793d6)); 	/* For WebKit (Safari, Google Chrome etc) */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#FF4db6e8, endColorstr=#FF3793d6); /* For Internet Explorer 5.5 - 7 */
-	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#FF4db6e8, endColorstr=#FF3793d6)";	/* For Internet Explorer 8 */
 	border-color:#4db6e8;
 	color:#ffffff;
 }
@@ -121,8 +113,6 @@ button:hover,
 	background-color:#757575;
 	background: -moz-linear-gradient(top, #8e8e8e, #757575);
 	background: -webkit-gradient(linear, left top, left bottom, from(#8e8e8e), to(#757575)); 	/* For WebKit (Safari, Google Chrome etc) */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#FF8e8e8e, endColorstr=#FF757575); /* For Internet Explorer 5.5 - 7 */
-	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#FF8e8e8e, endColorstr=#FF757575)";	/* For Internet Explorer 8 */
 	border-color:#00CC00;
 	color:#fff;
 }
@@ -133,8 +123,6 @@ button.featured:hover,
 	background-color:#c9c9c9;
 	background: -moz-linear-gradient(top, #f8f8f8, #c9c9c9);
 	background: -webkit-gradient(linear, left top, left bottom, from(#f8f8f8), to(#c9c9c9)); 	/* For WebKit (Safari, Google Chrome etc) */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#FFf8f8f8, endColorstr=#FFc9c9c9); /* For Internet Explorer 5.5 - 7 */
-	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#FFf8f8f8, endColorstr=#FFc9c9c9)";	/* For Internet Explorer 8 */
 	color:#000; 
 }
 
