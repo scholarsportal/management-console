@@ -168,7 +168,7 @@ public class AccountsController extends AbstractRootController{
         //activate only if pending
         if(AccountStatus.PENDING.equals(status)){
             getRootAccountManagerService().activateAccount(id);
-            message += "and activated acccount";
+            message += " and activated acccount";
         }
 
         setSuccessFeedback(message, redirectAttributes);
