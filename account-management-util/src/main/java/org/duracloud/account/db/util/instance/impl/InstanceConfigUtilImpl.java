@@ -14,16 +14,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.config.AmaEndpoint;
+import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.DuracloudInstance;
 import org.duracloud.account.db.model.DuracloudMill;
 import org.duracloud.account.db.model.ServerDetails;
+import org.duracloud.account.db.model.ServerImage;
 import org.duracloud.account.db.model.StorageProviderAccount;
 import org.duracloud.account.db.repo.DuracloudAccountRepo;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
-import org.duracloud.account.db.repo.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.util.DuracloudMillConfigService;
 import org.duracloud.account.db.util.instance.InstanceConfigUtil;
 import org.duracloud.account.db.util.instance.InstanceUtil;
@@ -35,6 +35,7 @@ import org.duracloud.appconfig.domain.NotificationConfig;
 import org.duracloud.storage.domain.AuditConfig;
 import org.duracloud.storage.domain.DatabaseConfig;
 import org.duracloud.storage.domain.StorageAccount;
+import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.storage.domain.impl.StorageAccountImpl;
 
 /**
@@ -79,10 +80,10 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         DurastoreConfig config = new DurastoreConfig();
         Set<StorageAccount> storageAccts = new HashSet<>();
         ServerDetails serverDetails = getAccount().getServerDetails();
-
         // Primary Storage Provider
         StorageProviderAccount primaryProviderAccount =
             serverDetails.getPrimaryStorageProviderAccount();
+
         storageAccts.add(getStorageAccount(primaryProviderAccount,
                                            true));
         // Secondary Storage Providers
@@ -142,6 +143,13 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
                 String propValue = providerProps.get(propKey);
                 storageAccount.setOption(propKey, propValue);
             }
+        }
+
+        if(provider.getProviderType().equals(StorageProviderType.AMAZON_S3)){
+            ServerImage image = instance.getImage();
+            storageAccount.setOption(StorageAccount.OPTS.CF_KEY_PATH.name(), image.getCfKeyPath());
+            storageAccount.setOption(StorageAccount.OPTS.CF_ACCOUNT_ID.name(), image.getCfAccountId());
+            storageAccount.setOption(StorageAccount.OPTS.CF_KEY_ID.name(), image.getCfKeyId());
         }
 
         return storageAccount;

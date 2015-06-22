@@ -114,7 +114,7 @@
            path="cfAccountId"><spring:message code="serverimage.cf.accountid"/></form:label>
           <form:input
            cssErrorClass="error"
-           path="cfAccountId"
+           path="cfAccountId"/>
           <form:errors
            path="cfAccountId"
            cssClass="error"
@@ -126,7 +126,7 @@
            path="cfKeyId"><spring:message code="serverimage.cf.keyid"/></form:label>
           <form:input
            cssErrorClass="error"
-           path="cfKeyId"
+           path="cfKeyId"/>
           <form:errors
            path="cfKeyId"
            cssClass="error"
@@ -139,7 +139,7 @@
            path="cfKeyPath"><spring:message code="serverimage.cf.keypath"/></form:label>
           <form:input
            cssErrorClass="error"
-           path="cfKeyPath"
+           path="cfKeyPath"/>
           <form:errors
            path="cfKeyPath"
            cssClass="error"

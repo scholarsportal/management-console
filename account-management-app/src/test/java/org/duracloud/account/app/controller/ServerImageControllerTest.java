@@ -36,7 +36,10 @@ public class ServerImageControllerTest extends AmaControllerTestBase {
                                                       serverImageForm.getDescription(),
                                                       serverImageForm.getPassword(),
                                                       serverImageForm.isLatest(),
-                                                      serverImageForm.getIamRole());
+                                                      serverImageForm.getIamRole(),
+                                                      serverImageForm.getCfKeyPath(),
+                                                      serverImageForm.getCfAccountId(),
+                                                      serverImageForm.getCfKeyId());
         EasyMock.expectLastCall();
         replayMocks();
         // method under test
@@ -79,7 +82,10 @@ public class ServerImageControllerTest extends AmaControllerTestBase {
                           serverImageForm.getDescription(),
                           serverImageForm.getPassword(),
                           serverImageForm.isLatest(),
-                          serverImageForm.getIamRole());
+                          serverImageForm.getIamRole(),
+                          serverImageForm.getCfKeyPath(),
+                          serverImageForm.getCfAccountId(),
+                          serverImageForm.getCfKeyId());
         EasyMock.expectLastCall();
 
         replayMocks();
