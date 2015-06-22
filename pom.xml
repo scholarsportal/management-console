@@ -205,11 +205,6 @@
   </profiles>
 
   <properties>
-    <duracloud.artifact.version>3.3.0</duracloud.artifact.version>
-    <org.springframework.version>4.0.5.RELEASE</org.springframework.version>
-    <org.springframework.security.version>3.2.3.RELEASE</org.springframework.security.version>
-    <org.springframework.webflow.version>2.3.3.RELEASE</org.springframework.webflow.version>
-    <org.springframework.data.jpa.version>1.6.0.RELEASE</org.springframework.data.jpa.version>
     <tomcat.port.default>8080</tomcat.port.default>
     <database.home.default>/opt/derby/duracloudDB</database.home.default>
     <unitTests>**/*Test.class</unitTests>
@@ -218,6 +213,13 @@
     <innerClasses>**/*$*</innerClasses>
     <log.level.default>INFO</log.level.default>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <duracloud.artifact.version>3.3.0</duracloud.artifact.version>
+    <duracloud.db.version>3.3.1</duracloud.db.version>
+    <org.springframework.version>4.0.5.RELEASE</org.springframework.version>
+    <org.springframework.security.version>3.2.3.RELEASE</org.springframework.security.version>
+    <org.springframework.webflow.version>2.3.3.RELEASE</org.springframework.webflow.version>
+    <org.springframework.data.jpa.version>1.6.0.RELEASE</org.springframework.data.jpa.version>
     <slf4j.version>1.7.6</slf4j.version>
   </properties>
 
@@ -438,6 +440,18 @@
 
   <dependencyManagement>
     <dependencies>
+
+      <dependency>
+        <groupId>org.duracloud.db</groupId>
+        <artifactId>account-management-db-model</artifactId>
+        <version>${duracloud.db.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.duracloud.db</groupId>
+        <artifactId>account-management-db-repo</artifactId>
+        <version>${duracloud.db.version}</version>
+      </dependency>
 
       <dependency>
         <groupId>junit</groupId>

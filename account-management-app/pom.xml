@@ -201,15 +201,13 @@
     </dependency>
 
     <dependency>
-        <groupId>org.duracloud</groupId>
+        <groupId>org.duracloud.db</groupId>
         <artifactId>account-management-db-model</artifactId>
-        <version>${duracloud.artifact.version}</version>
     </dependency>
 
     <dependency>
-      <groupId>org.duracloud</groupId>
+      <groupId>org.duracloud.db</groupId>
       <artifactId>account-management-db-repo</artifactId>
-      <version>${duracloud.artifact.version}</version>
     </dependency>
 
     <dependency>
