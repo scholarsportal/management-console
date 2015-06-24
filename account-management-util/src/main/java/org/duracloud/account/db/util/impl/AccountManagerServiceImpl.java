@@ -105,10 +105,12 @@ public class AccountManagerServiceImpl implements AccountManagerService {
             StorageProviderAccount storageProviderAccount = new StorageProviderAccount();
             storageProviderAccount.setProviderType(storageType);
             storageProviderAccount.setRrs(true);
-
+            storageProviderAccount = repoMgr.getStorageProviderAccountRepo()
+                    .save(storageProviderAccount);
             secondaryStorageProviderAccounts.add(storageProviderAccount);
         }
 
+        
         serverDetails = new ServerDetails();
         serverDetails.setComputeProviderAccount(computeProviderAccount);
         serverDetails.setPrimaryStorageProviderAccount(primaryStorageProviderAccount);
