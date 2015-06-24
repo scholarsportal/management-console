@@ -1,5 +1,9 @@
 /*
- * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.app.controller;
 
@@ -7,11 +11,10 @@ import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.Role;
-import org.duracloud.account.db.util.AccountService;
 import org.duracloud.account.db.util.DuracloudUserService;
-import org.duracloud.account.db.util.error.AccountNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -41,7 +44,6 @@ public class UsersController extends AbstractRootController{
         List<User> u = new ArrayList<User>();
         Set<DuracloudUser> users = getRootAccountManagerService().listAllUsers(null);
         for(DuracloudUser user: users) {
-            boolean removable = true;
             Set<Account> accounts = new HashSet<Account>();
             if(user.getAccountRights() != null) {
                 for(AccountRights account : user.getAccountRights()) {
@@ -60,6 +62,7 @@ public class UsersController extends AbstractRootController{
                            user.getFirstName(),
                            user.getLastName(),
                            user.getEmail(),
+                           user.getAllowableIPAddressRange(),
                            accounts,
                            user.isRoot()));
         }
@@ -73,18 +76,21 @@ public class UsersController extends AbstractRootController{
         return mav;
     }
     
+    @Transactional
     @RequestMapping(value = { BY_ID_MAPPING + "/reset" }, method = RequestMethod.POST)
     public ModelAndView resetUsersPassword(
         @PathVariable Long id, RedirectAttributes redirectAttributes)
         throws Exception {
         log.debug("resetting user {}'s password.", id);    
         getRootAccountManagerService().resetUsersPassword(id);
-            
-        setSuccessFeedback("The username has been reset.", redirectAttributes);
+        DuracloudUser user = getUserService().loadDuracloudUserByIdInternal(id);
+        String message = MessageFormat.format("{0}'s password has been reset.", user.getUsername());
+        setSuccessFeedback(message, redirectAttributes);
         return createRedirectMav(BASE_VIEW);
     }
 
     
+    @Transactional
     @RequestMapping(value = BY_ID_DELETE_MAPPING , method = RequestMethod.POST)
     public ModelAndView deleteUser(
         @PathVariable Long id, RedirectAttributes redirectAttributes)
@@ -98,6 +104,7 @@ public class UsersController extends AbstractRootController{
     }
     
     
+    @Transactional
     @RequestMapping(value = BY_ID_MAPPING + "/revoke", method = RequestMethod.POST)
     public ModelAndView revokeUserRightsFromAccount(@PathVariable("id") Long userId,
                                                     @RequestParam(required=true) Long accountId,
@@ -116,7 +123,7 @@ public class UsersController extends AbstractRootController{
         return createRedirectMav(BASE_MAPPING);
     }
 
-    
+    @Transactional
     @RequestMapping(value = BY_ID_MAPPING + "/changerole", method = RequestMethod.POST)
     public ModelAndView changeUserRole(@PathVariable("id") Long userId,
                  @ModelAttribute @Valid AccountUserEditForm accountUserEditForm,
@@ -150,13 +157,14 @@ public class UsersController extends AbstractRootController{
     public class User implements Comparable<User> {
         public User(
             Long id, String username, String firstName, String lastName,
-            String email, Set<Account> accounts, boolean root) {
+            String email, String allowableIPAddressRange, Set<Account> accounts, boolean root) {
             super();
             this.id = id;
             this.username = username;
             this.firstName = firstName;
             this.lastName = lastName;
             this.email = email;
+            this.allowableIPAddressRange = allowableIPAddressRange;
             this.accounts = accounts;
             this.root = root;
         }
@@ -167,6 +175,7 @@ public class UsersController extends AbstractRootController{
         private String lastName;
         private String email;
         private Set<Account> accounts;
+        private String allowableIPAddressRange;
         private boolean root = false;
 
         public Long getId() {
@@ -201,6 +210,11 @@ public class UsersController extends AbstractRootController{
         public int compareTo(User o) {
             return this.getUsername().compareTo(o.getUsername());
         }
+
+        public String getAllowableIPAddressRange() {
+            return allowableIPAddressRange;
+        }
+
     }
 
     public class Account implements Comparable<Account> {

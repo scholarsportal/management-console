@@ -49,6 +49,8 @@
 
                   <th align="left">Email Address</th>
 
+                  <th align="left">IP Address Range(s)</th>
+
                   <th align="left">Role</th>
 
                   <th align="left">Change Role</th>
@@ -66,6 +68,8 @@
                     <td align="left">${u.firstName} ${u.lastName}</td>
 
                     <td align="left">${u.email}</td>
+
+                    <td align="left">${u.allowableIPAddressRange}</td>
 
                     <td align="left">${u.role.displayName}</td>
                      <c:choose>
@@ -247,7 +251,7 @@
                           <c:if test="${account.userRole == 'ROLE_ROOT'}">
                           <li>
                             <a
-                             href="${up.redemptionURL}" class="instructions">
+                             href="${pageContext.request.contextPath}/users/redeem/${up.redemptionCode}" class="instructions">
                             Redemption URL</a>
                           </li>
                           </c:if>

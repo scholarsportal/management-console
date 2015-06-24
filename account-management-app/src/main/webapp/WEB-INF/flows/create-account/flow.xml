@@ -7,21 +7,13 @@
               view="/create-account/account-info" 
               model="newAccountForm" >
     <on-entry>
-      <evaluate  expression="createAccountFlowHelper.getAccountClusters()"  
-                 result="viewScope.accountClusters" />
       <set name="flowScope.newAccountForm" value="newAccountForm"/>
     </on-entry>
     
-    <transition on="next" to="isCommunity"/> 
+    <transition on="next" to="configureStorageProviders"/> 
     <transition on="cancel" to="end" validate="false"/>
   </view-state>
  
-  <decision-state id="isCommunity">
-    <if test="newAccountForm.community" 
-        then="createAccount" 
-        else="configureStorageProviders"/>
-  </decision-state>
-
   <view-state id="configureStorageProviders" view="/create-account/storage-providers"
     model="fullAccountForm">
     <on-entry>

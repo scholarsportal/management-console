@@ -1,9 +1,13 @@
 /*
- * Copyright (c) 2009-2012 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
-
 package org.duracloud.account.app.controller;
 
+import org.duracloud.account.annotation.CIDRRangeConstraint;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -22,6 +26,10 @@ public class UserProfileEditForm {
     @NotEmpty(message = "Email must be specified.")
     @Email(message="Email is invalid")
     private String email;
+
+    
+    @CIDRRangeConstraint
+    private String allowableIPAddressRange;
 
 	@NotBlank (message = "Security question is empty.")
 	private String securityQuestion;
@@ -67,5 +75,13 @@ public class UserProfileEditForm {
 
     public void setSecurityAnswer(String securityAnswer) {
         this.securityAnswer = securityAnswer;
+    }
+
+    public String getAllowableIPAddressRange() {
+        return allowableIPAddressRange;
+    }
+
+    public void setAllowableIPAddressRange(String allowableIPAddressRange) {
+        this.allowableIPAddressRange = allowableIPAddressRange;
     }
 }

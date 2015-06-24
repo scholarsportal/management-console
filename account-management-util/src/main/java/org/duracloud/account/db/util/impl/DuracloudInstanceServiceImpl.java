@@ -16,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import org.duracloud.account.compute.ComputeProviderUtil;
 import org.duracloud.account.compute.DuracloudComputeProvider;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
+import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.DuracloudGroup;
@@ -28,6 +29,7 @@ import org.duracloud.account.db.repo.DuracloudAccountRepo;
 import org.duracloud.account.db.repo.DuracloudGroupRepo;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.db.util.DuracloudInstanceService;
+import org.duracloud.account.db.util.DuracloudMillConfigService;
 import org.duracloud.account.db.util.error.DuracloudInstanceUpdateException;
 import org.duracloud.account.db.util.instance.DurabossUpdater;
 import org.duracloud.account.db.util.instance.InstanceAccessUtil;
@@ -39,7 +41,7 @@ import org.duracloud.account.db.util.instance.impl.InstanceAccessUtilImpl;
 import org.duracloud.account.db.util.instance.impl.InstanceConfigUtilImpl;
 import org.duracloud.account.db.util.instance.impl.InstanceUpdaterImpl;
 import org.duracloud.account.db.util.notification.NotificationMgrConfig;
-import org.duracloud.account.db.util.util.AccountClusterUtil;
+import org.duracloud.account.db.util.util.UserFinderUtil;
 import org.duracloud.appconfig.domain.DurabossConfig;
 import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
@@ -65,7 +67,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
     private AccountInfo accountInfo;
     private DuracloudInstance instance;
     private DuracloudRepoMgr repoMgr;
-    private AccountClusterUtil accountClusterUtil;
+    private UserFinderUtil userFinderUtil;
     private ComputeProviderUtil computeProviderUtil;
     private DuracloudComputeProvider computeProvider;
     private InstanceUpdater instanceUpdater;
@@ -73,48 +75,56 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
     private DurabossUpdater durabossUpdater;
     private Credential rootCredential;
     private NotificationMgrConfig notMgrConfig;
+    private DuracloudMillConfigService duracloudMillService;
     private int timeoutMinutes = 20;
 
     public DuracloudInstanceServiceImpl(Long accountId,
                                         DuracloudInstance instance,
                                         DuracloudRepoMgr repoMgr,
-                                        AccountClusterUtil accountClusterUtil,
+                                        UserFinderUtil userFinderUtil,
                                         ComputeProviderUtil computeProviderUtil,
-                                        NotificationMgrConfig notMgrConfig) {
+                                        NotificationMgrConfig notMgrConfig,
+                                        AmaEndpoint amaEndpoint,
+                                        DuracloudMillConfigService duracloudMillService) {
         this(accountId,
                 instance,
                 repoMgr,
-                accountClusterUtil,
+                userFinderUtil,
                 computeProviderUtil,
                 null,
                 null,
                 null,
                 null,
-                notMgrConfig);
+                notMgrConfig, 
+                amaEndpoint,
+                duracloudMillService);
     }
 
     protected DuracloudInstanceServiceImpl(Long accountId,
                                            DuracloudInstance instance,
                                            DuracloudRepoMgr repoMgr,
-                                           AccountClusterUtil accountClusterUtil,
+                                           UserFinderUtil userFinderUtil,
                                            ComputeProviderUtil computeProviderUtil,
                                            DuracloudComputeProvider computeProvider,
                                            InstanceUpdater instanceUpdater,
                                            InstanceConfigUtil instanceConfigUtil,
                                            DurabossUpdater durabossUpdater,
-                                           NotificationMgrConfig notMgrConfig) {
+                                           NotificationMgrConfig notMgrConfig,
+                                           AmaEndpoint amaEndpoint,
+                                           DuracloudMillConfigService duracloudMillService) {
 
         this.accountId = accountId;
         this.instance = instance;
         this.repoMgr = repoMgr;
-        this.accountClusterUtil = accountClusterUtil;
+        this.userFinderUtil = userFinderUtil;
         this.computeProviderUtil = computeProviderUtil;
         this.computeProvider = computeProvider;
         this.instanceUpdater = instanceUpdater;
         this.instanceConfigUtil = instanceConfigUtil;
         this.durabossUpdater = durabossUpdater;
         this.notMgrConfig = notMgrConfig;
-
+        this.duracloudMillService = duracloudMillService;
+        
         if (null == computeProvider) {
             initializeComputeProvider();
         }
@@ -126,7 +136,9 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
         if (null == instanceConfigUtil) {
             this.instanceConfigUtil = new InstanceConfigUtilImpl(instance,
                     repoMgr,
-                    notMgrConfig);
+                    notMgrConfig,
+                    amaEndpoint,
+                    duracloudMillService);
         }
 
         if (null == durabossUpdater){
@@ -276,7 +288,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
 
     private void initializeUserRoles() {
         Set< DuracloudUser > users =
-                accountClusterUtil.getAccountClusterUsers(getAccount());
+                userFinderUtil.getAccountUsers(getAccount());
         setUserRoles(users);
     }
 
@@ -292,13 +304,10 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
             throw new DuracloudInstanceUpdateException(msg);
         }
 
-        // collect groups for the cluster
+        // collect groups for the account
         DuracloudGroupRepo groupRepo = repoMgr.getGroupRepo();
-        Set<Long> clusterAcctIds = getClusterAccountIds();
         Set<DuracloudGroup> groups = new HashSet<DuracloudGroup>();
-        for(Long clusterAcctId : clusterAcctIds) {
-            groups.addAll(groupRepo.findByAccountId(clusterAcctId));
-        }
+        groups.addAll(groupRepo.findByAccountId(accountId));
 
         // collect user roles for this account
         Set<SecurityUserBean> userBeans = new HashSet<SecurityUserBean>();
@@ -306,7 +315,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
             String username = user.getUsername();
             String password = user.getPassword();
             String email = user.getEmail();
-            Set<Role> roles = getRolesByAccounts(user, clusterAcctIds);
+            String ipLimits = annotateAddressRange(user.getAllowableIPAddressRange());
+            Set<Role> roles = user.getRolesByAcct(accountId);
 
             if(roles == null) {
                 roles = new HashSet<Role>();
@@ -336,6 +346,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
                 SecurityUserBean bean =
                         new SecurityUserBean(username, password, grants);
                 bean.setEmail(email);
+                bean.setIpLimits(ipLimits);
 
                 if(groups != null) {
                     for (DuracloudGroup group : groups) {
@@ -354,19 +365,27 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
         updateUserDetails(userBeans);
     }
 
-    private Set<Role> getRolesByAccounts(DuracloudUser user,
-                                         Set<Long> clusterAcctIds) {
-        Set<Role> roles = user.getRolesByAcct(accountId);
-        for (Long clusterAcctId : clusterAcctIds) {
-            roles.addAll(user.getRolesByAcct(clusterAcctId));
+    /**
+     * For a user account with an IP limitation, this method is used to update
+     * the list of allowed IPs to include the IP of the DuraCloud instance itself.
+     * This is required to allow the calls made between applications (like those
+     * made from DurAdmin to DuraStore) to pass through the IP range check.
+     *
+     * @param baseRange set of IP ranges set by the user
+     * @return baseRange plus the instance elastic IP, or null if baseRange is null
+     */
+    private String annotateAddressRange(String baseRange) {
+        if(null == baseRange || baseRange.equals("")) {
+            return baseRange;
+        } else {
+            String elasticIp = getAccount().getServerDetails()
+                                           .getComputeProviderAccount().getElasticIp();
+            String delimeter = ";";
+            return baseRange + delimeter + elasticIp + "/32";
         }
-
-        return roles;
     }
 
-    private Set<Long> getClusterAccountIds() {
-        return accountClusterUtil.getClusterAccountIds(getAccount());
-    }
+
 
     private void updateUserDetails(Set<SecurityUserBean> userBeans) {
         RestHttpHelper restHelper = new RestHttpHelper(getRootCredential());

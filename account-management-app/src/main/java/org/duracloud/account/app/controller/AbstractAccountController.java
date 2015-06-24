@@ -1,11 +1,14 @@
 /*
- * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.app.controller;
 
 import org.duracloud.account.db.model.*;
 import org.duracloud.account.db.util.*;
-import org.duracloud.account.db.util.error.AccountClusterNotFoundException;
 import org.duracloud.account.db.util.error.AccountNotFoundException;
 import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.duracloud.account.util.StorageProviderTypeUtil;
@@ -93,14 +96,9 @@ public abstract class AbstractAccountController extends AbstractController {
     }
 
     protected void addAccountInfoToModel(AccountInfo info,
-                                         ServerDetails serverDetails,
-                                         AccountCluster accountCluster, Model model){
+                                         ServerDetails serverDetails, Model model){
         model.addAttribute(ACCOUNT_INFO_KEY, info);
         model.addAttribute(SERVER_DETAILS_KEY, serverDetails);
-        if(accountCluster != null){
-            model.addAttribute("accountCluster", accountCluster);
-        }
-
     }
 
     protected void addAccountOwnersToModel(List<DuracloudUser> owners, Model model)
@@ -111,10 +109,10 @@ public abstract class AbstractAccountController extends AbstractController {
     /**
      * @param accountId
      * @param model
-     * @throws AccountClusterNotFoundException 
+     * @throws AccountNotFoundException
      */
     protected AccountInfo loadAccountInfo(Long accountId, Model model)
-        throws AccountNotFoundException, AccountClusterNotFoundException {
+        throws AccountNotFoundException {
         AccountService accountService =
             accountManagerService.getAccount(accountId);
         return loadAccountInfo(accountService, model);
@@ -122,11 +120,10 @@ public abstract class AbstractAccountController extends AbstractController {
 
     
     protected AccountInfo loadAccountInfo(AccountService accountService,
-                                          Model model) throws AccountClusterNotFoundException{
+                                          Model model) {
         AccountInfo accountInfo = accountService.retrieveAccountInfo();
         ServerDetails serverDetails = accountInfo.getServerDetails();
-        AccountCluster cluster = accountInfo.getAccountCluster();
-        addAccountInfoToModel(accountInfo, serverDetails, cluster, model);
+        addAccountInfoToModel(accountInfo, serverDetails, model);
         return accountInfo;
     }
 

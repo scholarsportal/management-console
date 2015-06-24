@@ -1,11 +1,20 @@
 /*
- * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.db.util.impl;
 
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
-import org.duracloud.account.db.model.AccountType;
+import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.ServerDetails;
@@ -23,11 +32,6 @@ import org.duracloud.storage.domain.StorageProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  */
@@ -37,12 +41,13 @@ public class AccountServiceImpl implements AccountService {
     // writes go to both it and the persistence layer.
     private AccountInfo account;
     private DuracloudRepoMgr repoMgr;
-
+    private AmaEndpoint amaEndpoint;
     /**
      * @param acct
      */
-    public AccountServiceImpl(AccountInfo acct,
+    public AccountServiceImpl(AmaEndpoint amaEndpoint, AccountInfo acct,
                               DuracloudRepoMgr repoMgr) {
+        this.amaEndpoint = amaEndpoint;
         this.account = acct;
         this.repoMgr = repoMgr;
     }
@@ -76,21 +81,12 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public ServerDetails retrieveServerDetails() {
-        ServerDetails details = null;
-        if(account.getType().equals(AccountType.FULL)) {
-            details = account.getServerDetails();
-        }
-        return details;
+        return account.getServerDetails();
     }
 
     @Override
     public void storeServerDetails(ServerDetails serverDetails) {
-        if(account.getType().equals(AccountType.FULL)) {
-            repoMgr.getServerDetailsRepo().save(serverDetails);
-        } else {
-            throw new DuraCloudRuntimeException("Cannot store server details " +
-                                                "to Community account!");
-        }
+        repoMgr.getServerDetailsRepo().save(serverDetails);
     }
 
     @Override
@@ -222,8 +218,9 @@ public class AccountServiceImpl implements AccountService {
 
     private void sendEmail(UserInvitation invitation, Emailer emailer) {
         try {
-            emailer.send(invitation.getSubject(),
-                         invitation.getBody(),
+            InvitationMessageFormatter formatter = new InvitationMessageFormatter(invitation, amaEndpoint);
+            emailer.send(formatter.getSubject(),
+                         formatter.getBody(),
                          invitation.getUserEmail());
 
         } catch (Exception e) {

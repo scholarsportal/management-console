@@ -1,5 +1,9 @@
 /*
- * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.app.controller;
 
@@ -17,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -94,6 +99,7 @@ public class AccountUsersController extends AbstractAccountController {
         return get(getAccountService(accountId), model);
     }
 
+    @Transactional
     @RequestMapping(value = ACCOUNT_USERS_MAPPING+"/adduser", method = RequestMethod.POST)
     public ModelAndView
         addUser(@PathVariable Long accountId,
@@ -134,6 +140,7 @@ public class AccountUsersController extends AbstractAccountController {
         return ACCOUNT_USERS_VIEW_ID;
     }
 
+    @Transactional
     @RequestMapping(value = ACCOUNT_USERS_MAPPING, method = RequestMethod.POST)
     public ModelAndView sendInvitations(
         @PathVariable Long accountId,
@@ -194,6 +201,7 @@ public class AccountUsersController extends AbstractAccountController {
         return createAccountRedirectModelAndView(accountId, ACCOUNT_USERS_PATH);
     }
 
+    @Transactional
     @RequestMapping(value = USERS_INVITATIONS_DELETE_MAPPING, method = RequestMethod.POST)
     public ModelAndView deleteUserInvitation(
         @PathVariable Long accountId, @PathVariable Long invitationId, Model model)
@@ -206,7 +214,8 @@ public class AccountUsersController extends AbstractAccountController {
 
         return createAccountRedirectModelAndView(accountId, ACCOUNT_USERS_PATH);
     }
-
+    
+    @Transactional
     @RequestMapping(value = USERS_DELETE_MAPPING, method = RequestMethod.POST)
     public ModelAndView deleteUserFromAccount(
         @PathVariable Long accountId, @PathVariable Long userId, Model model)
@@ -239,6 +248,7 @@ public class AccountUsersController extends AbstractAccountController {
                         u.getEmail(),
                         InvitationStatus.ACTIVE,
                         u.getRoleByAcct(accountId),
+                        u.getAllowableIPAddressRange(),
                         false);
                 //TODO set current role for select box - based on hierarchy?
                 //editForm.setRole();
@@ -250,7 +260,8 @@ public class AccountUsersController extends AbstractAccountController {
         loadAccountInfo(accountId, model);        
         return ACCOUNT_USERS_EDIT_ID;
     }
-
+    
+    @Transactional
     @RequestMapping(value = USERS_EDIT_MAPPING, method = RequestMethod.POST)
     public ModelAndView
         editUser(@PathVariable Long accountId,
@@ -351,6 +362,7 @@ public class AccountUsersController extends AbstractAccountController {
                     u.getEmail(),
                     InvitationStatus.ACTIVE,
                     role,
+                    u.getAllowableIPAddressRange(),
                     caller.isRoot() 
                         || caller.isOwnerForAcct(accountId) 
                         || (caller.isAdminForAcct(accountId) 
@@ -371,9 +383,10 @@ public class AccountUsersController extends AbstractAccountController {
      * 
      */
     public class AccountUser implements Comparable<AccountUser> {
+
         public AccountUser(
             Long id, String username, String firstName, String lastName,
-            String email, InvitationStatus status, Role role, boolean editable) {
+            String email, InvitationStatus status, Role role, String allowableIPAddressRange, boolean editable) {
             super();
             this.id = id;
             this.username = username;
@@ -383,6 +396,7 @@ public class AccountUsersController extends AbstractAccountController {
             this.status = status;
             this.role = role;
             this.editable = editable;
+            this.allowableIPAddressRange = allowableIPAddressRange;
         }
 
         private Long id;
@@ -393,6 +407,7 @@ public class AccountUsersController extends AbstractAccountController {
         private InvitationStatus status;
         private Role role;
         private boolean editable;
+        private String allowableIPAddressRange;
 
         public Long getId() {
             return id;
@@ -430,6 +445,14 @@ public class AccountUsersController extends AbstractAccountController {
         public int compareTo(AccountUser o) {
             return this.getUsername().compareTo(o.getUsername());
         }
+
+        public String getAllowableIPAddressRange() {
+            return allowableIPAddressRange;
+        }
+
+        public void setAllowableIPAddressRange(String allowableIPAddressRange) {
+            this.allowableIPAddressRange = allowableIPAddressRange;
+        }
     }
 
     public static enum InvitationStatus {
@@ -452,10 +475,6 @@ public class AccountUsersController extends AbstractAccountController {
 
         public String getRedemptionCode() {
             return this.invitation.getRedemptionCode();
-        }
-
-        public String getRedemptionURL() {
-            return this.invitation.getRedemptionURL();
         }
 
         public String getEmail() {

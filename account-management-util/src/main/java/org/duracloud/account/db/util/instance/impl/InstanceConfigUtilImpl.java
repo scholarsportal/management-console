@@ -1,23 +1,42 @@
 /*
- * Copyright (c) 2009-2011 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.db.util.instance.impl;
 
-import org.duracloud.account.compute.DuracloudComputeProvider;
-import org.duracloud.account.db.model.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.duracloud.account.config.AmaEndpoint;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.ComputeProviderAccount;
+import org.duracloud.account.db.model.DuracloudInstance;
+import org.duracloud.account.db.model.DuracloudMill;
+import org.duracloud.account.db.model.ServerDetails;
+import org.duracloud.account.db.model.ServerImage;
+import org.duracloud.account.db.model.StorageProviderAccount;
 import org.duracloud.account.db.repo.DuracloudAccountRepo;
-import org.duracloud.account.db.repo.DuracloudComputeProviderAccountRepo;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
-import org.duracloud.account.db.repo.DuracloudStorageProviderAccountRepo;
+import org.duracloud.account.db.util.DuracloudMillConfigService;
 import org.duracloud.account.db.util.instance.InstanceConfigUtil;
 import org.duracloud.account.db.util.instance.InstanceUtil;
 import org.duracloud.account.db.util.notification.NotificationMgrConfig;
-import org.duracloud.appconfig.domain.*;
+import org.duracloud.appconfig.domain.DurabossConfig;
+import org.duracloud.appconfig.domain.DuradminConfig;
+import org.duracloud.appconfig.domain.DurastoreConfig;
+import org.duracloud.appconfig.domain.NotificationConfig;
 import org.duracloud.storage.domain.AuditConfig;
+import org.duracloud.storage.domain.DatabaseConfig;
 import org.duracloud.storage.domain.StorageAccount;
+import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.storage.domain.impl.StorageAccountImpl;
-
-import java.util.*;
 
 /**
  * @author: Bill Branan
@@ -26,25 +45,25 @@ import java.util.*;
 public class InstanceConfigUtilImpl implements InstanceConfigUtil {
 
     protected static final String DEFAULT_SSL_PORT = "443";
-    protected static final String DEFAULT_SERVICES_ADMIN_PORT = "8089";
-    protected static final String DEFAULT_SERVICES_ADMIN_CONTEXT_PREFIX =
-        "org.duracloud.services.admin_";
-    protected static final String DEFAULT_DURASTORE_CONTEXT = "durastore";
-    protected static final String DEFAULT_MSG_BROKER_PORT = "61617";
-    protected static final String DEFAULT_SERVICE_COMPUTE_TYPE = "AMAZON_EC2";
-    protected static final String DEFAULT_SERVICE_COMPUTE_IMAGE_ID = "unknown";
     protected static final String NOTIFICATION_TYPE = "EMAIL";
 
     private DuracloudInstance instance;
     private DuracloudRepoMgr repoMgr;
     private NotificationMgrConfig notMgrConfig;
+    private DuracloudMillConfigService duracloudMillService;
+    private AmaEndpoint amaEndpoint;
 
     public InstanceConfigUtilImpl(DuracloudInstance instance,
                                   DuracloudRepoMgr repoMgr,
-                                  NotificationMgrConfig notMgrConfig) {
+                                  NotificationMgrConfig notMgrConfig,
+                                  AmaEndpoint amaEndpoint,
+                                  DuracloudMillConfigService duracloudMillService) {
         this.instance = instance;
         this.repoMgr = repoMgr;
         this.notMgrConfig = notMgrConfig;
+        this.amaEndpoint = amaEndpoint;
+        this.duracloudMillService = duracloudMillService;
+        
     }
 
     public DuradminConfig getDuradminConfig() {
@@ -52,38 +71,48 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         config.setDurastoreHost(instance.getHostName());
         config.setDurastorePort(DEFAULT_SSL_PORT);
         config.setDurastoreContext(DurastoreConfig.QUALIFIER);
-        config.setAmaUrl(AmaEndpoint.getUrl());
+        config.setAmaUrl(amaEndpoint.getUrl());
+        config.setMillDbEnabled(true);
         return config;
     }
 
     public DurastoreConfig getDurastoreConfig() {
         DurastoreConfig config = new DurastoreConfig();
-        DuracloudStorageProviderAccountRepo storageProviderAcctRepo =
-            repoMgr.getStorageProviderAccountRepo();
-        Set<StorageAccount> storageAccts = new HashSet<StorageAccount>();
+        Set<StorageAccount> storageAccts = new HashSet<>();
         ServerDetails serverDetails = getAccount().getServerDetails();
-
         // Primary Storage Provider
         StorageProviderAccount primaryProviderAccount =
             serverDetails.getPrimaryStorageProviderAccount();
-        storageAccts.add(getStorageAccount(storageProviderAcctRepo,
-                                           primaryProviderAccount,
+
+        storageAccts.add(getStorageAccount(primaryProviderAccount,
                                            true));
         // Secondary Storage Providers
         Set<StorageProviderAccount> storageProviderAccounts =
             serverDetails.getSecondaryStorageProviderAccounts();
         for(StorageProviderAccount storageProviderAccount : storageProviderAccounts) {
-            storageAccts.add(getStorageAccount(storageProviderAcctRepo,
-                    storageProviderAccount,
+            storageAccts.add(getStorageAccount(storageProviderAccount,
                                                false));
         }
-
-        ComputeProviderAccount compute = serverDetails.getComputeProviderAccount();
-        AuditConfig audit = config.getAuditConfig();
-        audit.setAuditQueueName(compute.getAuditQueue());
-        audit.setAuditUsername(compute.getUsername());
-        audit.setAuditPassword(compute.getPassword());
         config.setStorageAccounts(storageAccts);
+
+        DuracloudMill mill = duracloudMillService.get();
+        ComputeProviderAccount compute = serverDetails.getComputeProviderAccount();
+
+        AuditConfig auditConfig = config.getAuditConfig();
+        auditConfig.setAuditUsername(compute.getUsername());
+        auditConfig.setAuditPassword(compute.getPassword());
+        auditConfig.setAuditQueueName(mill.getAuditQueue());
+        auditConfig.setAuditLogSpaceId(mill.getAuditLogSpaceId());
+        config.setAuditConfig(auditConfig);
+
+        DatabaseConfig milldbConfig = new DatabaseConfig();
+        milldbConfig.setHost(mill.getDbHost());
+        milldbConfig.setPort(mill.getDbPort());
+        milldbConfig.setName(mill.getDbName());
+        milldbConfig.setUsername(mill.getDbUsername());
+        milldbConfig.setPassword(mill.getDbPassword());
+        config.setMillDbConfig(milldbConfig);
+
         return config;
     }
 
@@ -92,16 +121,13 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         return accountRepo.findOne(instance.getAccount().getId());
     }
 
-    private StorageAccount getStorageAccount(
-        DuracloudStorageProviderAccountRepo storageProviderAcctRepo,
-        StorageProviderAccount provider,
-        boolean primary) {
-
+    private StorageAccount getStorageAccount(StorageProviderAccount provider,
+                                             boolean primary) {
         StorageAccount storageAccount =
             new StorageAccountImpl(String.valueOf(provider.getId()),
-                               provider.getUsername(),
-                               provider.getPassword(),
-                               provider.getProviderType());
+                                   provider.getUsername(),
+                                   provider.getPassword(),
+                                   provider.getProviderType());
         storageAccount.setPrimary(primary);
 
         String storageClass = "rrs";
@@ -110,6 +136,21 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
 
         storageAccount.setOption(StorageAccount.OPTS.STORAGE_CLASS.name(),
                                  storageClass);
+
+        Map<String, String> providerProps = provider.getProperties();
+        if(null != providerProps && providerProps.size() > 0) {
+            for(String propKey : providerProps.keySet()) {
+                String propValue = providerProps.get(propKey);
+                storageAccount.setOption(propKey, propValue);
+            }
+        }
+
+        if(provider.getProviderType().equals(StorageProviderType.AMAZON_S3)){
+            ServerImage image = instance.getImage();
+            storageAccount.setOption(StorageAccount.OPTS.CF_KEY_PATH.name(), image.getCfKeyPath());
+            storageAccount.setOption(StorageAccount.OPTS.CF_ACCOUNT_ID.name(), image.getCfAccountId());
+            storageAccount.setOption(StorageAccount.OPTS.CF_KEY_ID.name(), image.getCfKeyId());
+        }
 
         return storageAccount;
     }

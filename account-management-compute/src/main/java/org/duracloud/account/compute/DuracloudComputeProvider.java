@@ -1,5 +1,9 @@
 /*
- * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.compute;
 
@@ -17,7 +21,8 @@ public interface DuracloudComputeProvider{
      *
      * @param providerImageId the ID of the server image to use in creating
      *                        a new instance
-     * @param securityGroup     the security group which is used to define the
+     * @param iamRole role to be associated with any instances started
+     * @param securityGroup the security group which is used to define the
      *                      firewall settings for an instance
      * @param keyname the name of the key pair which can be used to access
      *                the instance server
@@ -31,6 +36,7 @@ public interface DuracloudComputeProvider{
      * @return provider instance ID
      */
     public String start(String providerImageId,
+                        String iamRole,
                         String securityGroup,
                         String keyname,
                         String elasticIp, 

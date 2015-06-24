@@ -1,5 +1,9 @@
 /*
- * Copyright (c) 2009-2012 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.flow.createaccount;
 
@@ -23,6 +27,7 @@ import org.springframework.binding.message.Message;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -43,6 +48,7 @@ public class CreateAccountAction extends AbstractAction {
     @Autowired
     private MessageSource messageSource = null;
     
+    @Transactional
     public Event doExecute(RequestContext context) throws Exception {
 
         NewAccountForm newAccountForm =
@@ -54,12 +60,10 @@ public class CreateAccountAction extends AbstractAction {
         Set<StorageProviderType> secondaryStorageProviders =
             new HashSet<StorageProviderType>();
 
-        if (!newAccountForm.isCommunity()) {
-            if (fullAccountForm.getSecondaryStorageProviders() != null) {
-                secondaryStorageProviders.addAll(fullAccountForm.getSecondaryStorageProviders());
-            }
-            reducedRedundancy = fullAccountForm.isUseReducedRedundancy();
+        if (fullAccountForm.getSecondaryStorageProviders() != null) {
+            secondaryStorageProviders.addAll(fullAccountForm.getSecondaryStorageProviders());
         }
+        reducedRedundancy = fullAccountForm.isUseReducedRedundancy();
 
         AccountCreationInfo aci =
             new AccountCreationInfo(newAccountForm.getSubdomain(),
@@ -67,16 +71,10 @@ public class CreateAccountAction extends AbstractAction {
                                     newAccountForm.getOrgName(),
                                     newAccountForm.getDepartment(),
                                     StorageProviderType.AMAZON_S3,
-                                    secondaryStorageProviders,
-                                    newAccountForm.getAccountType(),
-                                    newAccountForm.getAccountClusterId() == null
-                                        ? -1L
-                                        : newAccountForm.getAccountClusterId());
+                                    secondaryStorageProviders);
 
         AccountService as = accountManagerService.createAccount(aci);
-        if(!newAccountForm.isCommunity()){
-            as.setPrimaryStorageProviderRrs(reducedRedundancy);
-        }
+        as.setPrimaryStorageProviderRrs(reducedRedundancy);
 
         String contextPath = context.getExternalContext().getContextPath();
         String accountName = newAccountForm.getAcctName();
@@ -84,33 +82,17 @@ public class CreateAccountAction extends AbstractAction {
 
         Message message;
 
-        if(newAccountForm.isCommunity()){
-            String pattern =
-                contextPath
-                    + AccountDetailsController.ACCOUNTS_PATH
-                    + AccountDetailsController.ACCOUNT_DETAILS_MAPPING;
-            String accountUri = UrlHelper.formatAccountId(accountId, pattern);
-            
-            Object[] args = new Object[] { accountName, accountUri };
-            message = 
-                messageHelper.createMessageSuccess(messageSource,
-                                                   "account.create.community.success",
-                                                   args);
-            
-        }else{
-            String pattern =
-                contextPath
-                    + AccountsController.BASE_MAPPING
-                    + AccountsController.ACCOUNT_SETUP_MAPPING;
-            String accountUri = UrlHelper.formatId(accountId, pattern);
-            
-            Object[] args = new Object[] { accountName, accountUri };
-            message = 
-                messageHelper.createMessageSuccess(messageSource,
-                                                   "account.create.full.success",
-                                                   args);
-            
-        }
+        String pattern =
+            contextPath
+                + AccountsController.BASE_MAPPING
+                + AccountsController.ACCOUNT_SETUP_MAPPING;
+        String accountUri = UrlHelper.formatId(accountId, pattern);
+        
+        Object[] args = new Object[] { accountName, accountUri };
+        message = 
+            messageHelper.createMessageSuccess(messageSource,
+                                               "account.create.full.success",
+                                               args);
         
         context.getFlowScope().put(UserFeedbackUtil.FEEDBACK_KEY, message);
         return success();

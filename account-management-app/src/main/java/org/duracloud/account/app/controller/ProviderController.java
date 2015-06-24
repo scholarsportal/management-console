@@ -1,15 +1,19 @@
 /*
- * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.app.controller;
 
 import org.duracloud.account.db.util.AccountService;
-import org.duracloud.account.db.util.error.AccountClusterNotFoundException;
 import org.duracloud.account.db.util.error.AccountNotFoundException;
 import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -28,15 +32,14 @@ public class ProviderController extends AbstractAccountController {
 
     @RequestMapping(value = { PROVIDER_PATH }, method = RequestMethod.GET)
     public String getProviders(@PathVariable Long accountId, Model model)
-        throws AccountNotFoundException,
-            DBNotFoundException,
-            AccountClusterNotFoundException {
+        throws AccountNotFoundException, DBNotFoundException {
         loadAccountInfo(accountId, model);
         loadProviderInfo(accountId, model);
         addUserToModel(model);
         return "account-providers";
     }
 
+    @Transactional
     @RequestMapping(value = ACCOUNT_PATH + "/providers/add", method = RequestMethod.POST)
     public ModelAndView addProvider(@PathVariable Long accountId,
                            @ModelAttribute("providerForm") @Valid ProviderForm providerForm,
@@ -51,6 +54,7 @@ public class ProviderController extends AbstractAccountController {
         return createAccountRedirectModelAndView(accountId, "/providers");
     }
 
+    @Transactional
     @RequestMapping(value = ACCOUNT_PATH + "/providers/byid/{providerId}/delete", method = RequestMethod.POST)
     public ModelAndView deleteProviderFromAccount(
         @PathVariable Long accountId, @PathVariable Long providerId, Model model)
@@ -63,6 +67,7 @@ public class ProviderController extends AbstractAccountController {
         return createAccountRedirectModelAndView(accountId, "/providers");
     }
 
+    @Transactional
     @RequestMapping(value = ACCOUNT_PATH + "/providers/rrs/enable", method = RequestMethod.POST)
     public ModelAndView enableProviderRrs(@PathVariable Long accountId,
 					   Model model) throws AccountNotFoundException {
@@ -73,6 +78,7 @@ public class ProviderController extends AbstractAccountController {
         return createAccountRedirectModelAndView(accountId, "/providers");
     }
 
+    @Transactional
     @RequestMapping(value = ACCOUNT_PATH + "/providers/rrs/disable", method = RequestMethod.POST)
     public ModelAndView disableProviderRrs(@PathVariable Long accountId,
 					   Model model) throws AccountNotFoundException {

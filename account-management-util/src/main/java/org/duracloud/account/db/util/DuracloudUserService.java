@@ -1,5 +1,9 @@
 /*
- * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.db.util;
 
@@ -193,6 +197,7 @@ public interface DuracloudUserService {
      * @param email     of user
      * @param securityQuestion of user
      * @param securityAnswer of user
+     * @param allowableIPAddressRange 
      */
     @Secured({"role:ROLE_USER, scope:SELF_ID"})
     public void storeUserDetails(Long userId,
@@ -200,7 +205,8 @@ public interface DuracloudUserService {
                                  String lastName,
                                  String email,
                                  String securityQuestion,
-                                 String securityAnswer)
+                                 String securityAnswer, 
+                                 String allowableIPAddressRange)
             throws DBNotFoundException;
 
 }

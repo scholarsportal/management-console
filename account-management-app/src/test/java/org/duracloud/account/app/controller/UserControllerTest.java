@@ -1,6 +1,14 @@
+/*
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
+ */
 package org.duracloud.account.app.controller;
 
 import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.UserInvitation;
 import org.duracloud.account.db.util.DuracloudInstanceManagerService;
@@ -169,6 +177,8 @@ public class UserControllerTest extends AmaControllerTestBase {
         EasyMock.expect(editForm.getFirstName()).andReturn("").anyTimes();
         EasyMock.expect(editForm.getLastName()).andReturn("").anyTimes();
         EasyMock.expect(editForm.getEmail()).andReturn("").anyTimes();
+        EasyMock.expect(editForm.getAllowableIPAddressRange()).andReturn("").anyTimes();
+
         EasyMock.expect(editForm.getSecurityQuestion())
                 .andReturn("")
                 .anyTimes();
@@ -324,10 +334,12 @@ public class UserControllerTest extends AmaControllerTestBase {
                 .andReturn(new UserInvitation(1L, createAccountInfo(-1L), "n/a", "n/a", "n/a",
                         "n/a", "username", "email", 1, "aaa"));
 
-        
+        AmaEndpoint endpoint = EasyMock.createMock(AmaEndpoint.class);
+        EasyMock.expect(endpoint.getUrl()).andReturn("test");
         EasyMock.replay(userService);
         userController.setUserService(userService);        
-        
+       
+        userController.setAmaEndpoint(endpoint);
         replayMocks();
 
         String view = userController.anonymousPasswordChange("ABC",
@@ -376,6 +388,7 @@ public class UserControllerTest extends AmaControllerTestBase {
 
     private void initializeMockUserServiceStoreUser() throws Exception {
         userService.storeUserDetails(EasyMock.anyLong(),
+                                     EasyMock.isA(String.class),
                                      EasyMock.isA(String.class),
                                      EasyMock.isA(String.class),
                                      EasyMock.isA(String.class),

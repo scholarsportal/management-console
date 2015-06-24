@@ -1,15 +1,17 @@
 /*
- * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.app.controller;
 
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.db.model.AccountInfo;
-import org.duracloud.account.db.model.AccountType;
 import org.duracloud.account.db.model.InstanceType;
 import org.duracloud.account.db.util.AccountService;
 import org.duracloud.account.db.util.DuracloudInstanceService;
-import org.duracloud.account.db.util.error.AccountClusterNotFoundException;
 import org.duracloud.account.db.util.error.AccountNotFoundException;
 import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.duracloud.account.db.util.notification.NotificationMgr;
@@ -19,6 +21,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,8 +32,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.validation.Valid;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -53,14 +54,14 @@ public class AccountController extends AbstractAccountController {
    
     @RequestMapping(value = { ACCOUNT_PATH }, method = RequestMethod.GET)
     public String getHome(@PathVariable Long accountId, Model model)
-        throws AccountNotFoundException, AccountClusterNotFoundException {
+        throws AccountNotFoundException {
         loadAccountInfo(accountId, model);
         return ACCOUNT_HOME;
     }
 
     @RequestMapping(value = { STATEMENT_PATH }, method = RequestMethod.GET)
     public String getStatement(@PathVariable Long accountId, Model model)
-        throws AccountNotFoundException, AccountClusterNotFoundException {
+        throws AccountNotFoundException {
         loadAccountInfo(accountId, model);
         return "account-statement";
     }
@@ -69,8 +70,7 @@ public class AccountController extends AbstractAccountController {
     public String getInstance(@PathVariable Long accountId, Model model)
         throws AccountNotFoundException,
             DBNotFoundException,
-            DuracloudInstanceNotAvailableException,
-            AccountClusterNotFoundException {
+            DuracloudInstanceNotAvailableException {
         populateAccountInModel(accountId, model);
         addUserToModel(model);
         return "account-instance";
@@ -78,8 +78,7 @@ public class AccountController extends AbstractAccountController {
 
     private void populateAccountInModel(Long accountId, Model model)
         throws AccountNotFoundException,
-            DuracloudInstanceNotAvailableException,
-            AccountClusterNotFoundException {
+            DuracloudInstanceNotAvailableException {
         AccountInfo acctInfo = loadAccountInfo(accountId, model);
         loadAccountInstances(acctInfo, model);
     }
@@ -111,6 +110,7 @@ public class AccountController extends AbstractAccountController {
     }
 
     @RequestMapping(value = { INSTANCE_START_PATH }, method = RequestMethod.POST)
+    @Transactional
     public ModelAndView startInstance(@PathVariable Long accountId,
                                 @ModelAttribute(NEW_INSTANCE_FORM) @Valid AccountInstanceForm instanceForm,
                                 RedirectAttributes redirectAttributes)
@@ -178,13 +178,13 @@ public class AccountController extends AbstractAccountController {
     }
 
     @RequestMapping(value = { INSTANCE_UPGRADE_PATH }, method = RequestMethod.POST)
+    @Transactional
     public ModelAndView
         upgradeInstance(@PathVariable Long accountId,
                         @PathVariable Long instanceId,
                         Model model)
             throws AccountNotFoundException,
-                DuracloudInstanceNotAvailableException,
-                AccountClusterNotFoundException {
+                   DuracloudInstanceNotAvailableException {
         InstanceType instanceType =
             instanceManagerService.getInstanceService(instanceId)
                                   .getInstanceType();
@@ -204,13 +204,13 @@ public class AccountController extends AbstractAccountController {
     }
 
     @RequestMapping(value = { INSTANCE_RESTART_PATH }, method = RequestMethod.POST)
+    @Transactional
     public ModelAndView
         restartInstance(@PathVariable Long accountId,
                         @PathVariable Long instanceId,
                         Model model)
             throws AccountNotFoundException,
-                DuracloudInstanceNotAvailableException,
-                AccountClusterNotFoundException {
+                   DuracloudInstanceNotAvailableException {
         restartInstance(instanceId);
         populateAccountInModel(accountId, model);
         model.addAttribute(ACTION_STATUS,
@@ -231,13 +231,13 @@ public class AccountController extends AbstractAccountController {
 
     @RequestMapping(value = {INSTANCE_REINIT_USERS_PATH},
                     method = RequestMethod.POST)
+    @Transactional
     public ModelAndView reInitializeUserRoles(@PathVariable Long accountId,
                                         @PathVariable Long instanceId,
                                         Model model,
                                         RedirectAttributes redirectAttributes)        
                 throws  AccountNotFoundException, 
-                        DuracloudInstanceNotAvailableException, 
-                        AccountClusterNotFoundException {
+                        DuracloudInstanceNotAvailableException {
 
         log.info("ReInit UserRoles for acct: {}, instance: {}",
                   accountId,
@@ -260,13 +260,13 @@ public class AccountController extends AbstractAccountController {
 
     @RequestMapping(value = {INSTANCE_REINIT_PATH},
                     method = RequestMethod.POST)
+    @Transactional
     public ModelAndView reInitialize(@PathVariable Long accountId,
                                @PathVariable Long instanceId,
                                Model model,
                                RedirectAttributes redirectAttributes)        
             throws  AccountNotFoundException, 
-                    DuracloudInstanceNotAvailableException, 
-                    AccountClusterNotFoundException {
+                    DuracloudInstanceNotAvailableException {
         
         log.info("ReInit Instance for acct: {}, instance: {}",
                   accountId,
@@ -294,8 +294,7 @@ public class AccountController extends AbstractAccountController {
                                       Model model,
                                       RedirectAttributes redirectAttributes)
         throws AccountNotFoundException,
-                DuracloudInstanceNotAvailableException,
-                AccountClusterNotFoundException {
+                DuracloudInstanceNotAvailableException {
         populateAccountInModel(accountId, model);
 
         String username =
@@ -304,13 +303,13 @@ public class AccountController extends AbstractAccountController {
     }
 
     @RequestMapping(value = { INSTANCE_STOP_PATH }, method = RequestMethod.POST)
+    @Transactional
     public ModelAndView
         stopInstance(@PathVariable Long accountId,
                      @PathVariable Long instanceId,
                      Model model)
             throws AccountNotFoundException,
-                DuracloudInstanceNotAvailableException,
-                AccountClusterNotFoundException {
+                DuracloudInstanceNotAvailableException {
         stopInstance(instanceId);
         populateAccountInModel(accountId, model);
         model.addAttribute(ACTION_STATUS, "Instance STOPPED successfully.");
@@ -328,13 +327,9 @@ public class AccountController extends AbstractAccountController {
         instanceService.stop();
     }
 
-    @ModelAttribute("accountTypes")
-    public List<AccountType> getAccountTypes() {
-        return Arrays.asList(AccountType.values());
-    }
-
 
     @RequestMapping(value = { ACCOUNT_PATH + "/activate" }, method = RequestMethod.POST)
+    @Transactional
     public ModelAndView activate(@PathVariable Long accountId)
         throws AccountNotFoundException {
         AccountService accountService = accountManagerService.getAccount(
@@ -347,6 +342,7 @@ public class AccountController extends AbstractAccountController {
     }
 
     @RequestMapping(value = { ACCOUNT_PATH + "/deactivate" }, method = RequestMethod.POST)
+    @Transactional
     public ModelAndView deactivate(@PathVariable Long accountId,
                            Model model)
         throws AccountNotFoundException {

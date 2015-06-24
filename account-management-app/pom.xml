@@ -1,8 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
   <parent>
     <groupId>org.duracloud</groupId>
-    <artifactId>duracloud-priv</artifactId>
-    <version>2.0.0</version>
+    <artifactId>duracloud-mc</artifactId>
+    <version>2.1.0</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   
@@ -10,7 +11,7 @@
   <groupId>org.duracloud</groupId>
   <artifactId>ama</artifactId>
   <packaging>war</packaging>
-  <version>2.0.0</version>
+  <version>2.1.0</version>
   <name>Account Management App</name>
   <url>http://duraspace.org</url>
 
@@ -26,7 +27,6 @@
     <log.level.default>DEBUG</log.level.default>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <credentials.file.path>${basedir}/src/test/resources/credentials.xml</credentials.file.path>
-    <jquery.target.path>static/jquery</jquery.target.path>
   </properties>
 
   <!-- Build Configuration -->
@@ -46,18 +46,6 @@
               <filtering>true</filtering>
             </resource>
           </webResources>
-          <overlays>
-            <overlay>
-              <groupId>org.duracloud</groupId>
-              <artifactId>jquery</artifactId>
-              <type>zip</type>
-              <targetPath>${jquery.target.path}</targetPath>
-              <includes>
-                <include>jquery.js</include>
-                <include>jquery.min.js</include>
-              </includes>
-            </overlay>
-          </overlays>
         </configuration>
       </plugin>
       
@@ -212,22 +200,14 @@
       <version>${duracloud.artifact.version}</version>
     </dependency>
 
-    <!--<dependency>-->
-      <!--<groupId>org.duracloud</groupId>-->
-      <!--<artifactId>account-management-util</artifactId>-->
-      <!--<version>${project.version}</version>-->
-    <!--</dependency>-->
-
     <dependency>
-        <groupId>org.duracloud</groupId>
+        <groupId>org.duracloud.db</groupId>
         <artifactId>account-management-db-model</artifactId>
-        <version>${project.version}</version>
     </dependency>
 
     <dependency>
-      <groupId>org.duracloud</groupId>
+      <groupId>org.duracloud.db</groupId>
       <artifactId>account-management-db-repo</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -338,12 +318,6 @@
       <artifactId>hibernate-validator</artifactId>
       <version>4.1.0.Final</version>
       <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.duracloud</groupId>
-      <artifactId>jquery</artifactId>
-      <type>zip</type>
-      <version>1.7.1</version>
     </dependency>
     <dependency>
         <groupId>org.seleniumhq.selenium</groupId>

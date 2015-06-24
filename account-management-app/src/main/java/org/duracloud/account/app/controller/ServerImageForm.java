@@ -1,3 +1,10 @@
+/*
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
+ */
 package org.duracloud.account.app.controller;
 
 import org.hibernate.validator.constraints.NotBlank;
@@ -16,6 +23,43 @@ public class ServerImageForm {
 
     @NotBlank(message = "You must specify a password.")
     private String password;
+
+    @NotBlank(message = "You must specify an IAM Role")
+    private String iamRole;
+
+    @NotBlank(message = "You must specify a CloudFront Key Path")
+    private String cfKeyPath;
+
+    @NotBlank(message = "You must specify a CloudFront Account Id")
+    private String cfAccountId;
+
+    @NotBlank(message = "You must specify a Cloud Key Id")
+    private String cfKeyId;
+
+    
+    public String getCfKeyPath() {
+        return cfKeyPath;
+    }
+
+    public void setCfKeyPath(String cfKeyPath) {
+        this.cfKeyPath = cfKeyPath;
+    }
+
+    public String getCfAccountId() {
+        return cfAccountId;
+    }
+
+    public void setCfAccountId(String cfAccountId) {
+        this.cfAccountId = cfAccountId;
+    }
+
+    public String getCfKeyId() {
+        return cfKeyId;
+    }
+
+    public void setCfKeyId(String cfKeyId) {
+        this.cfKeyId = cfKeyId;
+    }
 
     private boolean latest;
 
@@ -71,5 +115,13 @@ public class ServerImageForm {
                                     this.password,
                                     this.latest);
         
+    }
+
+    public String getIamRole() {
+        return iamRole;
+    }
+
+    public void setIamRole(String iamRole) {
+        this.iamRole = iamRole;
     }
 }

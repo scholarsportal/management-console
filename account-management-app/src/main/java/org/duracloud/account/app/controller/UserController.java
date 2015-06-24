@@ -1,5 +1,9 @@
 /*
- * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.app.controller;
 
@@ -7,7 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountInfo.AccountStatus;
-import org.duracloud.account.db.model.AmaEndpoint;
+import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.InstanceType;
 import org.duracloud.account.db.model.UserInvitation;
@@ -29,6 +33,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -102,6 +107,10 @@ public class UserController extends AbstractController {
     @Autowired(required = true)
     protected DuracloudInstanceManagerService instanceManagerService;
 
+    @Autowired
+    private AmaEndpoint amaEndpoint;
+    
+    
     /**
      * 
      * @param userService
@@ -239,6 +248,7 @@ public class UserController extends AbstractController {
         form.setFirstName(user.getFirstName());
         form.setLastName(user.getLastName());
         form.setEmail(user.getEmail());
+        form.setAllowableIPAddressRange(user.getAllowableIPAddressRange());
         form.setSecurityQuestion(user.getSecurityQuestion());
         form.setSecurityAnswer(user.getSecurityAnswer());
         model.addAttribute(USER_PROFILE_FORM_KEY, form);
@@ -249,6 +259,7 @@ public class UserController extends AbstractController {
         return USER_EDIT_VIEW;
     }
 
+    @Transactional
     @RequestMapping(value = { USER_EDIT_MAPPING }, method = RequestMethod.POST)
     public ModelAndView update(@PathVariable String username,
                          @ModelAttribute(USER_PROFILE_FORM_KEY) @Valid UserProfileEditForm form,
@@ -273,7 +284,8 @@ public class UserController extends AbstractController {
                                           form.getLastName(),
                                           form.getEmail(),
                                           form.getSecurityQuestion(),
-                                          form.getSecurityAnswer());
+                                          form.getSecurityAnswer(),
+                                          form.getAllowableIPAddressRange());
 
         return new ModelAndView(formatUserRedirect(username));
     }
@@ -288,6 +300,7 @@ public class UserController extends AbstractController {
         return CHANGE_PASSWORD_VIEW;
     }
 
+    @Transactional
     @RequestMapping(value = { CHANGE_PASSWORD_MAPPING }, method = RequestMethod.POST)
     public ModelAndView changePassword(@PathVariable String username,
                                  @ModelAttribute(CHANGE_PASSWORD_FORM_KEY) @Valid ChangePasswordForm form,
@@ -352,6 +365,7 @@ public class UserController extends AbstractController {
         }
     }
 
+    @Transactional
     @RequestMapping(value = {  "/change-password/{redemptionCode}" }, method = RequestMethod.POST)
     public String anonymousPasswordChange(@PathVariable String redemptionCode,
                                           @ModelAttribute(CHANGE_PASSWORD_FORM_KEY) @Valid AnonymousChangePasswordForm form,
@@ -377,7 +391,7 @@ public class UserController extends AbstractController {
                                                 form.getPassword());
                 
                 this.userService.redeemPasswordChangeRequest(user.getId(), redemptionCode);
-                model.addAttribute("adminUrl", AmaEndpoint.getUrl());
+                model.addAttribute("adminUrl", amaEndpoint.getUrl());
                 return "anonymous-change-password-success";
                 
             } catch (InvalidPasswordException e) {
@@ -465,6 +479,7 @@ public class UserController extends AbstractController {
         }
     }
 
+    @Transactional
     @RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.POST)
     public ModelAndView add(@ModelAttribute(NEW_USER_FORM_KEY) @Valid NewUserForm newUserForm,
                       BindingResult result,
@@ -517,6 +532,7 @@ public class UserController extends AbstractController {
         return view;
     }
 
+    @Transactional
     @RequestMapping(value = { FORGOT_PASSWORD_MAPPING }, method = RequestMethod.POST)
     public String forgotPassword(@ModelAttribute(FORGOT_PASSWORD_FORM_KEY) @Valid ForgotPasswordForm forgotPasswordForm,
                                  BindingResult result,
@@ -604,5 +620,9 @@ public class UserController extends AbstractController {
 
     public void setInstanceManagerService(DuracloudInstanceManagerService instanceManagerService) {
         this.instanceManagerService = instanceManagerService;
+    }
+
+    public void setAmaEndpoint(AmaEndpoint amaEndpoint) {
+        this.amaEndpoint = amaEndpoint;
     }
 }

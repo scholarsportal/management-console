@@ -1,10 +1,13 @@
 /*
- * Copyright (c) 2009-2012 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.app.integration;
 
 import org.duracloud.account.db.model.AccountInfo.AccountStatus;
-import org.duracloud.account.db.model.AccountType;
 import org.duracloud.account.flow.createaccount.CreateAccountFlowHandler;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.junit.Assert;
@@ -29,22 +32,7 @@ public class TestNewAccountWizard extends AbstractIntegrationTest {
         this.rootBot = new RootBot(sc);
     }
 
-    @Test
-    public void testCreateCommunityAccount() throws Exception {
-        rootBot.login();
-
-        UrlHelper.openRelative(sc, "/"+CreateAccountFlowHandler.FLOW_ID);
-        assertNewAccountFormIsPresent();
-        String accountName = "test"+System.currentTimeMillis();
-        Map<String,String> fields = createNewAccountFormInput(accountName, AccountType.COMMUNITY);
-        fillForm(fields);
-        clickAndWait("id=next");
-        
-        assertInfoMessagePresent();
-        assertAccountInList(accountName);
-        deleteAccount(accountName);
-    }
-
+ 
     private void assertNewAccountFormIsPresent() {
         Assert.assertTrue(isElementPresent("id=newAccountForm"));
     }
@@ -72,13 +60,12 @@ public class TestNewAccountWizard extends AbstractIntegrationTest {
     }
 
     private Map<String, String>
-        createNewAccountFormInput(String accountName, AccountType accountType) {
+        createNewAccountFormInput(String accountName) {
         Map<String,String> fields = new HashMap<String,String>();
         fields.put("acctName", accountName);
         fields.put("orgName", "test organization");
         fields.put("department", "test department");
         fields.put("subdomain", accountName);
-        fields.put("accountType", "value=" + accountType);
         return fields;
     }
 
@@ -96,7 +83,7 @@ public class TestNewAccountWizard extends AbstractIntegrationTest {
         UrlHelper.openRelative(sc, "/"+CreateAccountFlowHandler.FLOW_ID);
         assertNewAccountFormIsPresent();
         String accountName = "test"+System.currentTimeMillis();
-        Map<String,String> fields = createNewAccountFormInput(accountName,AccountType.FULL);
+        Map<String,String> fields = createNewAccountFormInput(accountName);
         fillForm(fields);
         
         clickAndWait("id=next");

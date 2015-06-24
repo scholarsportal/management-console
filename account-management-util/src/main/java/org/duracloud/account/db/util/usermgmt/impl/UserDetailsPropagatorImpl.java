@@ -1,21 +1,27 @@
 /*
- * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.db.util.usermgmt.impl;
 
-import org.duracloud.account.db.repo.DuracloudAccountClusterRepo;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.DuracloudInstance;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.Role;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
-import org.duracloud.account.db.model.*;
 import org.duracloud.account.db.util.DuracloudInstanceManagerService;
 import org.duracloud.account.db.util.DuracloudInstanceService;
 import org.duracloud.account.db.util.usermgmt.UserDetailsPropagator;
-import org.duracloud.account.db.util.util.AccountClusterUtil;
+import org.duracloud.account.db.util.util.UserFinderUtil;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * This class propagates UserDetail updates down to the Duracloud Instance.
@@ -29,16 +35,17 @@ public class UserDetailsPropagatorImpl implements UserDetailsPropagator {
 
     private DuracloudRepoMgr repoMgr;
     private DuracloudInstanceManagerService instanceManagerService;
-    private AccountClusterUtil accountClusterUtil;
 
     private Exception error = null;
+    
+    private UserFinderUtil userFinder;
 
     public UserDetailsPropagatorImpl(DuracloudRepoMgr repoMgr,
                                      DuracloudInstanceManagerService instanceManagerService,
-                                     AccountClusterUtil accountClusterUtil) {
+                                     UserFinderUtil userFinder) {
         this.repoMgr = repoMgr;
         this.instanceManagerService = instanceManagerService;
-        this.accountClusterUtil = accountClusterUtil;
+        this.userFinder = userFinder;
     }
 
     @Override
@@ -71,28 +78,6 @@ public class UserDetailsPropagatorImpl implements UserDetailsPropagator {
         checkForErrors(acctId, groupId, "groupId");
     }
 
-    @Override
-    public void propagateClusterUpdate(Long acctId, Long clusterId) {
-        Set<DuracloudUser> users = findUsers(acctId);
-        doPropagate(acctId, users);
-        checkForErrors(acctId, clusterId, "clusterId");
-    }
-
-    @Override
-    public void propagateClusterUpdate(Long clusterId) {
-        DuracloudAccountClusterRepo clusterRepo =
-            repoMgr.getAccountClusterRepo();
-        AccountCluster cluster =  clusterRepo.findOne(clusterId);
-        Set<AccountInfo> clusterAccts = cluster.getClusterAccounts();
-        if(null != clusterAccts && clusterAccts.size() > 0) {
-            propagateClusterUpdate(clusterAccts.iterator().next().getId(),
-                                   clusterId);
-        } else {
-            log.info("No accounts found within cluster with ID: " +
-                     clusterId + ". No propagation necessary.");
-        }
-    }
-
     private void checkForErrors(Long acctId, Long id, String idName) {
         if (null != error) {
             StringBuilder msg = new StringBuilder("Failed to propagate, ");
@@ -109,7 +94,7 @@ public class UserDetailsPropagatorImpl implements UserDetailsPropagator {
     private Set<DuracloudUser> findUsers(Long acctId) {
         Set<DuracloudUser> users = new HashSet<DuracloudUser>();
         AccountInfo acctInfo = repoMgr.getAccountRepo().findOne(acctId);
-        users = accountClusterUtil.getAccountClusterUsers(acctInfo);
+        users = userFinder.getAccountUsers(acctInfo);
         return users;
     }
 
@@ -124,28 +109,11 @@ public class UserDetailsPropagatorImpl implements UserDetailsPropagator {
         return results;
     }
 
-//    private Set<DuracloudUser> updateUserRoles(Long userId,
-//                                               Long acctId,
-//                                               Set<Role> roles,
-//                                               Set<DuracloudUser> users) {
-//        Set<DuracloudUser> results = new HashSet<DuracloudUser>();
-//        for (DuracloudUser user : users) {
-//            if (userId == user.getId()) {
-//                Set<AccountRights> userRights = new HashSet<AccountRights>();
-//                userRights.add(new AccountRights(-1L, acctId, userId, roles));
-//                user.setAccountRights(userRights);
-//            }
-//
-//            results.add(user);
-//        }
-//        return results;
-//    }
-
     private void doPropagate(Long acctId, Set<DuracloudUser> users) {
         log.debug("propagating user roles for acct: " + acctId);
 
         Set<DuracloudInstanceService> services =
-            instanceManagerService.getClusterInstanceServices(acctId);
+            instanceManagerService.getInstanceServices(acctId);
         for (DuracloudInstanceService service : services) {
             DuracloudInstance instanceInfo = service.getInstanceInfo();
             log.debug("propagating user roles: {}, {}",

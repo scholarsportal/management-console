@@ -1,5 +1,9 @@
 /*
- * Copyright (c) 2009-2012 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.app.controller;
 
@@ -9,7 +13,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.duracloud.account.annotation.UniqueSubdomainConstraint;
-import org.duracloud.account.db.model.AccountType;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.context.annotation.Scope;
@@ -38,20 +41,9 @@ public class NewAccountForm implements Serializable {
     @Length(min = 3, max = 25, message = "Subdomain must be between 3 and 25 characters.")
     private String subdomain;
 
-    private AccountType accountType;
-
-    private Long accountClusterId;
-
-
-    public List<AccountType> getAccountTypes(){
-        return new LinkedList<AccountType>(Arrays.asList(AccountType.values()));
-    }
-    
     public String getSubdomain() {
         return subdomain;
     }
-
-    
     
     public void setSubdomain(String subdomain) {
         this.subdomain = subdomain;
@@ -79,27 +71,6 @@ public class NewAccountForm implements Serializable {
 
     public void setAcctName(String acctName) {
         this.acctName = acctName;
-    }
-
-
-    public AccountType getAccountType() {
-        return accountType;
-    }
-
-    public void setAccountType(AccountType accountType) {
-        this.accountType = accountType;
-    }
-
-    public Long getAccountClusterId() {
-        return accountClusterId;
-    }
-
-    public void setAccountClusterId(Long accountClusterId) {
-        this.accountClusterId = accountClusterId;
-    }
-    
-    public boolean isCommunity(){
-        return AccountType.COMMUNITY == this.accountType;
     }
 
 }

@@ -1,5 +1,9 @@
 /*
- * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.app.controller;
 
@@ -55,7 +59,11 @@ public class ServerImageController extends AbstractRootCrudController<ServerImag
                                                          form.getVersion(),
                                                          form.getDescription(),
                                                          form.getPassword(),
-                                                         form.isLatest());
+                                                         form.isLatest(),
+                                                         form.getIamRole(), 
+                                                         form.getCfKeyPath(),
+                                                         form.getCfAccountId(),
+                                                         form.getCfKeyId());
         
     }
 
@@ -73,6 +81,11 @@ public class ServerImageController extends AbstractRootCrudController<ServerImag
         form.setDescription(entity.getDescription());
         form.setPassword(entity.getDcRootPassword());
         form.setLatest(entity.isLatest());
+        form.setIamRole(entity.getIamRole());
+        form.setCfKeyPath(entity.getCfKeyPath());
+        form.setCfAccountId(entity.getCfAccountId());
+        form.setCfKeyId(entity.getCfKeyId());
+
         return form;
     }
 
@@ -83,7 +96,11 @@ public class ServerImageController extends AbstractRootCrudController<ServerImag
                                                        form.getVersion(),
                                                        form.getDescription(),
                                                        form.getPassword(),
-                                                       form.isLatest());        
+                                                       form.isLatest(),
+                                                       form.getIamRole(), 
+                                                       form.getCfKeyPath(),
+                                                       form.getCfAccountId(),
+                                                       form.getCfKeyId());        
     }
 
     @Override

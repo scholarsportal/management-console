@@ -1,14 +1,16 @@
 /*
- * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.app.controller;
 
 import org.duracloud.account.db.model.AccountInfo;
-import org.duracloud.account.db.model.AccountType;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.StorageProviderAccount;
 import org.duracloud.account.db.util.AccountService;
-import org.duracloud.account.db.util.error.AccountClusterNotFoundException;
 import org.duracloud.account.db.util.error.AccountNotFoundException;
 import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.duracloud.account.util.UserFeedbackUtil;
@@ -16,6 +18,7 @@ import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.binding.message.Severity;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -44,13 +47,10 @@ public class AccountDetailsController extends AbstractAccountController {
 
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING, method = RequestMethod.GET)
     public String get(@PathVariable Long accountId, Model model)
-        throws AccountNotFoundException, DBNotFoundException, AccountClusterNotFoundException {
+        throws AccountNotFoundException, DBNotFoundException {
         AccountInfo accountInfo = loadAccountInfo(accountId, model);
         loadBillingInfo(accountId, model);
-
-        if(AccountType.FULL.equals(accountInfo.getType())) {
-            loadProviderInfo(accountId, model);
-        }
+        loadProviderInfo(accountId, model);
 
         DuracloudUser user = getUser();
         model.addAttribute(UserController.USER_KEY, user);
@@ -59,6 +59,7 @@ public class AccountDetailsController extends AbstractAccountController {
     }
 
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/add", method = RequestMethod.POST)
+    @Transactional
     public ModelAndView addProvider(@PathVariable Long accountId,
                            @ModelAttribute("providerForm") @Valid ProviderForm providerForm,
 					   BindingResult result,
@@ -74,6 +75,7 @@ public class AccountDetailsController extends AbstractAccountController {
 
     
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/{providerType}/remove", method = RequestMethod.POST)
+    @Transactional
     public View removeProvider(@PathVariable Long accountId,
                                        @PathVariable String providerType,
                                        RedirectAttributes redirectAttributes)
@@ -121,6 +123,7 @@ public class AccountDetailsController extends AbstractAccountController {
 
 
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/rrs/enable", method = RequestMethod.POST)
+    @Transactional
     public ModelAndView
         enableProviderRrs(@PathVariable Long accountId)
             throws AccountNotFoundException {
@@ -132,6 +135,7 @@ public class AccountDetailsController extends AbstractAccountController {
     }
 
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/rrs/disable", method = RequestMethod.POST)
+    @Transactional
     public ModelAndView disableProviderRrs(@PathVariable Long accountId,
 					   Model model) throws AccountNotFoundException {
         log.info("disableProviderRrs account {}", accountId);

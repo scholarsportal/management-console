@@ -1,26 +1,28 @@
 /*
- * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.db.util.impl;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.duracloud.account.db.model.AccountCluster;
+import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
-import org.duracloud.account.db.model.AccountType;
 import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.DuracloudGroup;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.ServerDetails;
 import org.duracloud.account.db.model.ServerImage;
 import org.duracloud.account.db.model.StorageProviderAccount;
-import org.duracloud.account.db.repo.DuracloudAccountClusterRepo;
 import org.duracloud.account.db.repo.DuracloudAccountRepo;
 import org.duracloud.account.db.repo.DuracloudGroupRepo;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
@@ -58,17 +60,19 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
     private Notifier notifier;
     private DuracloudInstanceManagerService instanceManagerService;
     private DuracloudUserService userService;
-
+    private AmaEndpoint amaEndpoint;
     public RootAccountManagerServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
                                          NotificationMgr notificationMgr,
                                          UserDetailsPropagator propagator,
                                          DuracloudInstanceManagerService instanceManagerService,
-                                         DuracloudUserService userService) {
+                                         DuracloudUserService userService,
+                                         AmaEndpoint amaEndpoint) {
         this.repoMgr = duracloudRepoMgr;
         this.notificationMgr = notificationMgr;
         this.propagator = propagator;
         this.instanceManagerService = instanceManagerService;
         this.userService = userService;
+        this.amaEndpoint = amaEndpoint;
     }
 
 	@Override
@@ -124,46 +128,18 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 	}
 
     @Override
-    public void deleteAccountCluster(Long clusterId) {
-        log.info("Deleting account cluster with ID {}", clusterId);
-
-        // Find the cluster
-        DuracloudAccountClusterRepo clusterRepo = getClusterRepo();
-        AccountCluster cluster = clusterRepo.findOne(clusterId);
-
-        // Reset the cluster ID of all accounts in this cluster
-        Set<AccountInfo> clusterAccounts = cluster.getClusterAccounts();
-        DuracloudAccountRepo accountRepo = getAccountRepo();
-        for(AccountInfo account : clusterAccounts) {
-            account.setAccountCluster(null);
-            accountRepo.save(account);
-        }
-
-        // Propagate user/group changes for all accounts in this cluster
-        for(AccountInfo account : clusterAccounts) {
-            propagator.propagateClusterUpdate(account.getId(), clusterId);
-        }
-
-        // Remove the cluster
-        clusterRepo.delete(clusterId);
-    }
-
-
-    @Override
 	public void deleteAccount(Long accountId) {
         log.info("Deleting account with ID {}", accountId);
         AccountInfo account = getAccount(accountId);
 
-        if(account.getType().equals(AccountType.FULL)) {
-            Set<DuracloudInstanceService> instanceServices =
-                instanceManagerService.getInstanceServices(accountId);
-            if (instanceServices.size() > 0) {
-                log.error("Unable to delete account {} found an instance",
-                          accountId);
-                return;
-            }
-
+        Set<DuracloudInstanceService> instanceServices =
+            instanceManagerService.getInstanceServices(accountId);
+        if (instanceServices.size() > 0) {
+            log.error("Unable to delete account {} found an instance",
+                      accountId);
+            return;
         }
+
 
         // Delete the account rights
         List<AccountRights > rightsList =
@@ -186,25 +162,10 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         DuracloudUserInvitationRepo invRepo = repoMgr.getUserInvitationRepo();
         invRepo.deleteInBatch(invRepo.findByAccountId(accountId));
 
-        // Update cluster if necessary
-        removeAccountFromCluster(account);
-
         // Delete account
         getAccountRepo().delete(accountId);
 	}
 
-    private void removeAccountFromCluster(AccountInfo account) {
-        Long accountId = account.getId();
-        AccountCluster cluster = account.getAccountCluster();
-        if(cluster != null) { // Account is part of a cluster
-            // Update the cluster to no longer include this account
-            cluster.getClusterAccounts().remove(account);
-            repoMgr.getAccountClusterRepo().save(cluster);
-
-            // Propagate any changes to cluster users/groups
-            propagator.propagateClusterUpdate(accountId, cluster.getId());
-        }
-    }
 
     @Override
     public List<StorageProviderAccount> getSecondaryStorageProviders(Long accountId) {
@@ -216,12 +177,16 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 	@Override
 	public void setupStorageProvider(Long providerId,
                                      String username,
-                                     String password) {
+                                     String password,
+                                     Map<String,String> properties,
+                                     int storageLimit) {
         log.info("Setting up storage provider with ID {}", providerId);
         StorageProviderAccount storageProviderAccount =
             getStorageRepo().findOne(providerId);
         storageProviderAccount.setUsername(username);
         storageProviderAccount.setPassword(password);
+        storageProviderAccount.getProperties().putAll(properties);
+        storageProviderAccount.setStorageLimit(storageLimit);
         getStorageRepo().save(storageProviderAccount);
     }
 
@@ -231,8 +196,7 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
                                      String password,
                                      String elasticIp,
                                      String keypair,
-                                     String securityGroup,
-                                     String auditQueue) {
+                                     String securityGroup) {
         log.info("Setting up compute provider with ID {}", providerId);
         ComputeProviderAccount computeProviderAcct =
             repoMgr.getComputeProviderAccountRepo().findOne(providerId);
@@ -241,7 +205,6 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         computeProviderAcct.setElasticIp(elasticIp);
         computeProviderAcct.setKeypair(keypair);
         computeProviderAcct.setSecurityGroup(securityGroup);
-        computeProviderAcct.setAuditQueue(auditQueue);
         repoMgr.getComputeProviderAccountRepo().save(computeProviderAcct);
     }
 
@@ -305,7 +268,11 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
                                   String version,
                                   String description,
                                   String password,
-                                  boolean latest) {
+                                  boolean latest,
+                                  String iamRole,
+                                  String cfKeyPath, 
+                                  String cfAccountId, 
+                                  String cfKeyId) {
         DuracloudServerImageRepo imageRepo = getServerImageRepo();
         if(latest) {
             //Remove current latest
@@ -328,7 +295,10 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         serverImage.setDescription(description);
         serverImage.setDcRootPassword(password);
         serverImage.setLatest(latest);
-
+        serverImage.setIamRole(iamRole);
+        serverImage.setCfKeyPath(cfKeyPath);
+        serverImage.setCfAccountId(cfAccountId);
+        serverImage.setCfKeyId(cfKeyId);
         getServerImageRepo().save(serverImage);
     }
 
@@ -338,7 +308,11 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
                                 String version,
                                 String description,
                                 String password,
-                                boolean latest) {
+                                boolean latest,
+                                String iamRole, 
+                                String cfKeyPath, 
+                                String cfAccountId, 
+                                String cfKeyId) {
 
         ServerImage serverImage = getServerImageRepo().findOne(id);
 
@@ -357,6 +331,10 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         serverImage.setVersion(version);
         serverImage.setDescription(description);
         serverImage.setDcRootPassword(password);
+        serverImage.setIamRole(iamRole);
+        serverImage.setCfKeyPath(cfKeyPath);
+        serverImage.setCfAccountId(cfAccountId);
+        serverImage.setCfKeyId(cfKeyId);
         getServerImageRepo().save(serverImage);
     }
 
@@ -398,13 +376,10 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         return repoMgr.getStorageProviderAccountRepo();
     }
 
-    private DuracloudAccountClusterRepo getClusterRepo() {
-        return repoMgr.getAccountClusterRepo();
-    }
 
     private Notifier getNotifier() {
         if(null == notifier) {
-            notifier = new Notifier(notificationMgr.getEmailer());
+            notifier = new Notifier(notificationMgr.getEmailer(), amaEndpoint);
         }
         return notifier;
     }

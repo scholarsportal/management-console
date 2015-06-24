@@ -1,9 +1,14 @@
 /*
- * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.db.util;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.duracloud.account.db.model.AccountInfo;
@@ -65,14 +70,6 @@ public interface RootAccountManagerService {
     public void deleteUser(Long id);
 
     /**
-     * Delete an account cluster from the system
-     *
-     * @param id
-     */
-    @Secured({"role:ROLE_ROOT, scope:ANY"})
-    public void deleteAccountCluster(Long id);
-
-    /**
      * Delete an account from the system
      *
      * @param id
@@ -96,13 +93,21 @@ public interface RootAccountManagerService {
      * @param description
      * @param password
      * @param latest
+     * @param iamRole 
+     * @param cfKeyPath 
+     * @param cfAccountId 
+     * @param cfKeyId 
      */
     @Secured({"role:ROLE_ROOT, scope:ANY"})
     public void createServerImage(String providerImageId,
                                   String version,
                                   String description,
                                   String password,
-                                  boolean latest);
+                                  boolean latest, 
+                                  String iamRole, 
+                                  String cfKeyPath, 
+                                  String cfAccountId, 
+                                  String cfKeyId);
     /**
      * Edits a service image in the system
      *
@@ -112,6 +117,10 @@ public interface RootAccountManagerService {
      * @param description
      * @param password
      * @param latest
+     * @param iamRole
+     * @param cfKeyPath 
+     * @param cfAccountId 
+     * @param cfKeyId 
      */
     @Secured({"role:ROLE_ROOT, scope:ANY"})
     public void editServerImage(Long id,
@@ -119,7 +128,11 @@ public interface RootAccountManagerService {
                                 String version,
                                 String description,
                                 String password,
-                                boolean latest);
+                                boolean latest,
+                                String iamRole, 
+                                String cfKeyPath, 
+                                String cfAccountId, 
+                                String cfKeyId);
 
     /**
      * Gets a server image from the system
@@ -159,9 +172,11 @@ public interface RootAccountManagerService {
      * @param id
      * @param username
      * @param password
+     * @param storageLimit 
+     * @parma properties
      */
     @Secured({"role:ROLE_ROOT, scope:ANY"})
-    public void setupStorageProvider(Long id, String username, String password);
+    public void setupStorageProvider(Long id, String username, String password, Map<String,String> properties, int storageLimit);
 
     /**
      * Sets up a compute provider
@@ -172,11 +187,10 @@ public interface RootAccountManagerService {
      * @param elasticIp
      * @param keypair
      * @param securityGroup
-     * @param auditQueue
      */
     @Secured({"role:ROLE_ROOT, scope:ANY"})
     public void setupComputeProvider(Long id, String username, String password,
-                                     String elasticIp, String keypair, String securityGroup, String auditQueue);
+                                     String elasticIp, String keypair, String securityGroup);
 
     /**
      * Reset a user's password

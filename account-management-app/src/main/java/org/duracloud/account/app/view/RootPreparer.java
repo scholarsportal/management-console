@@ -1,3 +1,10 @@
+/*
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
+ */
 package org.duracloud.account.app.view;
 
 import java.util.LinkedList;
@@ -5,6 +12,7 @@ import java.util.LinkedList;
 import org.apache.tiles.AttributeContext;
 import org.apache.tiles.context.TilesRequestContext;
 import org.apache.tiles.preparer.ViewPreparer;
+import org.duracloud.account.app.controller.DuracloudMillController;
 import org.duracloud.account.app.controller.ServerImageController;
 import org.springframework.stereotype.Component;
 
@@ -26,9 +34,10 @@ public class RootPreparer implements ViewPreparer {
         public RootTabs() {
             super();
             add(new Tab("/root/accounts", "accounts"));
-            add(new Tab("/root/clusters", "clusters"));
             add(new Tab("/root/users", "users"));
             add(new Tab(ServerImageController.BASE_MAPPING, "serverimages"));
+            add(new Tab(DuracloudMillController.BASE_MAPPING, "duracloudmill"));
+
         }
     }
 

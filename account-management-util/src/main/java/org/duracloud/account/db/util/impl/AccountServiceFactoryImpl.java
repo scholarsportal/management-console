@@ -1,9 +1,14 @@
 /*
- * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.db.util.impl;
 
 import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.db.util.AccountService;
 import org.duracloud.account.db.util.AccountServiceFactory;
@@ -31,15 +36,18 @@ public class AccountServiceFactoryImpl implements AccountServiceFactory {
     private AccessDecisionVoter voter;
     private SecurityContextUtil securityContext;
     private AnnotationParser annotationParser;
+    private AmaEndpoint amaEndpoint;
 
     public AccountServiceFactoryImpl(DuracloudRepoMgr repoMgr,
                                      AccessDecisionVoter voter,
                                      SecurityContextUtil securityContext,
-                                     AnnotationParser annotationParser) {
+                                     AnnotationParser annotationParser,
+                                     AmaEndpoint amaEndpoint) {
         this.repoMgr = repoMgr;
         this.voter = voter;
         this.securityContext = securityContext;
         this.annotationParser = annotationParser;
+        this.amaEndpoint = amaEndpoint;
     }
 
     @Override
@@ -51,7 +59,7 @@ public class AccountServiceFactoryImpl implements AccountServiceFactory {
 
     @Override
     public AccountService getAccount(AccountInfo acctInfo) {
-        AccountService acctService = new AccountServiceImpl(acctInfo,
+        AccountService acctService = new AccountServiceImpl(amaEndpoint, acctInfo,
                                                             repoMgr);
 
         Authentication authentication = getAuthentication();

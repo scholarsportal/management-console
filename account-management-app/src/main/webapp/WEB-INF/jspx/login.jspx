@@ -15,7 +15,7 @@
 
 <head>
 <title>Duracloud Management Console: Login</title>
-<script type="text/javascript" src="${pageContext.request.contextPath}/static/jquery/jquery.js"><!-- --></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/jquery/jquery.min.js"><!-- --></script>
 <jsp:include page="/WEB-INF/jspx/includes/global-styles.jspx"/>
 
   <style>

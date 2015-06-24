@@ -1,5 +1,9 @@
 /*
- * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.security.vote;
 
@@ -182,7 +186,7 @@ public class InstanceManagerAccessDecisionVoterTest {
                                                        .getMethods()[0]);
 
         DuracloudInstanceManagerServiceImpl serviceImpl =
-            new DuracloudInstanceManagerServiceImpl(null, null, null, null);
+            new DuracloudInstanceManagerServiceImpl(null, null, null);
 
         EasyMock.expect(inv.getThis()).andReturn(serviceImpl).times(2);
 

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<jsp:root
+ version="2.0"
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:jsp="http://java.sun.com/JSP/Page"
+ xmlns:c="http://java.sun.com/jsp/jstl/core"
+ xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+ xmlns:tiles="http://tiles.apache.org/tags-tiles"
+ xmlns:form="http://www.springframework.org/tags/form"
+ xmlns:spring="http://www.springframework.org/tags">
+          <fieldset>
+            <legend>${param.storageProviderName}:  ${param.storageProviderType}</legend>
+              <form:hidden
+               path="${param.storageProvider}.id">
+              </form:hidden>
+            <ol>
+	            <li>
+	              <form:label
+	               cssErrorClass="error"
+	               path="${param.storageProvider}.username"><spring:message code="username"/></form:label>
+	
+	              <form:input
+	               id="${param.storageProvider}username"
+	               cssErrorClass="error"
+	               path="${param.storageProvider}.username"
+	               onclick="same(this.form)"
+	               autofocus="true" />
+	               
+	              <form:errors
+	               path="${param.storageProvider}.username"
+	               cssClass="error"
+	               element="div" />               
+	            </li>
+	            
+	            <li>
+	              <form:label
+	               cssErrorClass="error"
+	               path="${param.storageProvider}.password"><spring:message code="password"/></form:label>
+	              <form:password
+	               cssErrorClass="error"
+	               showPassword="true"
+	               id="${param.storageProvider}password"
+	               path="${param.storageProvider}.password"
+	               onclick="same(this.form)"/>
+	              <form:errors
+	               path="${param.storageProvider}.password"
+	               cssClass="error"
+	               element="div" />               
+	            </li>
+
+              <li>
+                <form:label
+                 cssErrorClass="error"
+                 path="${param.storageProvider}.storageLimit"><spring:message code="storageprovider.storagelimit"/></form:label>
+                <form:input
+                 cssErrorClass="error"
+                 path="${param.storageProvider}.storageLimit"
+                 onclick="same(this.form)"/>
+                <form:errors
+                 path="${param.storageProvider}.storageLimit"
+                 cssClass="error"
+                 element="div" />               
+              </li>
+	            
+	            <c:if test="${param.storageProviderType eq 'SNAPSHOT'}">
+	              <li>
+	                <form:label
+	                 cssErrorClass="error"
+	                 path="${param.storageProvider}.properties['SNAPSHOT_USER']"><spring:message code="bridge.snapshotuser"/></form:label>
+	                <form:input
+	                 cssErrorClass="error"
+	                 path="${param.storageProvider}.properties['SNAPSHOT_USER']"
+	                 onclick="same(this.form)"/>
+	                <form:errors
+	                 path="${param.storageProvider}.properties['SNAPSHOT_USER']"
+	                 cssClass="error"
+	                 element="div" />               
+	              </li>
+
+                <li>
+                  <form:label
+                   cssErrorClass="error"
+                   path="${param.storageProvider}.properties['BRIDGE_HOST']"><spring:message code="bridge.host"/></form:label>
+                  <form:input
+                   cssErrorClass="error"
+                   path="${param.storageProvider}.properties['BRIDGE_HOST']"
+                   onclick="same(this.form)"/>
+                  <form:errors
+                   path="${param.storageProvider}.properties['BRIDGE_HOST']"
+                   cssClass="error"
+                   element="div" />               
+                </li>
+
+                <li>
+                  <form:label
+                   cssErrorClass="error"
+                   path="${param.storageProvider}.properties['BRIDGE_PORT']"><spring:message code="bridge.port"/></form:label>
+                  <form:input
+                   cssErrorClass="error"
+                   path="${param.storageProvider}.properties['BRIDGE_PORT']"
+                   onclick="same(this.form)"/>
+                  <form:errors
+                   path="${param.storageProvider}.properties['BRIDGE_PORT']"
+                   cssClass="error"
+                   element="div" />               
+                </li>
+                <li>
+                  <form:label
+                   cssErrorClass="error"
+                   path="${param.storageProvider}.properties['BRIDGE_USER']"><spring:message code="bridge.username"/></form:label>
+                  <form:input
+                   cssErrorClass="error"
+                   path="${param.storageProvider}.properties['BRIDGE_USER']"
+                   onclick="same(this.form)"/>
+                  <form:errors
+                   path="${param.storageProvider}.properties['BRIDGE_USER']"
+                   cssClass="error"
+                   element="div" />               
+                </li>
+                <li>
+                  <form:label
+                   cssErrorClass="error"
+                   path="${param.storageProvider}.properties['BRIDGE_PASS']"><spring:message code="bridge.password"/></form:label>
+                  <form:password 
+                   cssErrorClass="error"
+                   showPassword="true"
+                   path="${param.storageProvider}.properties['BRIDGE_PASS']"
+                   onclick="same(this.form)"/>
+                  <form:errors
+                   path="${param.storageProvider}.properties['BRIDGE_PASS']"
+                   cssClass="error"
+                   element="div" />               
+                </li>
+	            </c:if>
+	           </ol>
+          </fieldset>
+</jsp:root>
+

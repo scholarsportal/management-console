@@ -1,13 +1,17 @@
 /*
- * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.db.util;
+
+import java.util.Set;
 
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.db.model.InstanceType;
 import org.springframework.security.access.annotation.Secured;
-
-import java.util.Set;
 
 /**
  * Lifecycle operations for Duracloud instances.
@@ -63,19 +67,5 @@ public interface DuracloudInstanceManagerService {
     @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
     public Set<DuracloudInstanceService> getInstanceServices(Long accountId);
 
-    /**
-     * Retrieves the Set of DuraCloud instances associated with the account
-     * cluster of which a given account is a member. If the account is not a
-     * member with a cluster, then instances associated with the account are
-     * retrieved. Each instance is wrapped in a class which provides services
-     * on the instances. If no instances exist for any account in the cluster,
-     * an empty set is returned.
-     *
-     * @param accountId
-     * @return
-     *
-     */
-    @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
-    public Set<DuracloudInstanceService> getClusterInstanceServices(Long accountId);
 
 }

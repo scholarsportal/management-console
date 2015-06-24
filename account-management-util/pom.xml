@@ -5,8 +5,8 @@
 
     <parent>
         <groupId>org.duracloud</groupId>
-        <artifactId>duracloud-priv</artifactId>
-        <version>2.0.0</version>
+        <artifactId>duracloud-mc</artifactId>
+        <version>2.1.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -14,19 +14,13 @@
     <groupId>org.duracloud</groupId>
     <artifactId>account-management-util</artifactId>
     <packaging>jar</packaging>
-    <version>2.0.0</version>
-    <name>Account DB util/access layer</name>
+    <version>2.1.0</version>
+    <name>Account Management Datastore Access Utilities</name>
 
     <dependencies>
         <dependency>
             <groupId>org.duracloud</groupId>
-            <artifactId>account-management-db-model</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.duracloud</groupId>
-            <artifactId>account-management-db-repo</artifactId>
+            <artifactId>account-management-common</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -36,51 +30,45 @@
             <version>${project.version}</version>
         </dependency>
 
-    <dependency>
-      <groupId>org.duracloud</groupId>
-      <artifactId>account-management-compute</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.duracloud</groupId>
-      <artifactId>common</artifactId>
-      <version>${duracloud.artifact.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.duracloud</groupId>
-      <artifactId>storageprovider</artifactId>
-      <version>${duracloud.artifact.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.duracloud</groupId>
-      <artifactId>app-config</artifactId>
-      <version>${duracloud.artifact.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.duracloud</groupId>
-      <artifactId>notification</artifactId>
-      <version>${duracloud.artifact.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.duracloud</groupId>
-      <artifactId>security</artifactId>
-      <version>${duracloud.artifact.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.duracloud</groupId>
-      <artifactId>common</artifactId>
-      <version>${duracloud.artifact.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.duracloud</groupId>
-      <artifactId>duraboss-api</artifactId>
-      <version>${duracloud.artifact.version}</version>
-    </dependency>
+        <dependency>
+            <groupId>org.duracloud.db</groupId>
+            <artifactId>account-management-db-model</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.duracloud.db</groupId>
+            <artifactId>account-management-db-repo</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.duracloud</groupId>
+            <artifactId>common</artifactId>
+            <version>${duracloud.artifact.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.duracloud</groupId>
+            <artifactId>storageprovider</artifactId>
+            <version>${duracloud.artifact.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.duracloud</groupId>
+            <artifactId>app-config</artifactId>
+            <version>${duracloud.artifact.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.duracloud</groupId>
             <artifactId>notification</artifactId>
             <version>${duracloud.artifact.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.duracloud</groupId>
+            <artifactId>security</artifactId>
+            <version>${duracloud.artifact.version}</version>
+            <scope>compile</scope>
         </dependency>
 
         <!--External dependencies-->

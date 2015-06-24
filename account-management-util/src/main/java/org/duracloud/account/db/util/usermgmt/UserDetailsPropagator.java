@@ -1,5 +1,9 @@
 /*
- * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.db.util.usermgmt;
 
@@ -53,24 +57,5 @@ public interface UserDetailsPropagator {
      * @param groupId of the group that has changed
      */
     public void propagateGroupUpdate(Long acctId, Long groupId);
-
-    /**
-     * This method propagates the changes in an account cluster, such
-     * as the addition or removal of an account to a cluster. If the ID of an
-     * account within the cluster is known, use this method for propagation.
-     *
-     * @param acctId of DuraCloud acct to update
-     * @param clusterId of the cluster that has changed
-     */
-    public void propagateClusterUpdate(Long acctId, Long clusterId);
-
-    /**
-     * This method propagates the changes in an account cluster, such
-     * as the addition or removal of an account to a cluster. If no ID of an
-     * account within the cluster is  known, use this method for propagation.
-     *
-     * @param clusterId of the cluster that has changed
-     */
-    public void propagateClusterUpdate(Long clusterId);
 
 }

@@ -21,7 +21,7 @@
 
     <tiles:putAttribute
      name="header-extensions">
-      <script xml:space="preserve">
+      <script xml:space="preserve" type="text/javascript">
       	function doConfirm(/*string*/message){
             var answer = confirm(message);
             if (answer) {
@@ -42,7 +42,12 @@
             $(".deactivate").click(function(evt){
               	return doConfirm('<spring:message code="account.deactivate.confirm" />');
             });
+
+            $("#accounts").tablesorter(); 
+
       	});
+      	
+
             
       </script>
     </tiles:putAttribute>
@@ -72,7 +77,7 @@
          test="${not empty accounts}">
           <table
            id="accounts"
-           class="entity-list">
+           class="entity-list ">
             <thead>
               <tr>
                 <th>
@@ -83,14 +88,6 @@
                 <th>
                   <spring:message
                    code="account.subdomain" />
-                </th>
-                <th>
-                  <spring:message
-                   code="account.type" />
-                </th>
-                <th>
-                  <spring:message
-                   code="account.cluster" />
                 </th>
 
                 <th
@@ -116,15 +113,6 @@
                     <a
                       href="http://${a.subdomain}.duracloud.org/duradmin"
                       target="_blank">${a.subdomain}</a>
-                  </td>
-                  <td>${a.type}</td>
-                  <td>
-                    <c:set var="clusterId" value="${a.accountCluster.id}"/>
-                    <c:if test="${not empty clusterId and clusterId gt -1}">
-                      <a href="${pageContext.request.contextPath}/root/clusters/byid/${clusterId}">
-                        ${a.accountCluster.clusterName}
-                      </a>
-                    </c:if>
                   </td>
 
                   <td class="status">${a.status}</td>
@@ -170,7 +158,7 @@
                     
                   </td>
                   <td>
-                    <a
+                    <a target="_blank"
                       href="${currentUri}/byid/${a.id}/setup"
                       class="button configure"> 
                       <spring:message code="account.configureproviders" />

@@ -1,23 +1,30 @@
 /*
- * Copyright (c) 2009-2012 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.app.controller;
 
-import org.duracloud.account.app.controller.AccountSetupForm.StorageCredentials;
-import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
+import java.text.MessageFormat;
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.duracloud.account.app.controller.AccountSetupForm.StorageProviderSettings;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountInfo.AccountStatus;
 import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.ServerDetails;
 import org.duracloud.account.db.model.StorageProviderAccount;
-import org.duracloud.account.db.model.util.DuracloudAccount;
 import org.duracloud.account.db.util.AccountService;
 import org.duracloud.account.db.util.DuracloudInstanceManagerService;
-import org.duracloud.account.db.util.DuracloudInstanceService;
 import org.duracloud.account.db.util.RootAccountManagerService;
 import org.duracloud.account.db.util.error.AccountNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,12 +33,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.validation.Valid;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 /**
  * 
  * @author Daniel Bernstein
@@ -58,6 +59,7 @@ public class AccountsController extends AbstractRootController{
     }
 
     @RequestMapping(value = { BY_ID_DELETE_MAPPING}, method = RequestMethod.POST)
+    @Transactional
     public ModelAndView delete(@PathVariable Long id, RedirectAttributes redirectAttributes)
         throws AccountNotFoundException {
         AccountService accountService = getAccountManagerService().getAccount(id);
@@ -70,6 +72,7 @@ public class AccountsController extends AbstractRootController{
 
     
     @RequestMapping(value = { BY_ID_MAPPING +"/activate"}, method = RequestMethod.POST)
+    @Transactional
     public ModelAndView activate(@PathVariable Long id, RedirectAttributes redirectAttributes)
         throws AccountNotFoundException {
         AccountService accountService = getAccountManagerService().getAccount(id);
@@ -81,6 +84,7 @@ public class AccountsController extends AbstractRootController{
     }
 
     @RequestMapping(value = { BY_ID_MAPPING +"/deactivate"}, method = RequestMethod.POST)
+    @Transactional
     public ModelAndView deactivate(@PathVariable Long id, RedirectAttributes redirectAttributes)
         throws AccountNotFoundException {
         AccountService accountService = getAccountManagerService().getAccount(id);
@@ -116,6 +120,7 @@ public class AccountsController extends AbstractRootController{
     }
 
     @RequestMapping(value = ACCOUNT_SETUP_MAPPING, method = RequestMethod.POST)
+    @Transactional
     public ModelAndView setupAccount(
         @PathVariable Long id,
         @ModelAttribute(SETUP_ACCOUNT_FORM_KEY) @Valid AccountSetupForm accountSetupForm,
@@ -140,11 +145,11 @@ public class AccountsController extends AbstractRootController{
         ServerDetails serverDetails = accountService.retrieveServerDetails();
         
         //save primary
-        saveStorageProvider(accountSetupForm.getPrimaryStorageCredentials());
+        saveStorageProvider(accountSetupForm.getPrimaryStorageProviderSettings());
         
         //save secondary
-        for(StorageCredentials cred :  accountSetupForm.getSecondaryStorageCredentailsList()){
-            saveStorageProvider(cred);
+        for(StorageProviderSettings sp :  accountSetupForm.getSecondaryStorageProviderSettingsList()){
+            saveStorageProvider(sp);
         }
 
         //save compute
@@ -154,16 +159,16 @@ public class AccountsController extends AbstractRootController{
             accountSetupForm.getComputePassword(),
             accountSetupForm.getComputeElasticIP(),
             accountSetupForm.getComputeKeypair(),
-            accountSetupForm.getComputeSecurityGroup(),
-            accountSetupForm.getAuditQueue());
+            accountSetupForm.getComputeSecurityGroup());
 
-        String message = "Successfully configured providers ";
+        String message = MessageFormat
+                .format("Successfully configured providers for {0}",info.getAcctName());
 
         AccountStatus status = info.getStatus();
         //activate only if pending
         if(AccountStatus.PENDING.equals(status)){
             getRootAccountManagerService().activateAccount(id);
-            message += "and activated acccount";
+            message += " and activated acccount";
         }
 
         setSuccessFeedback(message, redirectAttributes);
@@ -172,10 +177,12 @@ public class AccountsController extends AbstractRootController{
     }
 
     private void
-        saveStorageProvider(StorageCredentials storageCredentials) {
-        getRootAccountManagerService().setupStorageProvider(storageCredentials.getId(),
-                                                            storageCredentials.getUsername(),
-                                                            storageCredentials.getPassword());
+        saveStorageProvider(StorageProviderSettings storageProviderSettings) {
+        getRootAccountManagerService().setupStorageProvider(storageProviderSettings.getId(),
+                storageProviderSettings.getUsername(),
+                storageProviderSettings.getPassword(),
+                storageProviderSettings.getProperties(),
+                Integer.parseInt(storageProviderSettings.getStorageLimit()));
         
     }
 

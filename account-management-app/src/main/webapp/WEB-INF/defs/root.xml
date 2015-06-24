@@ -62,32 +62,12 @@
   <definition name="/root/serverimages/new" template="/WEB-INF/jspx/root/serverimages/new.jspx" preparer="globalPreparer"/>
   <definition name="/root/serverimages/edit" template="/WEB-INF/jspx/root/serverimages/edit.jspx" preparer="globalPreparer"/>
 
-  <!-- account cluster views -->
-  <definition name="clusters-base" extends="root-base">
+  <definition name="duracloudmill-base" extends="root-base">
     <put-attribute name="title" />
-    <put-attribute name="primaryTab" cascade="true" value="clusters" />
+    <put-attribute name="primaryTab" cascade="true" value="duracloudmill" />
     <put-attribute name="mainContent" cascade="true" />
   </definition>
 
-  <definition name="clusters-form" template="/WEB-INF/jspx/root/clusters/form.jspx">
-    <put-attribute name="formTitle" cascade="true" />
-  </definition>  
-  
-  <definition name="clusters-form-base" extends="clusters-base">
-    <put-attribute name="title" />
-    <put-attribute name="primaryTab" cascade="true" value="clusters" />
-    <put-attribute name="mainContent" cascade="true">
-      <definition extends="clusters-form">
-        <put-attribute name="formTitle" cascade="true" />
-      </definition>
-    </put-attribute>
-  </definition>
-
-  <definition name="/root/clusters" template="/WEB-INF/jspx/root/clusters/index.jspx" preparer="globalPreparer"/>
-  <definition name="/root/clusters/new" template="/WEB-INF/jspx/root/clusters/new.jspx" preparer="globalPreparer"/>
-  <definition name="/root/clusters/edit" template="/WEB-INF/jspx/root/clusters/edit.jspx" preparer="globalPreparer"/>
-  <definition name="/root/clusters/detail" template="/WEB-INF/jspx/root/clusters/detail.jspx" preparer="globalPreparer"/>
-  <definition name="/root/clusters/add-accounts" template="/WEB-INF/jspx/root/clusters/add-accounts.jspx" preparer="globalPreparer"/>
-
-
+  <definition name="/root/duracloudmill" template="/WEB-INF/jspx/root/duracloudmill/index.jspx" preparer="globalPreparer"/>
+  <definition name="/root/duracloudmill/edit" template="/WEB-INF/jspx/root/duracloudmill/edit.jspx" preparer="globalPreparer"/>
 </tiles-definitions>

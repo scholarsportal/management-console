@@ -1,5 +1,9 @@
 /*
- * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.db.util;
 
@@ -10,7 +14,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
-import org.duracloud.account.db.model.AccountCluster;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
 import org.duracloud.account.db.model.BaseEntity;
@@ -68,9 +71,8 @@ public class DbUtil {
 
     private void doPut() {
         // Defines the order to import the different entity types. This is
-        // necessary
-        // because of defined and enforced JPA relationships.
-        String[] files = { "AccountCluster", "ServiceRepository",
+        // necessary because of defined and enforced JPA relationships.
+        String[] files = { "ServiceRepository",
                 "StorageProviderAccount", "ComputeProviderAccount",
                 "ServerDetails", "AccountInfo", "DuracloudUser", "ServerImage",
                 "DuracloudInstance", "DuracloudGroup", "UserInvitation",
@@ -140,8 +142,6 @@ public class DbUtil {
                     AccountInfo ai = (AccountInfo) entity;
                     ai.setServerDetails(repoMgr.getServerDetailsRepo().findOne(
                             ai.getServerDetails().getId()));
-                    ai.setAccountCluster(repoMgr.getAccountClusterRepo()
-                            .findOne(ai.getAccountCluster().getId()));
                     repo.saveAndFlush(ai);
                 } else if (entity instanceof DuracloudInstance) {
                     DuracloudInstance di = (DuracloudInstance) entity;
@@ -205,8 +205,6 @@ public class DbUtil {
             repo = repoMgr.getGroupRepo();
         } else if (item instanceof ServerDetails) {
             repo = repoMgr.getServerDetailsRepo();
-        } else if (item instanceof AccountCluster) {
-            repo = repoMgr.getAccountClusterRepo();
         } else {
             throw new RuntimeException("Item is not a known type: "
                     + item.getClass().getName());
@@ -239,9 +237,7 @@ public class DbUtil {
         xstream.alias(Role.class.getSimpleName(), Role.class);
         xstream.alias(StorageProviderType.class.getSimpleName(),
                 StorageProviderType.class);
-        xstream.alias(AccountCluster.class.getSimpleName(),
-                AccountCluster.class);
-
+        
         return xstream;
     }
 

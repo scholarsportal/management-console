@@ -1,9 +1,25 @@
 /*
- * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.db.util.impl;
 
-import org.duracloud.account.db.model.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.AccountRights;
+import org.duracloud.account.config.AmaEndpoint;
+import org.duracloud.account.db.model.DuracloudGroup;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.Role;
+import org.duracloud.account.db.model.ServerImage;
+import org.duracloud.account.db.model.UserInvitation;
 import org.duracloud.account.db.model.util.InitUserCredential;
 import org.duracloud.account.db.repo.DuracloudGroupRepo;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
@@ -11,7 +27,14 @@ import org.duracloud.account.db.repo.DuracloudRightsRepo;
 import org.duracloud.account.db.repo.DuracloudUserInvitationRepo;
 import org.duracloud.account.db.repo.DuracloudUserRepo;
 import org.duracloud.account.db.util.DuracloudUserService;
-import org.duracloud.account.db.util.error.*;
+import org.duracloud.account.db.util.error.DBNotFoundException;
+import org.duracloud.account.db.util.error.InvalidPasswordException;
+import org.duracloud.account.db.util.error.InvalidRedemptionCodeException;
+import org.duracloud.account.db.util.error.InvalidUsernameException;
+import org.duracloud.account.db.util.error.ReservedPrefixException;
+import org.duracloud.account.db.util.error.ReservedUsernameException;
+import org.duracloud.account.db.util.error.UnsentEmailException;
+import org.duracloud.account.db.util.error.UserAlreadyExistsException;
 import org.duracloud.account.db.util.notification.NotificationMgr;
 import org.duracloud.account.db.util.notification.Notifier;
 import org.duracloud.account.db.util.usermgmt.UserDetailsPropagator;
@@ -19,14 +42,9 @@ import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.ChecksumUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author Andrew Woods
@@ -40,13 +58,16 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     private UserDetailsPropagator propagator;
     private NotificationMgr notificationMgr;
     private Notifier notifier;
+    private AmaEndpoint amaEndpoint;
     
     public DuracloudUserServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
                                     NotificationMgr notificationMgr,
-                                    UserDetailsPropagator propagator) {
+                                    UserDetailsPropagator propagator,
+                                    AmaEndpoint amaEndpoint) {
         this.repoMgr = duracloudRepoMgr;
         this.notificationMgr = notificationMgr;
         this.propagator = propagator;
+        this.amaEndpoint = amaEndpoint;
     }
 
     @Override
@@ -77,7 +98,6 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         }
         
         return username.matches("\\A(?![_.@\\-])[a-z0-9_.@\\-]+(?<![_.@\\-])\\Z");
-        
     }
 
     private boolean isReservedName(String username) {
@@ -93,7 +113,6 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         
         return false;
     }
-
     
     @Override
     public DuracloudUser createNewUser(String username,
@@ -105,12 +124,9 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
                                        String securityAnswer)
         throws UserAlreadyExistsException, InvalidUsernameException {
 
-
         checkUsername(username);
         
         ChecksumUtil util = new ChecksumUtil(ChecksumUtil.Algorithm.SHA_256);
-
-
 
         DuracloudUser user = new DuracloudUser();
         user.setUsername(username);
@@ -126,7 +142,6 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         getNotifier().sendNotificationCreateNewUser(user);
         return user;
     }
-
 
     @Override
     public boolean setUserRights(Long acctId, Long userId, Role... roles) {
@@ -353,8 +368,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     }
     
     @Override 
-    public UserInvitation
-        retrievePassordChangeInvitation(String redemptionCode)
+    public UserInvitation retrievePassordChangeInvitation(String redemptionCode)
             throws  DBNotFoundException {
         UserInvitation invite =  this.repoMgr.getUserInvitationRepo()
                            .findByRedemptionCode(redemptionCode);
@@ -398,7 +412,8 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     }
 
     @Override
-    public DuracloudUser loadDuracloudUserByIdInternal(Long userId) throws DBNotFoundException {
+    public DuracloudUser loadDuracloudUserByIdInternal(Long userId)
+        throws DBNotFoundException {
         DuracloudUser user = repoMgr.getUserRepo().findOne(userId);
         if(user == null) {
             throw new DBNotFoundException("User with ID: "+userId+" does not exist");
@@ -452,9 +467,14 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     }
 
     @Override
-    public void storeUserDetails(
-            Long userId, String firstName, String lastName, String email,
-        String securityQuestion, String securityAnswer) throws DBNotFoundException {
+    public void storeUserDetails(Long userId,
+                                 String firstName,
+                                 String lastName,
+                                 String email,
+                                 String securityQuestion,
+                                 String securityAnswer,
+                                 String allowableIPAddressRange)
+        throws DBNotFoundException {
         log.info("Updating user details for user with ID {}", userId);
 
         DuracloudUser user = repoMgr.getUserRepo().findOne(userId);
@@ -462,22 +482,25 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
             throw new DBNotFoundException("User with ID: "+userId+" does not exist");
         }
         boolean emailUpdate = !user.getEmail().equals(email);
+        boolean ipAddressUpdate = !Objects.equals(user.getAllowableIPAddressRange(),
+                                                  allowableIPAddressRange);
 
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setEmail(email);
         user.setSecurityQuestion(securityQuestion);
         user.setSecurityAnswer(securityAnswer);
+        user.setAllowableIPAddressRange(allowableIPAddressRange);
         repoMgr.getUserRepo().save(user);
 
-        if(emailUpdate) {
+        if(emailUpdate || ipAddressUpdate) {
             propagateUserUpdate(userId);
         }
     }
 
     private Notifier getNotifier() {
         if(null == notifier) {
-            notifier = new Notifier(notificationMgr.getEmailer());
+            notifier = new Notifier(notificationMgr.getEmailer(), amaEndpoint);
         }
         return notifier;
     }

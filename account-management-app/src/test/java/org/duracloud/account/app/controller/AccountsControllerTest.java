@@ -1,9 +1,16 @@
 /*
- * Copyright (c) 2009-2012 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.app.controller;
 
-import org.duracloud.account.app.controller.AccountSetupForm.StorageCredentials;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.duracloud.account.app.controller.AccountSetupForm.StorageProviderSettings;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountInfo.AccountStatus;
 import org.duracloud.account.db.model.ComputeProviderAccount;
@@ -15,8 +22,6 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
-
-import java.util.ArrayList;
 
 /**
  * 
@@ -72,7 +77,6 @@ public class AccountsControllerTest extends AmaControllerTestBase {
         cpa.setElasticIp("ip");
         cpa.setSecurityGroup("security");
         cpa.setKeypair("keypair");
-        cpa.setAuditQueue("audit");
 
         EasyMock.expect(accountService.getComputeProvider()).andReturn(cpa);
         
@@ -87,15 +91,16 @@ public class AccountsControllerTest extends AmaControllerTestBase {
         AccountInfo info = createMock(AccountInfo.class);
         EasyMock.expect(info.getStatus()).andReturn(AccountStatus.PENDING);
         EasyMock.expect(rootAccountManagerService.getAccount(TEST_ACCOUNT_ID)).andReturn(info);
-
+        EasyMock.expect(info.getAcctName()).andReturn("test");
         
         rootAccountManagerService.setupStorageProvider(EasyMock.anyLong(),
                                                        EasyMock.isA(String.class),
-                                                       EasyMock.isA(String.class));
+                                                       EasyMock.isA(String.class),
+                                                       EasyMock.isA(new HashMap<String,String>().getClass()),
+                                                       EasyMock.anyInt());
         EasyMock.expectLastCall().anyTimes();
 
         rootAccountManagerService.setupComputeProvider(EasyMock.anyLong(),
-                                                       EasyMock.isA(String.class),
                                                        EasyMock.isA(String.class),
                                                        EasyMock.isA(String.class),
                                                        EasyMock.isA(String.class),
@@ -108,7 +113,7 @@ public class AccountsControllerTest extends AmaControllerTestBase {
 
         AccountSetupForm setupForm = new AccountSetupForm();
         String test = "test";
-        StorageCredentials p = setupForm.getPrimaryStorageCredentials();
+        StorageProviderSettings p = setupForm.getPrimaryStorageProviderSettings();
         p.setUsername(test);
         p.setPassword(test);
         setupForm.setComputeUsername(test);
@@ -116,7 +121,6 @@ public class AccountsControllerTest extends AmaControllerTestBase {
         setupForm.setComputeElasticIP(test);
         setupForm.setComputeKeypair(test);
         setupForm.setComputeSecurityGroup(test);
-        setupForm.setAuditQueue("auditQueue");
         setupNoBindingResultErrors();
         addFlashAttribute();
         replayMocks();

@@ -90,8 +90,66 @@
            cssClass="error"
            element="div" />
         </li>
+        <li>
+          <form:label
+           cssErrorClass="error"
+           path="iamRole">
+            <spring:message
+             code="serverimage.iamrole" />
+          </form:label>
+
+          <form:input
+           cssErrorClass="error"
+           path="iamRole" />
+
+          <form:errors
+           path="iamRole"
+           cssClass="error"
+           element="div" />
+        </li>
+
+        <li>
+          <form:label
+           cssErrorClass="error"
+           path="cfAccountId"><spring:message code="serverimage.cf.accountid"/></form:label>
+          <form:input
+           cssErrorClass="error"
+           path="cfAccountId"/>
+          <form:errors
+           path="cfAccountId"
+           cssClass="error"
+           element="div" />               
+        </li>
+        <li>
+          <form:label
+           cssErrorClass="error"
+           path="cfKeyId"><spring:message code="serverimage.cf.keyid"/></form:label>
+          <form:input
+           cssErrorClass="error"
+           path="cfKeyId"/>
+          <form:errors
+           path="cfKeyId"
+           cssClass="error"
+           element="div" />               
+        </li>
+
+        <li>
+          <form:label
+           cssErrorClass="error"
+           path="cfKeyPath"><spring:message code="serverimage.cf.keypath"/></form:label>
+          <form:input
+           cssErrorClass="error"
+           path="cfKeyPath"/>
+          <form:errors
+           path="cfKeyPath"
+           cssClass="error"
+           element="div" />               
+        </li>
+    
+
       </ol>
     </fieldset>
+    
 
     <fieldset>
       <legend>Is this the latest version?</legend>

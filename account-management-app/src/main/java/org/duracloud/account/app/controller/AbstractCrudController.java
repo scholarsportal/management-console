@@ -1,11 +1,16 @@
 /*
- * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.app.controller;
 
 import javax.validation.Valid;
 
 import org.duracloud.common.error.DuraCloudRuntimeException;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -59,6 +64,7 @@ public abstract class AbstractCrudController<T> extends AbstractController{
     }
     
     @RequestMapping(value = NEW_MAPPING, method = RequestMethod.POST)
+    @Transactional
     public ModelAndView create(@ModelAttribute("form") @Valid T form,
                                BindingResult bindingResult, 
                                Model model,
@@ -85,6 +91,7 @@ public abstract class AbstractCrudController<T> extends AbstractController{
     protected abstract void create(T form);
 
     @RequestMapping(value = BY_ID_EDIT_MAPPING, method = RequestMethod.GET)
+    @Transactional
     public ModelAndView edit(@PathVariable Long id){
         
         T form = getFormById(id);
@@ -103,6 +110,7 @@ public abstract class AbstractCrudController<T> extends AbstractController{
     protected abstract T loadForm(Object entity);
 
     @RequestMapping(value = BY_ID_EDIT_MAPPING, method = RequestMethod.POST)
+    @Transactional
     public ModelAndView
         update(@PathVariable Long id, @ModelAttribute("form") @Valid T form,
                           BindingResult bindingResult, Model model,RedirectAttributes redirectAttributes) {
@@ -127,6 +135,7 @@ public abstract class AbstractCrudController<T> extends AbstractController{
     protected abstract void update(Long id, T form);
 
     @RequestMapping(value = BY_ID_DELETE_MAPPING, method = RequestMethod.POST)
+    @Transactional
     public ModelAndView
         delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         

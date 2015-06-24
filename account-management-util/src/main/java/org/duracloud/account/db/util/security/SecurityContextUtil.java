@@ -1,5 +1,9 @@
 /*
- * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.db.util.security;
 
@@ -20,6 +24,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class SecurityContextUtil {
 
     private final Logger log = LoggerFactory.getLogger(SecurityContextUtil.class);
+
+    static {
+        //We set this value here in order to ensure that spawned threads do not
+        //lose their security context.
+        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+    }
 
     public Authentication getAuthentication() throws NoUserLoggedInException {
         SecurityContext context = SecurityContextHolder.getContext();

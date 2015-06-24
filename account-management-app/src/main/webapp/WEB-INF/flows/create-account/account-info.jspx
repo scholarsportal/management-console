@@ -89,34 +89,6 @@
                cssClass="error"
                element="div" />
             </li>            
-            <li>
-              <form:label
-                cssErrorClass="error"
-                path="accountType">
-                <spring:message code="account.type"/>
-              </form:label>
-              <form:select
-                id="accountType"
-                cssErrorClass="error"
-                path="accountType"
-                items="${newAccountForm.accountTypes}" />
-            </li>
-            <li>
-              <form:label
-                cssErrorClass="error"
-                path="accountClusterId">
-                <spring:message code="account.cluster"/>
-              </form:label>
-              <form:select
-                cssErrorClass="error"
-                path="accountClusterId">
-                <form:option value=""><spring:message code="optional"/></form:option>
-                <form:options
-                  items="${accountClusters}"
-                  itemValue="id"
-                  itemLabel="clusterName" />
-                </form:select>
-             </li>            
 
           </ol>
         </fieldset>

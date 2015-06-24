@@ -29,11 +29,6 @@
 
         <th>
           <spring:message
-           code="account.type" />
-        </th>
-
-        <th>
-          <spring:message
            code="account.status" />
         </th>
       </tr>
@@ -58,8 +53,6 @@
              href="http://${accountInfo.subdomain}.duracloud.org/duradmin"
              target="_blank">${accountInfo.subdomain}</a>
           </td>
-
-          <td>${accountInfo.type}</td>
 
           <td>${accountInfo.status}</td>
         </tr>

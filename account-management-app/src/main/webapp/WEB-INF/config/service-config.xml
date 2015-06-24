@@ -26,23 +26,23 @@
         class="org.duracloud.account.db.util.sys.impl.SystemMonitorImpl">
     <constructor-arg ref="notificationMgr"/>
     <constructor-arg ref="mcConfig"/>
+    <constructor-arg ref="amaEndpoint"/>
   </bean>
 
   <bean id="duracloudUserService"
         class="org.duracloud.account.db.util.impl.DuracloudUserServiceImpl"
         primary="true"
-        scope="singleton"
-        name="userDetailsService">
+        scope="singleton">
     <constructor-arg ref="repoMgr"/>
     <constructor-arg ref="notificationMgr"/>
     <constructor-arg ref="userDetailsPropagator" />
+    <constructor-arg ref="amaEndpoint"/>
   </bean>
 
   <bean id="duracloudGroupService"
         class="org.duracloud.account.db.util.impl.DuracloudGroupServiceImpl"
         primary="true"
-        scope="singleton"
-        name="duracloudGroupService">
+        scope="singleton">
     <constructor-arg ref="repoMgr"/>
     <constructor-arg ref="userDetailsPropagator"/>
   </bean>
@@ -52,10 +52,7 @@
         class="org.duracloud.account.db.util.impl.AccountManagerServiceImpl"
         scope="singleton">
     <constructor-arg ref="repoMgr"/>
-    <constructor-arg ref="duracloudUserService"/>
     <constructor-arg ref="accountServiceFactory"/>
-   <constructor-arg ref="accountClusterUtil"/>
-    <constructor-arg ref="userDetailsPropagator"/>
     <constructor-arg>
       <set>
         <ref bean="systemMonitor"/>
@@ -70,6 +67,7 @@
     <constructor-arg ref="acctVoter"/>
     <constructor-arg ref="securityContextUtil"/>
     <constructor-arg ref="annotationParser"/>
+    <constructor-arg ref="amaEndpoint"/>
   </bean>
 
   <bean id="computeProviderFactory"
@@ -83,8 +81,8 @@
     <constructor-arg ref="computeProviderFactory"/>
   </bean>
 
-  <bean id="accountClusterUtil"
-        class="org.duracloud.account.db.util.util.AccountClusterUtil"
+  <bean id="userFinderUtil"
+        class="org.duracloud.account.db.util.util.UserFinderUtil"
         scope="singleton">
     <constructor-arg ref="repoMgr"/>
   </bean>
@@ -93,17 +91,19 @@
     <constructor-arg ref="repoMgr"/>
     <constructor-arg ref="instanceVoter"/>
     <constructor-arg ref="securityContextUtil"/>
-    <constructor-arg ref="accountClusterUtil"/>
+    <constructor-arg ref="userFinderUtil"/>
     <constructor-arg ref="computeProviderUtil"/>
     <constructor-arg ref="annotationParser"/>
     <constructor-arg ref="notificationMgr"/>
+    <constructor-arg ref="amaEndpoint"/>
+    <constructor-arg ref="duracloudMillConfigService"/>
+
   </bean>
 
   <bean id="instanceManagerService"
         class="org.duracloud.account.db.util.impl.DuracloudInstanceManagerServiceImpl"
         scope="singleton">
     <constructor-arg ref="repoMgr"/>
-    <constructor-arg ref="accountClusterUtil"/>
     <constructor-arg ref="computeProviderUtil"/>
     <constructor-arg ref="instanceServiceFactory"/>
   </bean>
@@ -117,6 +117,7 @@
     <constructor-arg ref="userDetailsPropagator" />
     <constructor-arg ref="instanceManagerService" />
     <constructor-arg ref="duracloudUserService" />
+    <constructor-arg ref="amaEndpoint"/>
   </bean>
 
   <!--This service pushes UserDetails updates down to the DuraCloud instances-->
@@ -124,7 +125,7 @@
         class="org.duracloud.account.db.util.usermgmt.impl.UserDetailsPropagatorImpl">
     <constructor-arg ref="repoMgr"/>
     <constructor-arg ref="instanceManagerService" />
-    <constructor-arg ref="accountClusterUtil"/>
+    <constructor-arg ref="userFinderUtil"/>
   </bean>
 
 </beans>

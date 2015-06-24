@@ -1,11 +1,21 @@
 /*
- * Copyright (c) 2009-2011 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.compute;
 
 import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.amazonaws.services.ec2.model.*;
 
+import com.amazonaws.services.identitymanagement.AmazonIdentityManagementClient;
+import com.amazonaws.services.identitymanagement.model.CreateInstanceProfileRequest;
+import com.amazonaws.services.identitymanagement.model.CreateInstanceProfileResult;
+import com.amazonaws.services.identitymanagement.model.GetInstanceProfileRequest;
+import com.amazonaws.services.identitymanagement.model.InstanceProfile;
+import com.amazonaws.services.identitymanagement.model.NoSuchEntityException;
 import org.duracloud.account.db.model.InstanceType;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.easymock.Capture;
@@ -41,10 +51,15 @@ public class AmazonComputeProviderTest {
         String securityGroup = "security-group";
         String keyname = "keyname";
         String elasticIp = "127.0.0.1";
+        String iamRole = "iam-role";
 
-        // Set up mock
+        // Mock EC2 client
         AmazonEC2Client mockEC2Client =
             EasyMock.createMock(AmazonEC2Client.class);
+
+        // Mock IAM client
+        AmazonIdentityManagementClient iamClient =
+            EasyMock.createMock(AmazonIdentityManagementClient.class);
 
         DescribeAddressesResult describeAddressesResult =
             new DescribeAddressesResult().withAddresses(
@@ -93,12 +108,24 @@ public class AmazonComputeProviderTest {
             mockEC2Client.associateAddress(EasyMock.capture(associateCapture)))
             .andReturn(new AssociateAddressResult());
 
-        EasyMock.replay(mockEC2Client);
+        EasyMock.expect(iamClient.getInstanceProfile(
+            EasyMock.isA(GetInstanceProfileRequest.class)))
+                .andThrow(new NoSuchEntityException("does not exist"));
+
+        InstanceProfile instanceProfile =
+            new InstanceProfile().withArn("arn").withInstanceProfileName(iamRole);
+        EasyMock.expect(iamClient.createInstanceProfile(
+            EasyMock.isA(CreateInstanceProfileRequest.class)))
+                .andReturn(new CreateInstanceProfileResult()
+                               .withInstanceProfile(instanceProfile));
+
+        EasyMock.replay(mockEC2Client, iamClient);
 
         // Run test
         AmazonComputeProvider computeProvider =
-            new AmazonComputeProvider(mockEC2Client);
+            new AmazonComputeProvider(mockEC2Client, iamClient);
         String resultInstanceId = computeProvider.doStart(imageId,
+                                                          iamRole,
                                                           securityGroup,
                                                           keyname,
                                                           elasticIp,
@@ -108,12 +135,14 @@ public class AmazonComputeProviderTest {
         assertEquals(instanceId, resultInstanceId);
 
         EasyMock.verify(mockEC2Client);
+
         RunInstancesRequest request = requestCapture.getValue();
         assertEquals(imageId, request.getImageId());
         List<String> requestSecurityGroups = request.getSecurityGroups();
         assertEquals(1, requestSecurityGroups.size());
         assertEquals(securityGroup, requestSecurityGroups.iterator().next());
         assertEquals(keyname, request.getKeyName());
+        assertEquals(iamRole, request.getIamInstanceProfile().getName());
 
         AssociateAddressRequest associateRequest = associateCapture.getValue();
         assertEquals(elasticIp, associateRequest.getPublicIp());
@@ -134,20 +163,23 @@ public class AmazonComputeProviderTest {
     public void testStop() throws Exception {
         AmazonEC2Client mockEC2Client =
             EasyMock.createMock(AmazonEC2Client.class);
+        AmazonIdentityManagementClient iamClient =
+            EasyMock.createMock(AmazonIdentityManagementClient.class);
+
         Capture<TerminateInstancesRequest> requestCapture =
             new Capture<TerminateInstancesRequest>();
         EasyMock.expect(
             mockEC2Client.terminateInstances(EasyMock.capture(requestCapture)))
             .andReturn(null)
             .times(1);
-        EasyMock.replay(mockEC2Client);
+        EasyMock.replay(mockEC2Client, iamClient);
 
         AmazonComputeProvider computeProvider =
-            new AmazonComputeProvider(mockEC2Client);
+            new AmazonComputeProvider(mockEC2Client, iamClient);
         String instanceId = "my-instance-id";
         computeProvider.stop(instanceId);
 
-        EasyMock.verify(mockEC2Client);
+        EasyMock.verify(mockEC2Client, iamClient);
         TerminateInstancesRequest request = requestCapture.getValue();
         assertEquals(instanceId, request.getInstanceIds().get(0));
     }
@@ -156,19 +188,22 @@ public class AmazonComputeProviderTest {
     public void testRestart() throws Exception {
         AmazonEC2Client mockEC2Client =
             EasyMock.createMock(AmazonEC2Client.class);
+        AmazonIdentityManagementClient iamClient =
+            EasyMock.createMock(AmazonIdentityManagementClient.class);
+
         Capture<RebootInstancesRequest> requestCapture =
             new Capture<RebootInstancesRequest>();
         mockEC2Client.rebootInstances(EasyMock.capture(requestCapture));
         EasyMock.expectLastCall()
             .times(1);
-        EasyMock.replay(mockEC2Client);
+        EasyMock.replay(mockEC2Client, iamClient);
 
         AmazonComputeProvider computeProvider =
-            new AmazonComputeProvider(mockEC2Client);
+            new AmazonComputeProvider(mockEC2Client, iamClient);
         String instanceId = "my-instance-id";
         computeProvider.restart(instanceId);
 
-        EasyMock.verify(mockEC2Client);
+        EasyMock.verify(mockEC2Client, iamClient);
         RebootInstancesRequest request = requestCapture.getValue();
         assertEquals(instanceId, request.getInstanceIds().get(0));
     }
@@ -187,6 +222,8 @@ public class AmazonComputeProviderTest {
         throws DuracloudInstanceNotAvailableException {
         AmazonEC2Client mockEC2Client =
             EasyMock.createMock(AmazonEC2Client.class);
+        AmazonIdentityManagementClient iamClient =
+            EasyMock.createMock(AmazonIdentityManagementClient.class);
 
         String state = "pending";
         DescribeInstancesResult result =
@@ -206,15 +243,16 @@ public class AmazonComputeProviderTest {
                 DescribeInstancesRequest.class)))
             .andReturn(result)
             .times(1);
-        EasyMock.replay(mockEC2Client);
+
+        EasyMock.replay(mockEC2Client, iamClient);
 
         AmazonComputeProvider computeProvider =
-            new AmazonComputeProvider(mockEC2Client);
+            new AmazonComputeProvider(mockEC2Client, iamClient);
         String instanceId = "my-instance-id";
         String status = computeProvider.getStatus(instanceId);
         assertEquals(state, status);
 
-        EasyMock.verify(mockEC2Client);
+        EasyMock.verify(mockEC2Client, iamClient);
     }
 
 }

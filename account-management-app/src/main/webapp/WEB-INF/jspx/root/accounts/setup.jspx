@@ -22,8 +22,8 @@
       <script type="text/javascript" language="JavaScript">
         function same(form) {
             if(form.computeCredentialsSame.checked){
-                form.computeUsername.value = form.primaryStorageCredentialsusername.value;
-                form.computePassword.value = form.primaryStorageCredentialspassword.value;
+                form.computeUsername.value = form.primaryStorageProviderSettingsusername.value;
+                form.computePassword.value = form.primaryStorageProviderSettingspassword.value;
             }
         }
       </script>
@@ -34,91 +34,23 @@
       <form:form
        modelAttribute="setupAccountForm"
        method="POST">
-        <fieldset>
-          <legend>Primary Storage</legend>
-              <form:hidden
-               path="primaryStorageCredentials.id">
-              </form:hidden>
-          <ol>
-            <li>
-              <form:label
-               cssErrorClass="error"
-               path="primaryStorageCredentials.username"><spring:message code="username"/></form:label>
-
-              <form:input
-               id="primaryStorageCredentialsusername"
-               cssErrorClass="error"
-               path="primaryStorageCredentials.username"
-               onclick="same(this.form)"
-               autofocus="true" />
-               
-              <form:errors
-               path="primaryStorageCredentials.username"
-               cssClass="error"
-               element="div" />               
-            </li>
-            
-            <li>
-              <form:label
-               cssErrorClass="error"
-               path="primaryStorageCredentials.password"><spring:message code="password"/></form:label>
-              <form:password
-               id="primaryStorageCredentialspassword"
-               cssErrorClass="error"
-               showPassword="true"
-               path="primaryStorageCredentials.password"
-               onclick="same(this.form)"/>
-              <form:errors
-               path="primaryStorageCredentials.password"
-               cssClass="error"
-               element="div" />               
-            </li>
-           </ol>
-           </fieldset>
+          <jsp:include page="/WEB-INF/jspx/includes/storage-provider-form.jspx">
+            <jsp:param value="primaryStorageProviderSettings" name="storageProvider"/>
+            <jsp:param value="Primary Storage Provider" name="storageProviderName"/>
+            <jsp:param value="${setupAccountForm.primaryStorageProviderSettings.providerType}" name="storageProviderType"/>
+          </jsp:include>
+          
           <c:if
-           test="${not empty setupAccountForm.secondaryStorageCredentailsList}">
+           test="${not empty setupAccountForm.secondaryStorageProviderSettingsList}">
             <c:forEach
                var="s"
                varStatus="loop"
-               items="${setupAccountForm.secondaryStorageCredentailsList}">
-            <fieldset>
-              <legend>Secondary Storage : ${setupAccountForm.secondaryStorageCredentailsList[loop.index].providerType}</legend>
-                  <form:hidden
-                   path="secondaryStorageCredentailsList[${loop.index}].id">
-                  </form:hidden>
-                  <input type="hidden" name="secondaryStorageCredentailsList[${loop.index}].providerType" value="${fn:toUpperCase(setupAccountForm.secondaryStorageCredentailsList[loop.index].providerType)}"/>
-
-              <ol>
-              <li>
-                  <form:label
-                   cssErrorClass="error"
-                   path="secondaryStorageCredentailsList[${loop.index}].username">
-                   <spring:message code="username"/></form:label>
-                  <form:input
-                   cssErrorClass="error"
-                   path="secondaryStorageCredentailsList[${loop.index}].username"/>
-                  <form:errors
-                   path="secondaryStorageCredentailsList[${loop.index}].username"
-                   cssClass="error"
-                   element="div" />               
-
-              </li>
-              <li>
-                  <form:label
-                   cssErrorClass="error"
-                   path="secondaryStorageCredentailsList[${loop.index}].password">
-                   <spring:message code="password"/></form:label>
-                  <form:password
-                   cssErrorClass="error"
-                   showPassword="true"
-                   path="secondaryStorageCredentailsList[${loop.index}].password"/>
-                  <form:errors
-                   path="secondaryStorageCredentailsList[${loop.index}].password"
-                   cssClass="error"
-                   element="div" />               
-               </li>
-               </ol>
-               </fieldset>
+               items="${setupAccountForm.secondaryStorageProviderSettingsList}">
+		          <jsp:include page="/WEB-INF/jspx/includes/storage-provider-form.jspx">
+		            <jsp:param value="secondaryStorageProviderSettingsList[${loop.index}]" name="storageProvider"/>
+		            <jsp:param value="Secondary Storage Provider" name="storageProviderName"/>
+		            <jsp:param value="${setupAccountForm.secondaryStorageProviderSettingsList[loop.index].providerType}" name="storageProviderType"/>
+		          </jsp:include>
               </c:forEach>
           </c:if>    
           <fieldset>
@@ -197,18 +129,6 @@
                element="div" />               
             </li>
 
-            <li>                    
-              <form:label
-               cssErrorClass="error"
-               path="auditQueue">Audit Queue</form:label>
-              <form:input
-               cssErrorClass="error"
-               path="auditQueue" />
-              <form:errors
-               path="auditQueue"
-               cssClass="error"
-               element="div" />               
-            </li>
 
           </ol>
          </fieldset>                    
