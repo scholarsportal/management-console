@@ -205,7 +205,7 @@ public class AccountControllerTest extends AmaControllerTestBase {
         EasyMock.expect(instanceManagerService.getLatestVersion())
             .andReturn(version);
         EasyMock.expect(instanceService.getInstanceType())
-                .andReturn(InstanceType.SMALL);
+                .andReturn(InstanceType.MEDIUM);
         initStart(TEST_ACCOUNT_ID, version);
         replayMocks();
         accountController.upgradeInstance(TEST_ACCOUNT_ID,
@@ -288,7 +288,7 @@ public class AccountControllerTest extends AmaControllerTestBase {
 
     private void initStart(Long accountId, String version) throws Exception {
         EasyMock.expect(instanceManagerService.
-            createInstance(accountId, version, InstanceType.SMALL))
+            createInstance(accountId, version, InstanceType.MEDIUM))
             .andReturn(instanceService)
             .anyTimes();
     }

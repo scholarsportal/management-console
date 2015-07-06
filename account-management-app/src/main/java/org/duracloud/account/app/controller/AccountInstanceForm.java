@@ -15,7 +15,7 @@ import org.duracloud.account.db.model.InstanceType;
  */
 public class AccountInstanceForm {
     private String version;
-    private InstanceType instanceType = InstanceType.SMALL;
+    private InstanceType instanceType = InstanceType.MEDIUM;
     public String getVersion() {
         return version;
     }
