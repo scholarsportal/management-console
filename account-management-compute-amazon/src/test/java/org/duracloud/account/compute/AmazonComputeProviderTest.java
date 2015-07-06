@@ -255,4 +255,17 @@ public class AmazonComputeProviderTest {
         EasyMock.verify(mockEC2Client, iamClient);
     }
 
+    @Test
+    public void testConvertInstanceType() {
+        AmazonComputeProvider computeProvider = new AmazonComputeProvider("user", "pass");
+        assertEquals("m1.small",
+                     computeProvider.convertDuracloudInstanceTypeToNative(InstanceType.SMALL));
+        assertEquals("m3.medium",
+                     computeProvider.convertDuracloudInstanceTypeToNative(InstanceType.MEDIUM));
+        assertEquals("m3.large",
+                     computeProvider.convertDuracloudInstanceTypeToNative(InstanceType.LARGE));
+        assertEquals("m3.xlarge",
+                     computeProvider.convertDuracloudInstanceTypeToNative(InstanceType.XLARGE));
+    }
+
 }
