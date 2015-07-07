@@ -27,6 +27,7 @@ import org.duracloud.account.db.model.Role;
 import org.duracloud.account.db.model.ServerImage;
 import org.duracloud.account.db.repo.DuracloudAccountRepo;
 import org.duracloud.account.db.repo.DuracloudGroupRepo;
+import org.duracloud.account.db.repo.DuracloudInstanceRepo;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.db.util.DuracloudInstanceService;
 import org.duracloud.account.db.util.DuracloudMillConfigService;
@@ -204,7 +205,9 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
         AccountInfo account = accountRepo.getOne(instance.getAccount().getId());
         account.setInstance(null);
         accountRepo.saveAndFlush(account);
-        repoMgr.getInstanceRepo().delete(instance.getId());
+        DuracloudInstanceRepo instanceRepo = repoMgr.getInstanceRepo();
+        instanceRepo.delete(instance.getId());
+        instanceRepo.flush();
     }
 
     @Override
