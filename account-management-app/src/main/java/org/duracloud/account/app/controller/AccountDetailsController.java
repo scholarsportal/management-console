@@ -117,33 +117,7 @@ public class AccountDetailsController extends AbstractAccountController {
                                       redirectAttributes);
         }
 
-        return createAccountRedirectView(accountId,
-                                                 ACCOUNT_DETAILS_PATH);
+        return createAccountRedirectView(accountId, ACCOUNT_DETAILS_PATH);
     }
-
-
-    @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/rrs/enable", method = RequestMethod.POST)
-    @Transactional
-    public ModelAndView
-        enableProviderRrs(@PathVariable Long accountId)
-            throws AccountNotFoundException {
-        log.info("enableProviderRrs account {}", accountId);
-
-        setProviderRrs(accountId, true);
-
-        return createAccountRedirectModelAndView(accountId, ACCOUNT_DETAILS_PATH);
-    }
-
-    @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/rrs/disable", method = RequestMethod.POST)
-    @Transactional
-    public ModelAndView disableProviderRrs(@PathVariable Long accountId,
-					   Model model) throws AccountNotFoundException {
-        log.info("disableProviderRrs account {}", accountId);
-
-        setProviderRrs(accountId, false);
-
-        return createAccountRedirectModelAndView(accountId, ACCOUNT_DETAILS_PATH);
-    }
-
 
 }

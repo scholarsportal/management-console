@@ -79,7 +79,6 @@ public class CreateAccountActionTest extends AmaTestBase{
         EasyMock.expect(this.accountManagerService.createAccount(EasyMock.isA(AccountCreationInfo.class)))
                 .andReturn(accountService);
         
-        accountService.setPrimaryStorageProviderRrs(true);
         replayMocks();
         assertSuccess(this.action.doExecute(requestContext));
     }

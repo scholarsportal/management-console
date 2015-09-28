@@ -40,7 +40,6 @@ public class AccountDetailsControllerTest extends AmaControllerTestBase {
         storage.setProviderType(StorageProviderType.RACKSPACE);
         storage.setUsername("test");
         storage.setPassword("test");
-        storage.setRrs(false);
         spa.add(storage);
         EasyMock.expect(this.accountService.getSecondaryStorageProviders()).andReturn(spa);
         this.accountService.removeStorageProvider(EasyMock.anyLong());

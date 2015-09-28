@@ -13,7 +13,7 @@
   <jpa:repositories base-package="org.duracloud.account.db.repo" />
   <tx:annotation-driven />
 
-  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+  <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"
     destroy-method="close">
     <property name="driverClassName" value="com.mysql.jdbc.Driver" />
     <property name="url" value="jdbc:mysql://${db.host}:${db.port}/${db.name}?autoReconnect=true"/>

@@ -212,18 +212,4 @@ public abstract class AbstractAccountController extends AbstractController {
         return this.userService.loadDuracloudUserByUsername(username);
     }
 
-    protected void setProviderRrs(Long accountId, boolean rrs)
-        throws AccountNotFoundException {
-        AccountService accountService =
-            accountManagerService.getAccount(accountId);
-        accountService.setPrimaryStorageProviderRrs(rrs);
-
-        Set<DuracloudInstanceService> instanceServices =
-            instanceManagerService.getInstanceServices(accountId);
-        if(instanceServices.size() > 0) {
-            DuracloudInstanceService instanceService =
-                instanceServices.iterator().next();
-            instanceService.reInitialize();
-        }
-    }
 }

@@ -65,8 +65,7 @@ public class AccountsControllerTest extends AmaControllerTestBase {
         spa.setProviderType(StorageProviderType.AMAZON_S3);
         spa.setUsername("username");
         spa.setPassword("password");
-        spa.setRrs(true);
-        
+
         EasyMock.expect(accountService.getPrimaryStorageProvider())
                 .andReturn(spa);
 

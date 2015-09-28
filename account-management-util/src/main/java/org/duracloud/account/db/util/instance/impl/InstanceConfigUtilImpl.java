@@ -130,13 +130,6 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
                                    provider.getProviderType());
         storageAccount.setPrimary(primary);
 
-        String storageClass = "rrs";
-        if(!provider.isRrs())
-            storageClass = "standard";
-
-        storageAccount.setOption(StorageAccount.OPTS.STORAGE_CLASS.name(),
-                                 storageClass);
-
         Map<String, String> providerProps = provider.getProperties();
         if(null != providerProps && providerProps.size() > 0) {
             for(String propKey : providerProps.keySet()) {
@@ -147,9 +140,12 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
 
         if(provider.getProviderType().equals(StorageProviderType.AMAZON_S3)){
             ServerImage image = instance.getImage();
-            storageAccount.setOption(StorageAccount.OPTS.CF_KEY_PATH.name(), image.getCfKeyPath());
-            storageAccount.setOption(StorageAccount.OPTS.CF_ACCOUNT_ID.name(), image.getCfAccountId());
-            storageAccount.setOption(StorageAccount.OPTS.CF_KEY_ID.name(), image.getCfKeyId());
+            storageAccount.setOption(StorageAccount.OPTS.CF_KEY_PATH.name(),
+                                     image.getCfKeyPath());
+            storageAccount.setOption(StorageAccount.OPTS.CF_ACCOUNT_ID.name(),
+                                     image.getCfAccountId());
+            storageAccount.setOption(StorageAccount.OPTS.CF_KEY_ID.name(),
+                                     image.getCfKeyId());
         }
 
         return storageAccount;
@@ -171,8 +167,7 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         admins.add(notMgrConfig.getAdminAddress());
         notificationConfig.setAdmins(admins);
 
-        Map<String, NotificationConfig> notificationConfigMap =
-            new HashMap<String, NotificationConfig>();
+        Map<String, NotificationConfig> notificationConfigMap = new HashMap<>();
         notificationConfigMap.put("0", notificationConfig);
         config.setNotificationConfigs(notificationConfigMap);
 

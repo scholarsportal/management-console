@@ -1,0 +1,1 @@
+alter table storage_provider_account drop column `rrs`;
