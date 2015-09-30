@@ -37,6 +37,7 @@ public class InstanceUtilImpl implements InstanceUtil {
     private static final String CTXT_ADMIN = "duradmin";
 
     private static final String PATH_INIT = "/init";
+    private static final String PATH_SPACES = "/spaces";
 
     public InstanceUtilImpl(String subdomain) {
         this(subdomain, null);
@@ -59,6 +60,7 @@ public class InstanceUtilImpl implements InstanceUtil {
         InstanceInfo info = new InstanceInfo(subdomain);
 
         pingWebApp(durastore, PATH_INIT, 200, info);
+        pingWebApp(durastore, PATH_SPACES, 200, info);
         pingWebApp(duraboss, PATH_INIT, 200, info);
         pingWebApp(duradmin, PATH_INIT, 200, info);
 
