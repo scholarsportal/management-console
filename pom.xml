@@ -251,6 +251,15 @@
     </repository>
 
     <repository>
+      <id>snapshots</id>
+      <name>Sonatype Snapshots Maven Repository</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+
+    <repository>
       <id>Hibernate Repository</id>
       <url>https://repository.jboss.org/nexus/content/repositories/public</url>
       <snapshots>
