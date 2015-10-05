@@ -16,12 +16,13 @@
     <tx:annotation-driven />
 
     <context:property-placeholder location="file:///${user.home}/duracloud-mc/mc-config.properties" />
-
-    <bean  id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <bean  id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-        <property name="url" value="jdbc:mysql://${db.host}:${db.port}/${db.name}?autoReconnect=true"/>
+        <property name="url" value="jdbc:mysql://${db.host}:${db.port}/${db.name}"/>
         <property name="username" value="${db.user}"/>
-        <property name="password" value="${db.pass}"/>
+	<property name="password" value="${db.pass}"/>
+	<property name="testOnBorrow" value="true"/>
+	<property name="validationQuery" value="SELECT 1"/>
     </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
