@@ -126,13 +126,6 @@ public class AccountServiceSecuredImpl implements AccountService {
     }
 
     @Override
-    public void setPrimaryStorageProviderRrs(boolean rrs) {
-        throwIfAccessDenied();
-        accountService.setPrimaryStorageProviderRrs(rrs);
-    }
-
-
-    @Override
     public Set<StorageProviderAccount> getSecondaryStorageProviders() {
         throwIfAccessDenied();
         return accountService.getSecondaryStorageProviders();

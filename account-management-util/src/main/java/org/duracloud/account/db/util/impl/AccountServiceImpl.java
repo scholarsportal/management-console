@@ -101,18 +101,6 @@ public class AccountServiceImpl implements AccountService {
         return serverDetails.getComputeProviderAccount();
     }
 
-
-    @Override
-    public void setPrimaryStorageProviderRrs(boolean rrs) {
-        log.info("Setting primary storage provider RRS to {} for account {}",
-                 rrs, account.getSubdomain());
-
-        ServerDetails serverDetails = retrieveServerDetails();
-        StorageProviderAccount primary = serverDetails.getPrimaryStorageProviderAccount();
-        primary.setRrs(rrs);
-        repoMgr.getStorageProviderAccountRepo().save(primary);
-    }
-
     @Override
     public Set<StorageProviderAccount> getSecondaryStorageProviders() {
         ServerDetails serverDetails = retrieveServerDetails();
@@ -126,7 +114,6 @@ public class AccountServiceImpl implements AccountService {
 
         StorageProviderAccount storageProviderAccount = new StorageProviderAccount();
         storageProviderAccount.setProviderType(storageProviderType);
-        storageProviderAccount.setRrs(true);
 
         ServerDetails serverDetails = retrieveServerDetails();
         serverDetails.getSecondaryStorageProviderAccounts().add(storageProviderAccount);

@@ -149,30 +149,6 @@
                           <td>${primaryProvider.providerType}</td>
                           <td>(Primary)</td>
                           <td>${primaryProvider.storageLimit} TB Limit</td>
-                          <td>
-                            <sec:authorize access="hasAnyRole('ROLE_ROOT')">
-                            <c:choose>
-                            <c:when test="${primaryProvider.rrs}">
-                                <form
-                                 action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/details/providers/rrs/disable"
-                                 method="post">
-                                  <button style="margin-right:8px !important"
-                                   type="submit" onclick="AskAndDisable(this); return false;">
-                                  Disable RRS</button>
-                                </form>
-                            </c:when>
-                            <c:otherwise>
-                                <form
-                                 action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/details/providers/rrs/enable"
-                                 method="post">
-                                  <button style="margin-right:8px !important"
-                                   type="submit" onclick="AskAndEnable(this); return false;">
-                                  Enable RRS</button>
-                                </form>
-                            </c:otherwise>
-                            </c:choose>
-                            </sec:authorize>
-                          </td>
                         </tr>
                       <c:forEach
                            var="p"

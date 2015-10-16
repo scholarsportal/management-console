@@ -94,17 +94,14 @@ public class AccountManagerServiceImpl implements AccountManagerService {
             accountCreationInfo.getPrimaryStorageProviderType();
         StorageProviderAccount primaryStorageProviderAccount = new StorageProviderAccount();
         primaryStorageProviderAccount.setProviderType(primaryStorageType);
-        primaryStorageProviderAccount.setRrs(true);
         primaryStorageProviderAccount = repoMgr.getStorageProviderAccountRepo()
                 .save(primaryStorageProviderAccount);
 
-        Set<StorageProviderAccount> secondaryStorageProviderAccounts =
-            new HashSet<StorageProviderAccount>();
+        Set<StorageProviderAccount> secondaryStorageProviderAccounts = new HashSet<>();
         for(StorageProviderType storageType :
             accountCreationInfo.getSecondaryStorageProviderTypes()) {
             StorageProviderAccount storageProviderAccount = new StorageProviderAccount();
             storageProviderAccount.setProviderType(storageType);
-            storageProviderAccount.setRrs(true);
             storageProviderAccount = repoMgr.getStorageProviderAccountRepo()
                     .save(storageProviderAccount);
             secondaryStorageProviderAccounts.add(storageProviderAccount);

@@ -63,7 +63,6 @@ public class CreateAccountAction extends AbstractAction {
         if (fullAccountForm.getSecondaryStorageProviders() != null) {
             secondaryStorageProviders.addAll(fullAccountForm.getSecondaryStorageProviders());
         }
-        reducedRedundancy = fullAccountForm.isUseReducedRedundancy();
 
         AccountCreationInfo aci =
             new AccountCreationInfo(newAccountForm.getSubdomain(),
@@ -74,7 +73,6 @@ public class CreateAccountAction extends AbstractAction {
                                     secondaryStorageProviders);
 
         AccountService as = accountManagerService.createAccount(aci);
-        as.setPrimaryStorageProviderRrs(reducedRedundancy);
 
         String contextPath = context.getExternalContext().getContextPath();
         String accountName = newAccountForm.getAcctName();

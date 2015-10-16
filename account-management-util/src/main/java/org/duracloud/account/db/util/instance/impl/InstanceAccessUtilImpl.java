@@ -14,6 +14,8 @@ import org.duracloud.common.web.RestHttpHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+
 /**
  * @author: Bill Branan
  * Date: 4/1/11
@@ -77,8 +79,18 @@ public class InstanceAccessUtilImpl implements InstanceAccessUtil, InstanceUtil 
 
     private boolean checkResponse(RestHttpHelper.HttpResponse response) {
         int statusCode = response.getStatusCode();
-        if(statusCode == 200 || statusCode == 503) {
+        if(statusCode == 200) {
             return true;
+        } else if(statusCode == 503) {
+            try { // Determine if response is coming from DuraCloud app
+                if (response.getResponseBody().contains("DuraCloud")) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch(IOException e) {
+                return false;
+            }
         } else {
             return false;
         }

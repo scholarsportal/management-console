@@ -118,14 +118,6 @@ public interface AccountService {
     public void addStorageProvider(StorageProviderType storageProviderType);
 
     /**
-     * Sets the primary storage provider to RRS or not
-     *
-     * @param rrs
-     */
-    @Secured({"role:ROLE_OWNER, scope:SELF_ACCT"})
-    public void setPrimaryStorageProviderRrs(boolean rrs);
-
-    /**
      * Removes a storage provider from the list of secondary storage providers
      * for this account. The primary storage provider cannot be removed.
      *

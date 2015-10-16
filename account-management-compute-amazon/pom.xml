@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.duracloud</groupId>
     <artifactId>duracloud-mc</artifactId>
-    <version>2.1.1</version>
+    <version>2.2.0</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -11,7 +11,7 @@
   <groupId>org.duracloud</groupId>
   <artifactId>account-management-compute-amazon</artifactId>
   <packaging>jar</packaging>
-  <version>2.1.1</version>
+  <version>2.2.0</version>
   <name>Account Management Compute - Amazon</name>
 
   <dependencies>
