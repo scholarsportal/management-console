@@ -8,8 +8,6 @@
 package org.duracloud.account.app.controller;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.duracloud.account.util.StorageProviderTypeUtil;
@@ -30,9 +28,7 @@ import org.springframework.web.context.WebApplicationContext;
 public class FullAccountForm  implements Serializable{
     
     private List<StorageProviderType> secondaryStorageProviders;
-    
-    private boolean useReducedRedundancy = false;
-    
+
     public List<StorageProviderType> getSecondaryStorageProviderOptions() {
         return StorageProviderTypeUtil.getAvailableSecondaryTypes();
     }
@@ -44,14 +40,6 @@ public class FullAccountForm  implements Serializable{
     public void
         setSecondaryStorageProviders(List<StorageProviderType> secondaryStorageProviders) {
         this.secondaryStorageProviders = secondaryStorageProviders;
-    }
-
-    public boolean isUseReducedRedundancy() {
-        return useReducedRedundancy;
-    }
-
-    public void setUseReducedRedundancy(boolean useReducedRedundancy) {
-        this.useReducedRedundancy = useReducedRedundancy;
     }
 
 }

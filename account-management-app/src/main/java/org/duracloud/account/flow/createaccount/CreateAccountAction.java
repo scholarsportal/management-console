@@ -56,7 +56,6 @@ public class CreateAccountAction extends AbstractAction {
         FullAccountForm fullAccountForm =
             (FullAccountForm) context.getFlowScope().get("fullAccountForm");
         
-        boolean reducedRedundancy = false;
         Set<StorageProviderType> secondaryStorageProviders =
             new HashSet<StorageProviderType>();
 

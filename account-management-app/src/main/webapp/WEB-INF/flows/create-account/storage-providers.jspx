@@ -32,18 +32,6 @@
         method="POST">
 
         <fieldset>
-          <legend><spring:message code="account.reducedredundancy"/></legend>
-          <ol>
-            <li>
-              <form:checkbox path="useReducedRedundancy"/>
-              <form:label path="useReducedRedundancy">
-                <spring:message code="account.userreducedredundancy"/>
-              </form:label>
-            </li>
-          </ol>
-        </fieldset>
-
-        <fieldset>
           <legend><spring:message code="account.secondaryproviders"/></legend>
           <ol>
             <form:checkboxes
