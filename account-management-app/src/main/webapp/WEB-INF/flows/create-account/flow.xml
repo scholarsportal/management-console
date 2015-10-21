@@ -21,7 +21,7 @@
     </on-entry>
     <transition on="previous" to="enterAccountInfo"/>
     <transition on="finish" to="createAccount"/>
-    <transition on="cancel" to="end"/>
+    <transition on="cancel" to="end" validate="false"/>
   </view-state>
 
   <action-state id="createAccount">

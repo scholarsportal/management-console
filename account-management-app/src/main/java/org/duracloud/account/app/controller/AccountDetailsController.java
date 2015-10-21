@@ -120,4 +120,50 @@ public class AccountDetailsController extends AbstractAccountController {
         return createAccountRedirectView(accountId, ACCOUNT_DETAILS_PATH);
     }
 
+    @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/{providerType}/make-primary", method = RequestMethod.POST)
+    @Transactional
+    public View makePrimary(@PathVariable Long accountId,
+                                       @PathVariable String providerType,
+                                       RedirectAttributes redirectAttributes)
+        throws AccountNotFoundException {
+        log.debug("attempting to changed primary provider {} from  account {}",
+                  providerType,
+                  accountId);
+        AccountService accountService =
+            accountManagerService.getAccount(accountId);
+
+        StorageProviderType spType =
+            StorageProviderType.fromString(providerType);
+
+        Set<StorageProviderAccount> ssps =
+            accountService.getSecondaryStorageProviders();
+        boolean changed = false;
+        for (StorageProviderAccount spa : ssps){
+            if (spa.getProviderType().equals(spType)) {
+                accountService.changePrimaryStorageProvider(spa.getId());
+                String message =
+                    "Successfully made provider (" + providerType + ") primary!";
+                log.info(message + " from account " + accountId);
+                UserFeedbackUtil.addFlash(message,
+                                          Severity.INFO,
+                                          redirectAttributes);
+                changed = true;
+                break;
+            }
+        }
+
+        if (!changed) {
+            String message =
+                "Unable to make provider ("
+                    + providerType
+                    + ") primary.  A provider of that type is not a secondary provider associated with this account.";
+            log.info(message + " from account " + accountId);
+            UserFeedbackUtil.addFlash(message,
+                                      Severity.ERROR,
+                                      redirectAttributes);
+        }
+
+        return createAccountRedirectView(accountId, ACCOUNT_DETAILS_PATH);
+    }
+
 }

@@ -8,13 +8,12 @@
 package org.duracloud.account.flow.createaccount;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import org.duracloud.account.app.controller.AccountDetailsController;
 import org.duracloud.account.app.controller.AccountsController;
 import org.duracloud.account.app.controller.FullAccountForm;
 import org.duracloud.account.app.controller.NewAccountForm;
-import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.util.AccountCreationInfo;
 import org.duracloud.account.db.util.AccountManagerService;
 import org.duracloud.account.db.util.AccountService;
@@ -25,7 +24,6 @@ import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.binding.message.Message;
 import org.springframework.context.MessageSource;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.webflow.action.AbstractAction;
@@ -56,12 +54,14 @@ public class CreateAccountAction extends AbstractAction {
         FullAccountForm fullAccountForm =
             (FullAccountForm) context.getFlowScope().get("fullAccountForm");
         
-        boolean reducedRedundancy = false;
+        StorageProviderType primaryStorageProvider = fullAccountForm.getPrimaryStorageProvider();
         Set<StorageProviderType> secondaryStorageProviders =
             new HashSet<StorageProviderType>();
-
-        if (fullAccountForm.getSecondaryStorageProviders() != null) {
-            secondaryStorageProviders.addAll(fullAccountForm.getSecondaryStorageProviders());
+        
+        if (fullAccountForm.getStorageProviders() != null) {
+            List<StorageProviderType> storageProviders = fullAccountForm.getStorageProviders();
+            storageProviders.remove(primaryStorageProvider);
+            secondaryStorageProviders.addAll(storageProviders);
         }
 
         AccountCreationInfo aci =
@@ -69,7 +69,7 @@ public class CreateAccountAction extends AbstractAction {
                                     newAccountForm.getAcctName(),
                                     newAccountForm.getOrgName(),
                                     newAccountForm.getDepartment(),
-                                    StorageProviderType.AMAZON_S3,
+                                    primaryStorageProvider,
                                     secondaryStorageProviders);
 
         AccountService as = accountManagerService.createAccount(aci);

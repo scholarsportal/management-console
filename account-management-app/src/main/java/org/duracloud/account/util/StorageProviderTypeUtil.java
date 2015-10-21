@@ -17,13 +17,21 @@ public class StorageProviderTypeUtil {
     
     static {
         SECONDARY_PROVIDER_TYPES = new ArrayList<>();
-        SECONDARY_PROVIDER_TYPES.add(StorageProviderType.RACKSPACE);
-        SECONDARY_PROVIDER_TYPES.add(StorageProviderType.SDSC);
         SECONDARY_PROVIDER_TYPES.add(StorageProviderType.AMAZON_GLACIER);
         SECONDARY_PROVIDER_TYPES.add(StorageProviderType.SNAPSHOT);
+        SECONDARY_PROVIDER_TYPES.add(StorageProviderType.SDSC);
+        SECONDARY_PROVIDER_TYPES.add(StorageProviderType.RACKSPACE);
+
     }
     
     public static List<StorageProviderType> getAvailableSecondaryTypes() {
         return new ArrayList<>(SECONDARY_PROVIDER_TYPES);
     }
+
+    public static List<StorageProviderType> getAvailableTypes() {
+        List<StorageProviderType> types = new ArrayList<>(SECONDARY_PROVIDER_TYPES);
+        types.add(0,StorageProviderType.AMAZON_S3);
+        return types;
+    }
+
 }

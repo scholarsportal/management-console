@@ -8,9 +8,9 @@
 package org.duracloud.account.app.controller;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
+import javax.validation.constraints.NotNull;
 
 import org.duracloud.account.util.StorageProviderTypeUtil;
 import org.duracloud.storage.domain.StorageProviderType;
@@ -29,29 +29,30 @@ import org.springframework.web.context.WebApplicationContext;
 @Scope(value = WebApplicationContext.SCOPE_REQUEST)
 public class FullAccountForm  implements Serializable{
     
-    private List<StorageProviderType> secondaryStorageProviders;
+    private List<StorageProviderType> storageProviders;
     
-    private boolean useReducedRedundancy = false;
+    @NotNull(message="A primary storage provider must be specified")
+    private StorageProviderType primaryStorageProvider = null;
     
-    public List<StorageProviderType> getSecondaryStorageProviderOptions() {
-        return StorageProviderTypeUtil.getAvailableSecondaryTypes();
+    public StorageProviderType getPrimaryStorageProvider() {
+        return primaryStorageProvider;
     }
 
-    public List<StorageProviderType> getSecondaryStorageProviders() {
-        return secondaryStorageProviders;
+    public void setPrimaryStorageProvider(StorageProviderType primaryStorageProvider) {
+        this.primaryStorageProvider = primaryStorageProvider;
+    }
+
+    public List<StorageProviderType> getStorageProviderOptions() {
+        return StorageProviderTypeUtil.getAvailableTypes();
+    }
+
+    public List<StorageProviderType> getStorageProviders() {
+        return storageProviders;
     }
 
     public void
-        setSecondaryStorageProviders(List<StorageProviderType> secondaryStorageProviders) {
-        this.secondaryStorageProviders = secondaryStorageProviders;
-    }
-
-    public boolean isUseReducedRedundancy() {
-        return useReducedRedundancy;
-    }
-
-    public void setUseReducedRedundancy(boolean useReducedRedundancy) {
-        this.useReducedRedundancy = useReducedRedundancy;
+        setStorageProviders(List<StorageProviderType> storageProviders) {
+        this.storageProviders = storageProviders;
     }
 
 }

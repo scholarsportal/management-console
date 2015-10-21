@@ -70,7 +70,6 @@ public class CreateAccountActionTest extends AmaTestBase{
     public void testDoCreate() throws Exception {
 
         FullAccountForm fullAccountForm = new FullAccountForm();
-        fullAccountForm.setUseReducedRedundancy(true);
 
         //setup requestcontext
         setupRequestContext(fullAccountForm);
