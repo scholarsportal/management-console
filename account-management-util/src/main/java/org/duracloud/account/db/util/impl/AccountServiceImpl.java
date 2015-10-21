@@ -141,6 +141,31 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public void changePrimaryStorageProvider(Long storageProviderId) {
+        log.info("Changing primary storage provider to {} from account {}",
+                 storageProviderId, account.getSubdomain());
+
+        ServerDetails serverDetails = retrieveServerDetails();
+        
+        Set<StorageProviderAccount> secondaryAccounts = serverDetails.getSecondaryStorageProviderAccounts();
+        for(StorageProviderAccount secondary : secondaryAccounts){
+            if(secondary.getId().equals(storageProviderId)){
+                secondaryAccounts.remove(secondary);
+                secondaryAccounts.add(serverDetails.getPrimaryStorageProviderAccount());
+                serverDetails.setPrimaryStorageProviderAccount(secondary);
+                serverDetails.setSecondaryStorageProviderAccounts(secondaryAccounts);
+                storeServerDetails(serverDetails);
+                return;
+            }
+        }
+
+        throw new DuracloudProviderAccountNotAvailableException(
+            "The storage provider account with ID " + storageProviderId +
+            " is not associated with account with id " + account.getId() +
+            " as a secondary storage provider.");
+    }
+    
+    @Override
     public void storeAccountInfo(String acctName,
                                  String orgName,
                                  String department) {

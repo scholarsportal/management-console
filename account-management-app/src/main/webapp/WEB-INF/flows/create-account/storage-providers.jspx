@@ -30,14 +30,34 @@
       <form:form
         modelAttribute="fullAccountForm"
         method="POST">
-
         <fieldset>
-          <legend><spring:message code="account.secondaryproviders"/></legend>
           <ol>
-            <form:checkboxes
-              element="li"
-              path="secondaryStorageProviders"
-              items="${fullAccountForm.secondaryStorageProviderOptions}" itemValue="name"   />
+              <c:forEach items="${fullAccountForm.storageProviderOptions}" var="provider">
+              <li>
+	              <form:label
+	                cssErrorClass="error"
+	                path="primaryStorageProvider">
+	              </form:label>
+
+                <form:checkbox id="storageProvider${provider.name}" path="storageProviders" value="${provider.name}"/>
+                <label for="storageProvider${provider.name}"> ${provider.name}
+                </label>
+
+                <form:radiobutton  disabled="true" id="primary${provider.name}" path="primaryStorageProvider" value="${provider.name}"/>
+                <form:label 
+                  path="primaryStorageProvider"
+                  cssErrorClass="error"
+                  for="primary${provider.name}"> Primary
+                  
+                </form:label>                
+                <form:errors
+                  path="primaryStorageProvider"
+                  cssClass="error"
+                  element="span" />
+  
+  
+              </li>
+            </c:forEach>
           </ol>
         </fieldset>
 
@@ -53,6 +73,60 @@
             name="_eventId_cancel"><spring:message code="cancel"/></button>
         </fieldset>
       </form:form>
+      
+      <script>
+      $(function(){
+    	  
+    	  var storageProviderStateSync = function(){
+              var val = $(this).attr("value");
+              var primary =  $("#primary" + val);
+              if(!$(this).is(":checked")){
+                 primary.prop("checked", false)
+                        .prop("disabled", true);
+              }else{
+                 primary.prop("disabled", false);
+              }
+            };
+    	  
+            $("[id^=storageProvider]").map(storageProviderStateSync);   
+            
+    	  $("[id^=storageProvider]").change(storageProviderStateSync);
+    	  
+      });
+      </script>
+      <style>
+        form checkbox {
+          float: left !important
+        }
+        form label{
+          float: none;
+        }
+
+        label[for^=primary]  {
+          position: absolute;
+          left: 20px;
+        }
+        
+        li {
+          position: relative;
+        }
+
+        form input[type=radio]{
+          position: absolute;
+          left:190px;
+          float: none;
+        }
+        
+        form label:after {
+          content:'';
+        }
+        
+        span.error {
+          position: absolute;
+          left: 300px;
+        }
+        
+      </style>      
     </tiles:putAttribute>
   </tiles:insertDefinition>
 </jsp:root>

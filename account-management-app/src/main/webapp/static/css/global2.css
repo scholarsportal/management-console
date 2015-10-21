@@ -963,8 +963,9 @@ form textarea:focus {
 
 form input[type=radio]
 {
-  float: left;
+  /*float: left;
   margin-right: 5px;
+  */
 }
 
 form input[type=checkbox] {

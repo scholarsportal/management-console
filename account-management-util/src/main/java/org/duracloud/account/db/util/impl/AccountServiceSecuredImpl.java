@@ -142,6 +142,13 @@ public class AccountServiceSecuredImpl implements AccountService {
         throwIfAccessDenied(storageProviderId);
         accountService.removeStorageProvider(storageProviderId);
     }
+    
+    @Override
+    public void changePrimaryStorageProvider(Long storageProviderId) {
+        throwIfAccessDenied(storageProviderId);
+        accountService.changePrimaryStorageProvider(storageProviderId);
+    }
+
 
     @Override
     public Set<DuracloudUser> getUsers() {

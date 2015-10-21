@@ -160,4 +160,11 @@ public interface AccountService {
     @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
     public void deleteUserInvitation(Long invitationId);
 
+    /**
+     * Changes the primary storage provider to the one specified by the id.
+     * @param id of the new primary storage provider.
+     */
+    @Secured({"role:ROLE_OWNER, scope:SELF_ACCT"})
+    public void changePrimaryStorageProvider(Long id);
+
 }

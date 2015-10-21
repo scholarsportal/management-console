@@ -47,4 +47,21 @@ public class AccountDetailsControllerTest extends AmaControllerTestBase {
         replayMocks();
         this.controller.removeProvider(TEST_ACCOUNT_ID, StorageProviderType.RACKSPACE.toString(), redirectAttributes);
     }
+    
+    @Test
+    public void testChangePrimaryStorageProvider() throws Exception {
+        Set<StorageProviderAccount> spa = new HashSet<StorageProviderAccount>();
+        StorageProviderAccount storage = new StorageProviderAccount();
+        storage.setId(0L);
+        storage.setProviderType(StorageProviderType.RACKSPACE);
+        storage.setUsername("test");
+        storage.setPassword("test");
+        spa.add(storage);
+        EasyMock.expect(this.accountService.getSecondaryStorageProviders()).andReturn(spa);
+        this.accountService.changePrimaryStorageProvider(EasyMock.anyLong());
+        addFlashAttribute();
+        replayMocks();
+        this.controller.makePrimary(TEST_ACCOUNT_ID, StorageProviderType.RACKSPACE.toString(), redirectAttributes);
+    }
+
   }

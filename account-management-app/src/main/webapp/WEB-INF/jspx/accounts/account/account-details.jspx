@@ -148,7 +148,7 @@
                         <tr>
                           <td>${primaryProvider.providerType}</td>
                           <td>(Primary)</td>
-                          <td>${primaryProvider.storageLimit} TB Limit</td>
+                          <td colspan="2">${primaryProvider.storageLimit} TB Limit</td>
                         </tr>
                       <c:forEach
                            var="p"
@@ -160,13 +160,22 @@
                               <td>${p.storageLimit} TB Limit</td>
                               <td>
                                 <sec:authorize access="hasAnyRole('ROLE_ROOT')">
-                                    <form
+                                    <form style="display:inline; float:left;"
                                      action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/details/providers/${p.providerType}/remove"
                                      method="post">
                                       <button style="margin-right:8px !important"
                                        type="submit" onclick="Ask('Are you sure you want to delete this provider?',this); return false;">
                                       Remove</button>
                                     </form>
+
+                                    <form style="display:inline;"
+                                     action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/details/providers/${p.providerType}/make-primary"
+                                     method="post">
+                                      <button style="margin-right:8px !important"
+                                       type="submit" onclick="Ask('Are you sure you want to make this provider primary?',this); return false;">
+                                      Make Primary</button>
+                                    </form>
+                                    
                                 </sec:authorize>
                               </td>
                             </tr>
