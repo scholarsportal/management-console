@@ -131,6 +131,20 @@
                    cssClass="error"
                    element="div" />               
                 </li>
+                <li>
+                  <form:label
+                   cssErrorClass="error"
+                   path="${param.storageProvider}.properties['DPN_MEMBER_UUID']"><spring:message code="bridge.dpn.member.uuid"/></form:label>
+                  <form:input 
+                   cssErrorClass="error"
+                   path="${param.storageProvider}.properties['DPN_MEMBER_UUID']"
+                   onclick="same(this.form)"/>
+                  <form:errors
+                   path="${param.storageProvider}.properties['DPN_MEMBER_UUID']"
+                   cssClass="error"
+                   element="div" />               
+                </li>
+
 	            </c:if>
 	           </ol>
           </fieldset>
