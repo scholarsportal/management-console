@@ -134,13 +134,13 @@
                 <li>
                   <form:label
                    cssErrorClass="error"
-                   path="${param.storageProvider}.properties['DPN_MEMBER_UUID']"><spring:message code="bridge.dpn.member.uuid"/></form:label>
+                   path="${param.storageProvider}.properties['BRIDGE_MEMBER_ID']"><spring:message code="bridge.member.id"/></form:label>
                   <form:input 
                    cssErrorClass="error"
-                   path="${param.storageProvider}.properties['DPN_MEMBER_UUID']"
+                   path="${param.storageProvider}.properties['BRIDGE_MEMBER_ID']"
                    onclick="same(this.form)"/>
                   <form:errors
-                   path="${param.storageProvider}.properties['DPN_MEMBER_UUID']"
+                   path="${param.storageProvider}.properties['BRIDGE_MEMBER_ID']"
                    cssClass="error"
                    element="div" />               
                 </li>
