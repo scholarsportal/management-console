@@ -131,6 +131,20 @@
                    cssClass="error"
                    element="div" />               
                 </li>
+                <li>
+                  <form:label
+                   cssErrorClass="error"
+                   path="${param.storageProvider}.properties['BRIDGE_MEMBER_ID']"><spring:message code="bridge.member.id"/></form:label>
+                  <form:input 
+                   cssErrorClass="error"
+                   path="${param.storageProvider}.properties['BRIDGE_MEMBER_ID']"
+                   onclick="same(this.form)"/>
+                  <form:errors
+                   path="${param.storageProvider}.properties['BRIDGE_MEMBER_ID']"
+                   cssClass="error"
+                   element="div" />               
+                </li>
+
 	            </c:if>
 	           </ol>
           </fieldset>

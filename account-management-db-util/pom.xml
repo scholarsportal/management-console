@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.duracloud</groupId>
     <artifactId>duracloud-mc</artifactId>
-    <version>2.2.1</version>
+    <version>2.2.2</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -12,7 +12,7 @@
   <groupId>org.duracloud</groupId>
   <artifactId>account-management-db-util</artifactId>
   <packaging>jar</packaging>
-  <version>2.2.1</version>
+  <version>2.2.2</version>
   <name>Account Management Database Utility</name>
 
   <build>
@@ -59,6 +59,11 @@
     <dependency>
       <groupId>org.duracloud.db</groupId>
       <artifactId>account-management-db-repo</artifactId>
+     </dependency>
+     
+     <dependency>
+       <groupId>org.duracloud</groupId>
+       <artifactId>storageprovider</artifactId>
      </dependency>
 
     <dependency>
