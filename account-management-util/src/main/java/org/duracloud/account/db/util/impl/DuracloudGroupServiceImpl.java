@@ -15,7 +15,6 @@ import org.duracloud.account.db.util.DuracloudGroupService;
 import org.duracloud.account.db.util.error.DuracloudGroupAlreadyExistsException;
 import org.duracloud.account.db.util.error.DuracloudGroupNotFoundException;
 import org.duracloud.account.db.util.error.InvalidGroupNameException;
-import org.duracloud.account.db.util.usermgmt.UserDetailsPropagator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,12 +33,9 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
         LoggerFactory.getLogger(DuracloudGroupServiceImpl.class);
 
     private DuracloudRepoMgr repoMgr;
-    private UserDetailsPropagator propagator;
 
-    public DuracloudGroupServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
-                                     UserDetailsPropagator propagator) {
+    public DuracloudGroupServiceImpl(DuracloudRepoMgr duracloudRepoMgr) {
         this.repoMgr = duracloudRepoMgr;
-        this.propagator = propagator;
     }
 
     @Override
@@ -121,7 +117,7 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
     }
 
     private void propagateUpdate(Long acctId, DuracloudGroup group) {
-        propagator.propagateGroupUpdate(acctId, group.getId());
+        //TODO notify duracloud of changes.
     }
 
 }

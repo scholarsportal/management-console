@@ -17,13 +17,10 @@ import org.apache.commons.io.FileUtils;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
 import org.duracloud.account.db.model.BaseEntity;
-import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.DuracloudGroup;
-import org.duracloud.account.db.model.DuracloudInstance;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.Role;
 import org.duracloud.account.db.model.ServerDetails;
-import org.duracloud.account.db.model.ServerImage;
 import org.duracloud.account.db.model.StorageProviderAccount;
 import org.duracloud.account.db.model.UserInvitation;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
@@ -72,11 +69,9 @@ public class DbUtil {
     private void doPut() {
         // Defines the order to import the different entity types. This is
         // necessary because of defined and enforced JPA relationships.
-        String[] files = { "ServiceRepository",
-                "StorageProviderAccount", "ComputeProviderAccount",
-                "ServerDetails", "AccountInfo", "DuracloudUser", "ServerImage",
-                "DuracloudInstance", "DuracloudGroup", "UserInvitation",
-                "AccountRights" };
+        String[] files = { "ServiceRepository", "StorageProviderAccount",
+                "ServerDetails", "AccountInfo", "DuracloudUser",
+                "DuracloudGroup", "UserInvitation", "AccountRights" };
 
         for (String fileName : files) {
             File inputFile = new File(workDir, fileName + ".xml");
@@ -107,9 +102,6 @@ public class DbUtil {
                 // entities looked up and then set to save properly.
                 if (entity instanceof ServerDetails) {
                     ServerDetails sd = (ServerDetails) entity;
-                    sd.setComputeProviderAccount(repoMgr
-                            .getComputeProviderAccountRepo().findOne(
-                                    sd.getComputeProviderAccount().getId()));
                     sd.setPrimaryStorageProviderAccount(repoMgr
                             .getStorageProviderAccountRepo().findOne(
                                     sd.getPrimaryStorageProviderAccount()
@@ -138,18 +130,6 @@ public class DbUtil {
                         log.warn(e.toString());
                     }
                     repo.saveAndFlush(sd);
-                } else if (entity instanceof AccountInfo) {
-                    AccountInfo ai = (AccountInfo) entity;
-                    ai.setServerDetails(repoMgr.getServerDetailsRepo().findOne(
-                            ai.getServerDetails().getId()));
-                    repo.saveAndFlush(ai);
-                } else if (entity instanceof DuracloudInstance) {
-                    DuracloudInstance di = (DuracloudInstance) entity;
-                    di.setImage(repoMgr.getServerImageRepo().findOne(
-                            di.getImage().getId()));
-                    di.setAccount(repoMgr.getAccountRepo().findOne(
-                            di.getAccount().getId()));
-                    repo.saveAndFlush(entity);
                 } else if (entity instanceof DuracloudGroup) {
                     DuracloudGroup dg = (DuracloudGroup) entity;
                     dg.setAccount(repoMgr.getAccountRepo().findOne(
@@ -193,12 +173,6 @@ public class DbUtil {
             repo = repoMgr.getRightsRepo();
         } else if (item instanceof UserInvitation) {
             repo = repoMgr.getUserInvitationRepo();
-        } else if (item instanceof DuracloudInstance) {
-            repo = repoMgr.getInstanceRepo();
-        } else if (item instanceof ServerImage) {
-            repo = repoMgr.getServerImageRepo();
-        } else if (item instanceof ComputeProviderAccount) {
-            repo = repoMgr.getComputeProviderAccountRepo();
         } else if (item instanceof StorageProviderAccount) {
             repo = repoMgr.getStorageProviderAccountRepo();
         } else if(item instanceof DuracloudGroup) {
@@ -227,11 +201,6 @@ public class DbUtil {
         xstream.alias(AccountRights.class.getSimpleName(), AccountRights.class);
         xstream.alias(UserInvitation.class.getSimpleName(),
                 UserInvitation.class);
-        xstream.alias(DuracloudInstance.class.getSimpleName(),
-                DuracloudInstance.class);
-        xstream.alias(ServerImage.class.getSimpleName(), ServerImage.class);
-        xstream.alias(ComputeProviderAccount.class.getSimpleName(),
-                ComputeProviderAccount.class);
         xstream.alias(StorageProviderAccount.class.getSimpleName(),
                       StorageProviderAccount.class);
         xstream.alias(Role.class.getSimpleName(), Role.class);

@@ -141,7 +141,7 @@
                         </form>
                       </c:when>
                       <c:when
-                       test="${a.status == 'ACTIVE' and a.instance == null}">
+                       test="${a.status == 'ACTIVE'}">
                         <form
                          action="${currentUri}/byid/${a.id}/deactivate"
                          method="post">
@@ -165,9 +165,6 @@
                     </a>
                   </td>
                   <td><!-- placeholder -->
-                    <c:if
-                     test="${a.instance == null}">
-
                     <form
                      action="${currentUri}/byid/${a.id}/delete"
                      method="post">
@@ -185,7 +182,6 @@
                          code="delete" />
                       </button>
                     </form>
-                    </c:if>
                   </td>
                 </tr>
               </c:forEach>

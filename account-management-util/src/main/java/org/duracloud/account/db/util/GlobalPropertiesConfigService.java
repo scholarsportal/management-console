@@ -21,7 +21,8 @@ public interface GlobalPropertiesConfigService {
     @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
     public GlobalProperties get();
 
-    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
-    public void set(String instanceNotificationTopicArn);
+    @Secured({ "role:ROLE_ADMIN, scope:SELF_ACCT" })
+    public void set(String instanceNotificationTopicArn,
+            String duracloudRootUsername, String duracloudRootPassword);
 
 }

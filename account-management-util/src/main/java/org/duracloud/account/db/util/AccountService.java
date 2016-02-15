@@ -8,7 +8,6 @@
 package org.duracloud.account.db.util;
 
 import org.duracloud.account.db.model.AccountInfo;
-import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.ServerDetails;
 import org.duracloud.account.db.model.StorageProviderAccount;
@@ -92,14 +91,6 @@ public interface AccountService {
      */
     @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
     public StorageProviderAccount getPrimaryStorageProvider();
-
-    /**
-     * Retrieves the primary storage provider account info
-     *
-     * @return
-     */
-    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
-    public ComputeProviderAccount getComputeProvider();
 
     /**
      * Retrieves the info for all secondary storage provider accounts

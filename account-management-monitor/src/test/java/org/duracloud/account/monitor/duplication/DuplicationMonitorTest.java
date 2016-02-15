@@ -8,8 +8,7 @@
 package org.duracloud.account.monitor.duplication;
 
 import org.duracloud.account.db.repo.DuracloudAccountRepo;
-import org.duracloud.account.db.repo.DuracloudInstanceRepo;
-import org.duracloud.account.db.repo.DuracloudServerImageRepo;
+import org.duracloud.account.db.util.GlobalPropertiesConfigService;
 import org.duracloud.account.monitor.duplication.domain.DuplicationInfo;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreImpl;
@@ -38,32 +37,29 @@ public class DuplicationMonitorTest {
     private ContentStoreManager storeManager;
     private ContentStore store;
     private DuracloudAccountRepo acctRepo;
-    private DuracloudInstanceRepo instanceRepo;
-    private DuracloudServerImageRepo imageRepo;
+    private GlobalPropertiesConfigService configService;
     private Map<String, String> dupHosts;
     private DuplicationMonitor dupMonitor;
 
     @Before
     public void setup() {
+        configService = EasyMock.createMock(GlobalPropertiesConfigService.class);
         storeManager = EasyMock.createMock(ContentStoreManager.class);
         store = EasyMock.createMock(ContentStore.class);
         acctRepo = EasyMock.createMock(DuracloudAccountRepo.class);
-        instanceRepo = EasyMock.createMock(DuracloudInstanceRepo.class);
-        imageRepo = EasyMock.createMock(DuracloudServerImageRepo.class);
         dupHosts = new HashMap<>();
         dupMonitor = new DuplicationMonitor(acctRepo,
-                                            instanceRepo,
-                                            imageRepo,
+                                            configService,
                                             dupHosts);
     }
 
     private void replayMocks() {
-        EasyMock.replay(storeManager, store, acctRepo, instanceRepo, imageRepo);
+        EasyMock.replay(storeManager, store, acctRepo, configService);
     }
 
     @After
     public void teardown() {
-        EasyMock.verify(storeManager, store, acctRepo, instanceRepo, imageRepo);
+        EasyMock.verify(storeManager, store, acctRepo, configService);
     }
 
     @Test

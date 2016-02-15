@@ -61,6 +61,8 @@ public class GlobalPropertiesController {
             return new GlobalPropertiesForm();
         } else {
             form.setInstanceNotificationTopicArn(entity.getInstanceNotificationTopicArn());
+            form.setDuracloudRootUsername(entity.getDuracloudRootUsername());
+            form.setDuracloudRootPassword(entity.getDuracloudRootPassword());
             return form;
         }
     }
@@ -81,7 +83,11 @@ public class GlobalPropertiesController {
             return new ModelAndView(BASE_MAPPING + "/edit");
         }
         
-        this.globalPropertiesConfigService.set(form.getInstanceNotificationTopicArn());
+        this.globalPropertiesConfigService.set(
+                form.getInstanceNotificationTopicArn(),
+                form.getDuracloudRootUsername(),
+                form.getDuracloudRootPassword());
+
         UserFeedbackUtil.addSuccessFlash("Successfully updated!", redirectAttributes);
         return new ModelAndView(new RedirectView(BASE_MAPPING, true));
     }

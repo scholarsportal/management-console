@@ -8,10 +8,9 @@
 package org.duracloud.account.monitor.storereporter;
 
 import org.duracloud.account.db.model.AccountInfo;
-import org.duracloud.account.db.model.DuracloudInstance;
+import org.duracloud.account.db.model.AccountInfo.AccountStatus;
 import org.duracloud.account.db.repo.DuracloudAccountRepo;
-import org.duracloud.account.db.repo.DuracloudInstanceRepo;
-import org.duracloud.account.db.repo.DuracloudServerImageRepo;
+import org.duracloud.account.db.util.GlobalPropertiesConfigService;
 import org.duracloud.account.monitor.common.BaseMonitor;
 import org.duracloud.account.monitor.storereporter.domain.StoreReporterReport;
 import org.duracloud.account.monitor.storereporter.util.StoreReporterUtil;
@@ -34,11 +33,10 @@ public class StoreReporterMonitor extends BaseMonitor {
     private StoreReporterUtilFactory reporterUtilFactory;
 
     public StoreReporterMonitor(DuracloudAccountRepo acctRepo,
-                                DuracloudInstanceRepo instanceRepo,
-                                DuracloudServerImageRepo imageRepo,
+                                GlobalPropertiesConfigService configService,
                                 StoreReporterUtilFactory factory) {
         this.log = LoggerFactory.getLogger(StoreReporterMonitor.class);
-        super.init(acctRepo, instanceRepo, imageRepo);
+        super.init(acctRepo, configService);
         this.reporterUtilFactory = factory;
     }
 
@@ -51,30 +49,30 @@ public class StoreReporterMonitor extends BaseMonitor {
         log.info("starting store-reporter monitor");
         StoreReporterReport report = new StoreReporterReport();
 
-        List<DuracloudInstance> instances = getDuracloudInstances();
-        for (DuracloudInstance instance : instances) {
-            doMonitorStoreReporters(report, instance);
+        List<AccountInfo> accounts = this.acctRepo.findAll();
+        for (AccountInfo info : accounts) {
+            if(info.getStatus().equals(AccountStatus.ACTIVE)){
+                doMonitorStoreReporters(report, info);
+            }
         }
 
         return report;
     }
 
-    private void doMonitorStoreReporters(StoreReporterReport report,
-                                         DuracloudInstance instance) {
-        AccountInfo acct = instance.getAccount();
+    private void doMonitorStoreReporters(StoreReporterReport report, AccountInfo accountInfo) {
         log.info("monitoring store-reporter: {} ({})",
-                 acct.getAcctName(),
-                 acct.getSubdomain());
+                accountInfo.getAcctName(),
+                accountInfo.getSubdomain());
         try {
-            Credential credential = getRootCredential(instance);
+            Credential credential = getRootCredential();
             StoreReporterUtil reporterUtil =
-                reporterUtilFactory.getStoreReporterUtil(acct, credential);
-            report.addAcctInfo(acct, reporterUtil.pingStorageReporter());
+                reporterUtilFactory.getStoreReporterUtil(accountInfo, credential);
+            report.addAcctInfo(accountInfo, reporterUtil.pingStorageReporter());
 
         } catch (Exception e) {
             StringBuilder error = new StringBuilder("Error ");
             error.append("monitoring store-reporter for account: ");
-            error.append(acct.getSubdomain());
+            error.append(accountInfo.getSubdomain());
             error.append("\n");
             error.append("msg: \n");
             error.append(e.getMessage());
@@ -83,7 +81,7 @@ public class StoreReporterMonitor extends BaseMonitor {
             error.append(ExceptionUtil.getStackTraceAsString(e));
             log.error(error.toString());
 
-            report.addAcctError(acct, error.toString());
+            report.addAcctError(accountInfo, error.toString());
         }
     }
 

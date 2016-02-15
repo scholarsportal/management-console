@@ -59,6 +59,17 @@
              code="globalproperties.instancenotificationtopicarn" /></td>
 						<td>${globalProperties.instanceNotificationTopicArn}</td>
 					</tr>
+          <tr>
+            <td><spring:message
+             code="globalproperties.duracloudrootusername" /></td>
+            <td>${globalProperties.duracloudRootUsername}</td>
+          </tr>
+          <tr>
+            <td><spring:message
+             code="globalproperties.duracloudrootpassword" /></td>
+            <td>${globalProperties.duracloudURootPassword}</td>
+          </tr>
+
 				</tbody>
 			</table>
 

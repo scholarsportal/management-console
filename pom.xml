@@ -51,8 +51,6 @@
     <module>account-management-common</module>
     <module>account-management-security</module>
     <module>account-management-db-util</module>
-    <module>account-management-compute</module>
-    <module>account-management-compute-amazon</module>
     <module>account-management-monitor</module>
     <module>account-management-app</module>
     <module>account-management-util</module>

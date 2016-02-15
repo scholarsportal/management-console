@@ -15,7 +15,6 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.Digits;
 
-import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.StorageProviderAccount;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.hibernate.validator.constraints.NotBlank;
@@ -46,8 +45,7 @@ public class AccountSetupForm {
     private String computeSecurityGroup;
 
     public AccountSetupForm(StorageProviderAccount primary,
-            List<StorageProviderAccount> secondaryList,
-            ComputeProviderAccount compute) {
+            List<StorageProviderAccount> secondaryList) {
         this();
 
         this.primaryStorageProviderSettings = createStorageProviderSettings(primary);
@@ -57,13 +55,6 @@ public class AccountSetupForm {
                     .add(createStorageProviderSettings(spa));
         }
 
-        if (compute != null) {
-            this.computeUsername = compute.getUsername();
-            this.computePassword = compute.getPassword();
-            this.computeElasticIP = compute.getElasticIp();
-            this.computeKeypair = compute.getKeypair();
-            this.computeSecurityGroup = compute.getSecurityGroup();
-        }
     }
 
     private StorageProviderSettings createStorageProviderSettings(

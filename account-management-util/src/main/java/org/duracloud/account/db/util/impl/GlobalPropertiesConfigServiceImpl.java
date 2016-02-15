@@ -14,7 +14,6 @@ import org.duracloud.account.db.repo.GlobalPropertiesRepo;
 import org.duracloud.account.db.util.GlobalPropertiesConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 /**
  * A service for modifying global configuration settings.
  * @author Daniel Bernstein
@@ -46,15 +45,18 @@ public class GlobalPropertiesConfigServiceImpl implements
     }
 
     @Override
-    public void  set(String instanceNotificationTopicArn) {
+    public void set(String instanceNotificationTopicArn,
+            String duracloudRootUsername, String duracloudRootPassword) {
         GlobalProperties gp = get();
         if(null == gp) {
             gp = new GlobalProperties();
         }
 
         gp.setInstanceNotificationTopicArn(instanceNotificationTopicArn);
+        gp.setDuracloudRootUsername(duracloudRootUsername);
+        gp.setDuracloudRootPassword(duracloudRootPassword);
         
         repo.save(gp);
-        
+   
     }
 }

@@ -96,14 +96,6 @@
     <beans:constructor-arg ref="repoMgr"/>
   </beans:bean>
 
-  <beans:bean id="instanceMgrVoter" class="org.duracloud.account.security.vote.InstanceManagerAccessDecisionVoter">
-    <beans:constructor-arg ref="repoMgr"/>
-  </beans:bean>
-
-  <beans:bean id="instanceVoter" class="org.duracloud.account.security.vote.InstanceAccessDecisionVoter">
-    <beans:constructor-arg ref="repoMgr"/>
-  </beans:bean>
-
   <beans:bean id="userVoter" class="org.duracloud.account.security.vote.UserAccessDecisionVoter">
     <beans:constructor-arg ref="repoMgr"/>
   </beans:bean>
@@ -114,7 +106,6 @@
       <beans:list>
         <beans:ref bean="rootAcctMgrVoter"/>
         <beans:ref bean="acctMgrVoter"/>
-        <beans:ref bean="instanceMgrVoter"/>
         <beans:ref bean="userVoter"/>
       </beans:list>
     </beans:property>

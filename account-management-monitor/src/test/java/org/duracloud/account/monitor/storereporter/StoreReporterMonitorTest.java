@@ -7,12 +7,13 @@
  */
 package org.duracloud.account.monitor.storereporter;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.duracloud.account.db.model.AccountInfo;
-import org.duracloud.account.db.model.DuracloudInstance;
-import org.duracloud.account.db.model.ServerImage;
 import org.duracloud.account.db.repo.DuracloudAccountRepo;
-import org.duracloud.account.db.repo.DuracloudInstanceRepo;
-import org.duracloud.account.db.repo.DuracloudServerImageRepo;
+import org.duracloud.account.db.util.GlobalPropertiesConfigService;
 import org.duracloud.account.monitor.storereporter.domain.StoreReporterInfo;
 import org.duracloud.account.monitor.storereporter.domain.StoreReporterReport;
 import org.duracloud.account.monitor.storereporter.util.StoreReporterUtil;
@@ -24,10 +25,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 /**
  * @author Andrew Woods
  *         Date: 5/18/12
@@ -37,11 +34,9 @@ public class StoreReporterMonitorTest {
     private StoreReporterMonitor monitor;
 
     private DuracloudAccountRepo acctRepo;
-    private DuracloudInstanceRepo instanceRepo;
-    private DuracloudServerImageRepo imageRepo;
+    private GlobalPropertiesConfigService configService;
     private StoreReporterUtilFactory factory;
 
-    private static final Long IMAGE_ID = 345L;
     private static final String ROOT_PASS = "root-pass";
 
     private List<AccountInfo> accts;
@@ -56,26 +51,23 @@ public class StoreReporterMonitorTest {
 
         acctRepo = EasyMock.createMock("DuracloudAccountRepo",
                                        DuracloudAccountRepo.class);
-        instanceRepo = EasyMock.createMock("DuracloudInstanceRepo",
-                                           DuracloudInstanceRepo.class);
-        imageRepo = EasyMock.createMock("DuracloudServerImageRepo",
-                                        DuracloudServerImageRepo.class);
+        configService = EasyMock.createMock("GlobalPropertiesConfigService",
+                                           GlobalPropertiesConfigService.class);
         factory = EasyMock.createMock("StoreReporterUtilFactory",
                                       StoreReporterUtilFactory.class);
 
         monitor = new StoreReporterMonitor(acctRepo,
-                                           instanceRepo,
-                                           imageRepo,
+                                           configService,
                                            factory);
     }
 
     @After
     public void tearDown() throws Exception {
-        EasyMock.verify(acctRepo, instanceRepo, imageRepo, factory);
+        EasyMock.verify(acctRepo, configService, factory);
     }
 
     private void replayMocks() {
-        EasyMock.replay(acctRepo, instanceRepo, imageRepo, factory);
+        EasyMock.replay(acctRepo, configService, factory);
     }
 
     @Test
@@ -112,63 +104,23 @@ public class StoreReporterMonitorTest {
     }
 
     private void createMockExpectations(boolean valid) throws Exception {
-        Credential credential = new Credential(ServerImage.DC_ROOT_USERNAME,
-                                               ROOT_PASS);
+        Credential credential = new Credential("root",ROOT_PASS);
 
-        List<DuracloudInstance> instances = new ArrayList<>();
-        EasyMock.expect(instanceRepo.findAll())
+        List<AccountInfo> instances = new ArrayList<>();
+        EasyMock.expect(acctRepo.findAll())
         .andReturn(instances)
         .times(1);
         
-        long instanceId = 0;
         for (AccountInfo acct : accts) {
             Long id = acct.getId();
-
-            instanceId++;
-            
-            DuracloudInstance instance = createMockDuracloudInstance(instanceId);
-            instances.add(instance);
-
-            acct.setInstance(instance);
-            instance.setAccount(acct);
-
-
+            EasyMock.expect(acct.getStatus()).andReturn(AccountInfo.AccountStatus.ACTIVE);
             StoreReporterUtil util = createStoreReporterUtil(valid, id);
             EasyMock.expect(factory.getStoreReporterUtil(acct, credential))
                     .andReturn(util);
         }
     }
 
-    private DuracloudInstance createMockDuracloudInstance(Long id) {
-        String hostName = "hostname";
-        String providerInstanceId = "8";
-        boolean initialized = true;
 
-        DuracloudInstance instance = new DuracloudInstance();
-        instance.setId(id);
-        instance.setHostName(hostName);
-        instance.setProviderInstanceId(providerInstanceId);
-        instance.setInitialized(initialized);
-        instance.setImage(createMockServerImage());
-
-        return instance;
-    }
-
-    private ServerImage createMockServerImage() {
-        String providerImageId = "providerImageId";
-        String version = "version";
-        String description = "description";
-        boolean latest = true;
-
-        ServerImage serverImage = new ServerImage();
-        serverImage.setId(IMAGE_ID);
-        serverImage.setProviderImageId(providerImageId);
-        serverImage.setProviderImageId(version);
-        serverImage.setDescription(description);
-        serverImage.setDcRootPassword(ROOT_PASS);
-        serverImage.setLatest(latest);
-        return serverImage;
-    }
 
     private StoreReporterUtil createStoreReporterUtil(boolean valid, Long id) {
         StoreReporterUtil util = EasyMock.createMock("StoreReporterUtil",

@@ -7,18 +7,24 @@
  */
 package org.duracloud.account.app.controller;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.apache.commons.lang.StringUtils;
-import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
+import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountInfo.AccountStatus;
-import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.InstanceType;
 import org.duracloud.account.db.model.UserInvitation;
 import org.duracloud.account.db.model.util.DuracloudAccount;
 import org.duracloud.account.db.util.AccountManagerService;
-import org.duracloud.account.db.util.DuracloudInstanceManagerService;
-import org.duracloud.account.db.util.DuracloudInstanceService;
 import org.duracloud.account.db.util.DuracloudUserService;
 import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.duracloud.account.db.util.error.InvalidPasswordException;
@@ -42,18 +48,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 /**
  * The default view for this application
@@ -103,9 +100,6 @@ public class UserController extends AbstractController {
 
     @Autowired
     private DuracloudUserService userService;
-
-    @Autowired(required = true)
-    protected DuracloudInstanceManagerService instanceManagerService;
 
     @Autowired
     private AmaEndpoint amaEndpoint;
@@ -168,7 +162,7 @@ public class UserController extends AbstractController {
     @RequestMapping(value = { USER_MAPPING }, method = RequestMethod.GET)
     public ModelAndView getUser(@PathVariable String username,
                                 HttpServletRequest request)
-        throws DBNotFoundException, DuracloudInstanceNotAvailableException {
+        throws DBNotFoundException {
         log.debug("getting user {}", username);
         // if there's a redemption code in the session, it means that
         // the user logged in in order to redeem an invitation
@@ -213,33 +207,13 @@ public class UserController extends AbstractController {
 
     @RequestMapping(value = { USER_ACCOUNTS_MAPPING }, method = RequestMethod.GET)
     public ModelAndView getUserAccounts(@PathVariable String username)
-        throws DBNotFoundException, DuracloudInstanceNotAvailableException {
+        throws DBNotFoundException {
         log.debug("getting user accounts for {}", username);
         ModelAndView mav = new ModelAndView(USER_ACCOUNTS);
         prepareModel(username, mav);
         return mav;
     }
     
-    @RequestMapping(value = { USER_ACCOUNTS_MAPPING + "/{accountId}/instance/{property}"}, method = RequestMethod.GET)
-    @ResponseBody
-    public String getInstanceStatus(@PathVariable String username, @PathVariable long accountId, @PathVariable String property)
-        throws DBNotFoundException, DuracloudInstanceNotAvailableException {
-        Set<DuracloudInstanceService> instances = this.instanceManagerService.getInstanceServices(accountId);
-        if(instances != null && !instances.isEmpty()){
-            DuracloudInstanceService service = instances.iterator().next();
-            if(property.equals("status")){
-                return service.getStatus();
-            }else if( property.equals("type")){
-                return service.getInstanceType().name();
-            }else{
-                return property + " is not recognized.";
-            }
-        }else{
-            return "Not available";
-        }
-    }
-
- 
     @RequestMapping(value = { USER_EDIT_MAPPING }, method = RequestMethod.GET)
     public String edit(@PathVariable String username, Model model) throws DBNotFoundException {
         log.debug("getting user accounts for {}", username);
@@ -409,8 +383,7 @@ public class UserController extends AbstractController {
      * @param user
      * @param mav
      */
-    private void prepareModel(DuracloudUser user, ModelAndView mav)
-        throws DuracloudInstanceNotAvailableException {
+    private void prepareModel(DuracloudUser user, ModelAndView mav) {
         mav.addObject(USER_KEY, user);
         Set<AccountInfo> accounts = this.accountManagerService.findAccountsByUserId(user.getId());
 
@@ -418,14 +391,10 @@ public class UserController extends AbstractController {
         List<DuracloudAccount> inactiveAccounts = new ArrayList<>();
         List<DuracloudAccount> pendingAccounts = new ArrayList<>();
 
-        Set<String> versions = this.instanceManagerService.getVersions();
-        
         Iterator<AccountInfo> iterator = accounts.iterator();
         while (iterator.hasNext()) {
             AccountInfo acctInfo = iterator.next();
-            DuracloudAccount duracloudAccount = loadAccountInstances(acctInfo,
-                                                                     user);
-            duracloudAccount.setVersions(versions);
+            DuracloudAccount duracloudAccount = loadAccountInstances(acctInfo, user);
             AccountStatus status = acctInfo.getStatus();
             if (AccountInfo.AccountStatus.ACTIVE.equals(status)) {
                 activeAccounts.add(duracloudAccount);
@@ -441,19 +410,11 @@ public class UserController extends AbstractController {
         mav.addObject("activeAccounts", activeAccounts);
         mav.addObject("inactiveAccounts", inactiveAccounts);
         mav.addObject("pendingAccounts", pendingAccounts);
-        String latestVersion = instanceManagerService.getLatestVersion();
-        mav.addObject("latestVersion", latestVersion);
-
-        AccountInstanceForm accountInstanceForm = new AccountInstanceForm();
-        accountInstanceForm.setVersion(latestVersion);
-        mav.addObject(NEW_INSTANCE_FORM, accountInstanceForm);
-
-
     }
 
+
     private DuracloudAccount loadAccountInstances(AccountInfo accountInfo,
-                                                  DuracloudUser user)
-        throws DuracloudInstanceNotAvailableException {
+            DuracloudUser user)  {
         DuracloudAccount duracloudAccount = new DuracloudAccount();
         duracloudAccount.setAccountInfo(accountInfo);
         duracloudAccount.setUserRole(user.getRoleByAcct(accountInfo.getId()));
@@ -467,8 +428,7 @@ public class UserController extends AbstractController {
     /**
      * @param mav
      */
-    private void prepareModel(String username, ModelAndView mav)
-        throws DuracloudInstanceNotAvailableException {
+    private void prepareModel(String username, ModelAndView mav) {
         
         DuracloudUser user;
         try {
@@ -612,14 +572,6 @@ public class UserController extends AbstractController {
 
     public AccountManagerService getAccountManagerService() {
         return accountManagerService;
-    }
-
-    public DuracloudInstanceManagerService getInstanceManagerService() {
-        return instanceManagerService;
-    }
-
-    public void setInstanceManagerService(DuracloudInstanceManagerService instanceManagerService) {
-        this.instanceManagerService = instanceManagerService;
     }
 
     public void setAmaEndpoint(AmaEndpoint amaEndpoint) {

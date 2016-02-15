@@ -14,7 +14,6 @@ import java.util.Set;
 
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
-import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.ServerDetails;
 import org.duracloud.account.db.model.StorageProviderAccount;
@@ -26,7 +25,6 @@ import org.duracloud.account.db.util.AccountServiceFactory;
 import org.duracloud.account.db.util.error.AccountNotFoundException;
 import org.duracloud.account.db.util.error.SubdomainAlreadyExistsException;
 import org.duracloud.account.db.util.sys.EventMonitor;
-import org.duracloud.computeprovider.domain.ComputeProviderType;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,10 +83,6 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 
         status = AccountInfo.AccountStatus.PENDING;
 
-        ComputeProviderAccount computeProviderAccount = new ComputeProviderAccount();
-        computeProviderAccount.setProviderType(ComputeProviderType.AMAZON_EC2);
-        computeProviderAccount = repoMgr.getComputeProviderAccountRepo()
-                .save(computeProviderAccount);
 
         StorageProviderType primaryStorageType =
             accountCreationInfo.getPrimaryStorageProviderType();
@@ -109,7 +103,6 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 
         
         serverDetails = new ServerDetails();
-        serverDetails.setComputeProviderAccount(computeProviderAccount);
         serverDetails.setPrimaryStorageProviderAccount(primaryStorageProviderAccount);
         serverDetails.setSecondaryStorageProviderAccounts(secondaryStorageProviderAccounts);
 

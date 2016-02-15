@@ -13,7 +13,6 @@ import java.util.HashMap;
 import org.duracloud.account.app.controller.AccountSetupForm.StorageProviderSettings;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountInfo.AccountStatus;
-import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.StorageProviderAccount;
 import org.duracloud.account.db.util.RootAccountManagerService;
 import org.duracloud.computeprovider.domain.ComputeProviderType;
@@ -69,16 +68,6 @@ public class AccountsControllerTest extends AmaControllerTestBase {
         EasyMock.expect(accountService.getPrimaryStorageProvider())
                 .andReturn(spa);
 
-        ComputeProviderAccount cpa = new ComputeProviderAccount();
-        cpa.setProviderType(ComputeProviderType.AMAZON_EC2);
-        cpa.setUsername("username");
-        cpa.setPassword("password");
-        cpa.setElasticIp("ip");
-        cpa.setSecurityGroup("security");
-        cpa.setKeypair("keypair");
-
-        EasyMock.expect(accountService.getComputeProvider()).andReturn(cpa);
-        
         EasyMock.expect(rootAccountManagerService.getSecondaryStorageProviders(TEST_ACCOUNT_ID))
             .andReturn(new ArrayList<StorageProviderAccount>());
         replayMocks();
@@ -98,14 +87,6 @@ public class AccountsControllerTest extends AmaControllerTestBase {
                                                        EasyMock.isA(new HashMap<String,String>().getClass()),
                                                        EasyMock.anyInt());
         EasyMock.expectLastCall().anyTimes();
-
-        rootAccountManagerService.setupComputeProvider(EasyMock.anyLong(),
-                                                       EasyMock.isA(String.class),
-                                                       EasyMock.isA(String.class),
-                                                       EasyMock.isA(String.class),
-                                                       EasyMock.isA(String.class),
-                                                       EasyMock.isA(String.class));
-        EasyMock.expectLastCall();
 
         rootAccountManagerService.activateAccount(EasyMock.anyLong());
         EasyMock.expectLastCall();

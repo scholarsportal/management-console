@@ -18,7 +18,6 @@ import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.model.DuracloudGroup;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.Role;
-import org.duracloud.account.db.model.ServerImage;
 import org.duracloud.account.db.model.UserInvitation;
 import org.duracloud.account.db.model.util.InitUserCredential;
 import org.duracloud.account.db.repo.DuracloudGroupRepo;
@@ -37,7 +36,6 @@ import org.duracloud.account.db.util.error.UnsentEmailException;
 import org.duracloud.account.db.util.error.UserAlreadyExistsException;
 import org.duracloud.account.db.util.notification.NotificationMgr;
 import org.duracloud.account.db.util.notification.Notifier;
-import org.duracloud.account.db.util.usermgmt.UserDetailsPropagator;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.ChecksumUtil;
 import org.slf4j.Logger;
@@ -55,18 +53,15 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 	private Logger log = LoggerFactory.getLogger(DuracloudUserServiceImpl.class);
 
     private DuracloudRepoMgr repoMgr;
-    private UserDetailsPropagator propagator;
     private NotificationMgr notificationMgr;
     private Notifier notifier;
     private AmaEndpoint amaEndpoint;
     
     public DuracloudUserServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
                                     NotificationMgr notificationMgr,
-                                    UserDetailsPropagator propagator,
                                     AmaEndpoint amaEndpoint) {
         this.repoMgr = duracloudRepoMgr;
         this.notificationMgr = notificationMgr;
-        this.propagator = propagator;
         this.amaEndpoint = amaEndpoint;
     }
 
@@ -102,8 +97,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
     private boolean isReservedName(String username) {
         Credential init = new InitUserCredential();
-        return ServerImage.DC_ROOT_USERNAME.equalsIgnoreCase(username) ||
-            init.getUsername().equalsIgnoreCase(username);
+        return  init.getUsername().equalsIgnoreCase(username);
     }
 
     private boolean isReservedPrefix(String username) {
@@ -160,7 +154,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
         boolean result = doSetUserRights(acctId, userId, roleSet);
         if(result) {
-            propagator.propagateRights(acctId, userId, roleSet);
+            //TODO notify instances of user changes.
         }
         return result;
     }
@@ -230,7 +224,8 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
         doRevokeUserRights(acctId, userId);
         removeUserFromAccountGroups(acctId, userId);
-        propagator.propagateRevocation(acctId, userId);
+        //TODO notify instances of user changes.
+
     }
 
     private void doRevokeUserRights(Long acctId, Long userId) {
@@ -325,7 +320,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
                     repoMgr.getRightsRepo().findByUserId(userId);
 
             for(AccountRights rights : rightsList) {
-                propagator.propagateUserUpdate(rights.getAccount().getId(), userId);
+                //TODO notify instances of user changes.
             }
         }
     }

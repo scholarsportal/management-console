@@ -63,6 +63,52 @@
       </ol>
     </fieldset>
 
+
+    <fieldset>
+      <legend>
+        DuraCloud Root Credentials
+      </legend>
+
+      <ol>
+
+        <li>
+          <form:label
+           cssErrorClass="error"
+           path="duracloudRootUsername">
+            <spring:message
+             code="globalproperties.duracloudrootusername" />
+          </form:label>
+
+          <form:input
+           cssErrorClass="error"
+           path="duracloudRootUsername" />
+
+          <form:errors
+           path="duracloudRootUsername"
+           cssClass="error"
+           element="div" />
+        </li>
+        
+      <li>
+          <form:label
+           cssErrorClass="error"
+           path="duracloudRootPassword">
+            <spring:message
+             code="globalproperties.duracloudrootpassword" />
+          </form:label>
+
+          <form:input
+           cssErrorClass="error"
+           path="duracloudRootPassword" />
+
+          <form:errors
+           path="duracloudRootPassword"
+           cssClass="error"
+           element="div" />
+        </li>
+          
+      </ol>
+    </fieldset>
   
     <fieldset
      class="button-bar">

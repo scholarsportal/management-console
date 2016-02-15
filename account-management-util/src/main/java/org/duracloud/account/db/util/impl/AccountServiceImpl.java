@@ -15,7 +15,6 @@ import java.util.Set;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
 import org.duracloud.account.config.AmaEndpoint;
-import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.ServerDetails;
 import org.duracloud.account.db.model.StorageProviderAccount;
@@ -25,7 +24,6 @@ import org.duracloud.account.db.repo.DuracloudRightsRepo;
 import org.duracloud.account.db.util.AccountService;
 import org.duracloud.account.db.util.error.DuracloudProviderAccountNotAvailableException;
 import org.duracloud.account.db.util.error.UnsentEmailException;
-import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.notification.Emailer;
 import org.duracloud.storage.domain.StorageProviderType;
@@ -95,12 +93,6 @@ public class AccountServiceImpl implements AccountService {
         return serverDetails.getPrimaryStorageProviderAccount();
     }
     
-    @Override
-    public ComputeProviderAccount getComputeProvider() {
-        ServerDetails serverDetails = retrieveServerDetails();
-        return serverDetails.getComputeProviderAccount();
-    }
-
     @Override
     public Set<StorageProviderAccount> getSecondaryStorageProviders() {
         ServerDetails serverDetails = retrieveServerDetails();

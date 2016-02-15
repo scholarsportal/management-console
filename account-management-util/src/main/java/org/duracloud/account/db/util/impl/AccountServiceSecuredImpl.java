@@ -9,7 +9,6 @@ package org.duracloud.account.db.util.impl;
 
 import org.aopalliance.intercept.MethodInvocation;
 import org.duracloud.account.db.model.AccountInfo;
-import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.ServerDetails;
 import org.duracloud.account.db.model.StorageProviderAccount;
@@ -184,11 +183,5 @@ public class AccountServiceSecuredImpl implements AccountService {
     public void storeServerDetails(ServerDetails serverDetails) {
         throwIfAccessDenied(serverDetails);
         accountService.storeServerDetails(serverDetails);
-    }
-
-    @Override
-    public ComputeProviderAccount getComputeProvider() {
-        throwIfAccessDenied();
-        return accountService.getComputeProvider();
     }
 }

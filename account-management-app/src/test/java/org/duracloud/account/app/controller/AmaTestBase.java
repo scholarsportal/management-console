@@ -149,9 +149,6 @@ public class AmaTestBase {
         }
         ServerDetails serverDetails = new ServerDetails();
         serverDetails.setId(id);
-        ComputeProviderAccount compute = new ComputeProviderAccount();
-        compute.setId(0L);;
-        serverDetails.setComputeProviderAccount(compute);
         StorageProviderAccount primaryStorage = new StorageProviderAccount();
         primaryStorage.setId(0L);
         serverDetails.setPrimaryStorageProviderAccount(primaryStorage);
