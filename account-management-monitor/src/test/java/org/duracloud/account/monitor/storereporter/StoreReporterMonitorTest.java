@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.AccountInfo.AccountStatus;
+import org.duracloud.account.db.model.GlobalProperties;
 import org.duracloud.account.db.repo.DuracloudAccountRepo;
 import org.duracloud.account.db.util.GlobalPropertiesConfigService;
 import org.duracloud.account.monitor.storereporter.domain.StoreReporterInfo;
@@ -36,6 +38,7 @@ public class StoreReporterMonitorTest {
     private DuracloudAccountRepo acctRepo;
     private GlobalPropertiesConfigService configService;
     private StoreReporterUtilFactory factory;
+    private GlobalProperties props;
 
     private static final String ROOT_PASS = "root-pass";
 
@@ -59,15 +62,19 @@ public class StoreReporterMonitorTest {
         monitor = new StoreReporterMonitor(acctRepo,
                                            configService,
                                            factory);
+        
+        props = EasyMock.createMock("GlobalProperties",
+                GlobalProperties.class);
+        
     }
 
     @After
     public void tearDown() throws Exception {
-        EasyMock.verify(acctRepo, configService, factory);
+        EasyMock.verify(acctRepo, configService, factory, props);
     }
 
     private void replayMocks() {
-        EasyMock.replay(acctRepo, configService, factory);
+        EasyMock.replay(acctRepo, configService, factory,props);
     }
 
     @Test
@@ -106,18 +113,23 @@ public class StoreReporterMonitorTest {
     private void createMockExpectations(boolean valid) throws Exception {
         Credential credential = new Credential("root",ROOT_PASS);
 
-        List<AccountInfo> instances = new ArrayList<>();
         EasyMock.expect(acctRepo.findAll())
-        .andReturn(instances)
+        .andReturn(accts)
         .times(1);
         
         for (AccountInfo acct : accts) {
             Long id = acct.getId();
-            EasyMock.expect(acct.getStatus()).andReturn(AccountInfo.AccountStatus.ACTIVE);
+            //EasyMock.expect(acct.getStatus()).andReturn(AccountInfo.AccountStatus.ACTIVE);
             StoreReporterUtil util = createStoreReporterUtil(valid, id);
-            EasyMock.expect(factory.getStoreReporterUtil(acct, credential))
+            EasyMock.expect(factory.getStoreReporterUtil(EasyMock.eq(acct), EasyMock.isA(Credential.class)))
                     .andReturn(util);
         }
+        
+        
+        EasyMock.expect(props.getDuracloudRootUsername()).andReturn("username").atLeastOnce();
+        EasyMock.expect(props.getDuracloudRootPassword()).andReturn("password").atLeastOnce();
+
+        EasyMock.expect(configService.get()).andReturn(props).atLeastOnce();
     }
 
 
@@ -154,6 +166,7 @@ public class StoreReporterMonitorTest {
         account.setId(id);
         account.setSubdomain("subdomain-" + id);
         account.setAcctName("acctName-" + id);
+        account.setStatus(AccountStatus.ACTIVE);
         return account;
     }
 
