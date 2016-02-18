@@ -110,6 +110,70 @@
       </ol>
     </fieldset>
   
+     <fieldset>
+      <legend>
+        CloudFront
+      </legend>
+
+      <ol>
+
+        <li>
+          <form:label
+           cssErrorClass="error"
+           path="cloudFrontAccountId">
+            <spring:message
+             code="globalproperties.cloudfrontaccountid" />
+          </form:label>
+
+          <form:input
+           cssErrorClass="error"
+           path="cloudFrontAccountId" />
+
+          <form:errors
+           path="cloudFrontAccountId"
+           cssClass="error"
+           element="div" />
+        </li>
+        
+       <li>
+          <form:label
+           cssErrorClass="error"
+           path="cloudFrontKeyId">
+            <spring:message
+             code="globalproperties.cloudfrontkeyid" />
+          </form:label>
+
+          <form:input
+           cssErrorClass="error"
+           path="cloudFrontKeyId" />
+
+          <form:errors
+           path="cloudFrontKeyId"
+           cssClass="error"
+           element="div" />
+        </li>        
+        
+       <li>
+          <form:label
+           cssErrorClass="error"
+           path="cloudFrontKeyPath">
+            <spring:message
+             code="globalproperties.cloudfrontkeypath" />
+          </form:label>
+
+          <form:input
+           cssErrorClass="error"
+           path="cloudFrontKeyPath" />
+
+          <form:errors
+           path="cloudFrontKeyPath"
+           cssClass="error"
+           element="div" />
+        </li>                  
+      </ol>
+    </fieldset>
+  
+  
     <fieldset
      class="button-bar">
       <button

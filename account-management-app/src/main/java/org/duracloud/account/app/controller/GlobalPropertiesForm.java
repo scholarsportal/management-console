@@ -7,6 +7,7 @@
  */
 package org.duracloud.account.app.controller;
 
+import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -23,6 +24,16 @@ public class GlobalPropertiesForm {
 
     @NotNull
     private String duracloudRootUsername;
+    
+    @NotNull
+    private String cloudFrontAccountId;
+
+    @NotNull
+    private String cloudFrontKeyId;
+
+    @NotNull
+    private String cloudFrontKeyPath;
+    
 
     public String getDuracloudRootPassword() {
         return duracloudRootPassword;
@@ -48,4 +59,29 @@ public class GlobalPropertiesForm {
             String instanceNotificationTopicArn) {
         this.instanceNotificationTopicArn = instanceNotificationTopicArn;
     }       
+    
+    public String getCloudFrontAccountId() {
+        return cloudFrontAccountId;
+    }
+
+    public void setCloudFrontAccountId(String cloudFrontAccountId) {
+        this.cloudFrontAccountId = cloudFrontAccountId;
+    }
+
+    public String getCloudFrontKeyId() {
+        return cloudFrontKeyId;
+    }
+
+    public void setCloudFrontKeyId(String cloudFrontKeyId) {
+        this.cloudFrontKeyId = cloudFrontKeyId;
+    }
+
+    public String getCloudFrontKeyPath() {
+        return cloudFrontKeyPath;
+    }
+
+    public void setCloudFrontKeyPath(String cloudFrontKeyPath) {
+        this.cloudFrontKeyPath = cloudFrontKeyPath;
+    }   
+    
 }

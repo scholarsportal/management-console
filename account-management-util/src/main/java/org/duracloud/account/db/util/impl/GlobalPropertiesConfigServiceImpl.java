@@ -46,7 +46,9 @@ public class GlobalPropertiesConfigServiceImpl implements
 
     @Override
     public void set(String instanceNotificationTopicArn,
-            String duracloudRootUsername, String duracloudRootPassword) {
+            String duracloudRootUsername, String duracloudRootPassword,
+            String cloudFrontAccountId, String cloudFrontKeyId,
+            String cloudFrontKeyPath) {
         GlobalProperties gp = get();
         if(null == gp) {
             gp = new GlobalProperties();
@@ -55,8 +57,11 @@ public class GlobalPropertiesConfigServiceImpl implements
         gp.setInstanceNotificationTopicArn(instanceNotificationTopicArn);
         gp.setDuracloudRootUsername(duracloudRootUsername);
         gp.setDuracloudRootPassword(duracloudRootPassword);
+        gp.setCloudFrontAccountId(cloudFrontAccountId);
+        gp.setCloudFrontKeyId(cloudFrontKeyId);
+        gp.setCloudFrontKeyPath(cloudFrontKeyPath);
         
         repo.save(gp);
-   
+        
     }
 }

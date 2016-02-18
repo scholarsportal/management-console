@@ -63,6 +63,9 @@ public class GlobalPropertiesController {
             form.setInstanceNotificationTopicArn(entity.getInstanceNotificationTopicArn());
             form.setDuracloudRootUsername(entity.getDuracloudRootUsername());
             form.setDuracloudRootPassword(entity.getDuracloudRootPassword());
+            form.setCloudFrontAccountId(entity.getCloudFrontAccountId());
+            form.setCloudFrontKeyId(entity.getCloudFrontKeyId());
+            form.setCloudFrontKeyPath(entity.getCloudFrontKeyPath());
             return form;
         }
     }
@@ -86,7 +89,10 @@ public class GlobalPropertiesController {
         this.globalPropertiesConfigService.set(
                 form.getInstanceNotificationTopicArn(),
                 form.getDuracloudRootUsername(),
-                form.getDuracloudRootPassword());
+                form.getDuracloudRootPassword(),
+                form.getCloudFrontAccountId(),
+                form.getCloudFrontKeyId(), 
+                form.getCloudFrontKeyPath());
 
         UserFeedbackUtil.addSuccessFlash("Successfully updated!", redirectAttributes);
         return new ModelAndView(new RedirectView(BASE_MAPPING, true));
