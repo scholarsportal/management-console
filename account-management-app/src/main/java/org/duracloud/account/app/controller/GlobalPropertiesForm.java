@@ -7,8 +7,9 @@
  */
 package org.duracloud.account.app.controller;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * 
@@ -24,14 +25,14 @@ public class GlobalPropertiesForm {
 
     @NotNull
     private String duracloudRootUsername;
-    
-    @NotNull
+
+    @NotBlank(message = "You must specify a CloudFront Account Id")
     private String cloudFrontAccountId;
 
-    @NotNull
+    @NotBlank(message = "You must specify a Cloud Key Id")
     private String cloudFrontKeyId;
 
-    @NotNull
+    @NotBlank(message = "You must specify a CloudFront Key Path")
     private String cloudFrontKeyPath;
     
 
