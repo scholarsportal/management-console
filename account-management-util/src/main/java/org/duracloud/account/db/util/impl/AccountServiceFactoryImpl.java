@@ -7,9 +7,10 @@
  */
 package org.duracloud.account.db.util.impl;
 
-import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.config.AmaEndpoint;
+import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
+import org.duracloud.account.db.util.AccountChangeNotifier;
 import org.duracloud.account.db.util.AccountService;
 import org.duracloud.account.db.util.AccountServiceFactory;
 import org.duracloud.account.db.util.error.AccountNotFoundException;
@@ -19,8 +20,11 @@ import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.common.error.NoUserLoggedInException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 
 /**
  * This class creates security-wrapped instances of AccountService.
@@ -28,6 +32,7 @@ import org.springframework.security.core.Authentication;
  * @author Andrew Woods
  *         Date: 4/7/11
  */
+@Component("accountServiceFactory")
 public class AccountServiceFactoryImpl implements AccountServiceFactory {
 
     private Logger log = LoggerFactory.getLogger(AccountServiceFactoryImpl.class);
@@ -37,17 +42,21 @@ public class AccountServiceFactoryImpl implements AccountServiceFactory {
     private SecurityContextUtil securityContext;
     private AnnotationParser annotationParser;
     private AmaEndpoint amaEndpoint;
-
+    private AccountChangeNotifier accountChangeNotifier; 
+    
+    @Autowired
     public AccountServiceFactoryImpl(DuracloudRepoMgr repoMgr,
-                                     AccessDecisionVoter voter,
+                                     @Qualifier("acctVoter") AccessDecisionVoter voter,
                                      SecurityContextUtil securityContext,
                                      AnnotationParser annotationParser,
-                                     AmaEndpoint amaEndpoint) {
+                                     AmaEndpoint amaEndpoint, 
+                                     AccountChangeNotifier accountChangeNotifier) {
         this.repoMgr = repoMgr;
         this.voter = voter;
         this.securityContext = securityContext;
         this.annotationParser = annotationParser;
         this.amaEndpoint = amaEndpoint;
+        this.accountChangeNotifier = accountChangeNotifier;
     }
 
     @Override
@@ -59,7 +68,8 @@ public class AccountServiceFactoryImpl implements AccountServiceFactory {
 
     @Override
     public AccountService getAccount(AccountInfo acctInfo) {
-        AccountService acctService = new AccountServiceImpl(amaEndpoint, acctInfo,
+        AccountService acctService = new AccountServiceImpl(amaEndpoint, 
+                                                            acctInfo,
                                                             repoMgr);
 
         Authentication authentication = getAuthentication();

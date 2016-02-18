@@ -71,12 +71,6 @@ public interface AccountService {
     public void storeServerDetails(ServerDetails serverDetails);
 
     /**
-     * @param subdomain
-     */
-    @Secured({"role:ROLE_OWNER, scope:SELF_ACCT"})
-    public void storeSubdomain(String subdomain);
-
-    /**
      * This method returns the subdomain associated with this account.
      *
      * @return subdomain

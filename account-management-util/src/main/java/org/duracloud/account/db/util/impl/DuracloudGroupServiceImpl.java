@@ -11,12 +11,15 @@ import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.DuracloudGroup;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
+import org.duracloud.account.db.util.AccountChangeNotifier;
 import org.duracloud.account.db.util.DuracloudGroupService;
 import org.duracloud.account.db.util.error.DuracloudGroupAlreadyExistsException;
 import org.duracloud.account.db.util.error.DuracloudGroupNotFoundException;
 import org.duracloud.account.db.util.error.InvalidGroupNameException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -27,15 +30,20 @@ import java.util.Set;
  * @author Daniel Bernstein
  *         Date: Nov 11, 2011
  */
+@Component("duracloudGroupService")
 public class DuracloudGroupServiceImpl implements DuracloudGroupService {
 
     private Logger log =
         LoggerFactory.getLogger(DuracloudGroupServiceImpl.class);
 
     private DuracloudRepoMgr repoMgr;
+    
+    private AccountChangeNotifier accountChangeNotifier;
 
-    public DuracloudGroupServiceImpl(DuracloudRepoMgr duracloudRepoMgr) {
+    @Autowired
+    public DuracloudGroupServiceImpl(DuracloudRepoMgr duracloudRepoMgr, AccountChangeNotifier accountChangeNotifier) {
         this.repoMgr = duracloudRepoMgr;
+        this.accountChangeNotifier = accountChangeNotifier;
     }
 
     @Override
@@ -117,7 +125,7 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
     }
 
     private void propagateUpdate(Long acctId, DuracloudGroup group) {
-        //TODO notify duracloud of changes.
+        AccountInfo account = this.repoMgr.getAccountRepo().getOne(acctId);
+        this.accountChangeNotifier.userStoreChanged(account.getSubdomain());
     }
-
 }

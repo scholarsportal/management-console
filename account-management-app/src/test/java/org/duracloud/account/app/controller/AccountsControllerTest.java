@@ -96,11 +96,6 @@ public class AccountsControllerTest extends AmaControllerTestBase {
         StorageProviderSettings p = setupForm.getPrimaryStorageProviderSettings();
         p.setUsername(test);
         p.setPassword(test);
-        setupForm.setComputeUsername(test);
-        setupForm.setComputePassword(test);
-        setupForm.setComputeElasticIP(test);
-        setupForm.setComputeKeypair(test);
-        setupForm.setComputeSecurityGroup(test);
         setupNoBindingResultErrors();
         addFlashAttribute();
         replayMocks();

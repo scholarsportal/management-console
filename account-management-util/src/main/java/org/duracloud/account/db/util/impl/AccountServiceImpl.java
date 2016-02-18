@@ -43,7 +43,8 @@ public class AccountServiceImpl implements AccountService {
     /**
      * @param acct
      */
-    public AccountServiceImpl(AmaEndpoint amaEndpoint, AccountInfo acct,
+    public AccountServiceImpl(AmaEndpoint amaEndpoint, 
+                              AccountInfo acct,
                               DuracloudRepoMgr repoMgr) {
         this.amaEndpoint = amaEndpoint;
         this.account = acct;
@@ -179,11 +180,6 @@ public class AccountServiceImpl implements AccountService {
 
         account.setStatus(status);
         repoMgr.getAccountRepo().save(account);
-    }
-
-    @Override
-    public void storeSubdomain(String subdomain) {
-        // TODO Auto-generated method stub
     }
 
     @Override

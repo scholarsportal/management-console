@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
 import org.duracloud.account.db.model.DuracloudGroup;
@@ -24,9 +23,11 @@ import org.duracloud.account.db.repo.DuracloudAccountRepo;
 import org.duracloud.account.db.repo.DuracloudGroupRepo;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.db.repo.DuracloudRightsRepo;
+import org.duracloud.account.db.repo.DuracloudServerDetailsRepo;
 import org.duracloud.account.db.repo.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.repo.DuracloudUserInvitationRepo;
 import org.duracloud.account.db.repo.DuracloudUserRepo;
+import org.duracloud.account.db.util.AccountChangeNotifier;
 import org.duracloud.account.db.util.DuracloudUserService;
 import org.duracloud.account.db.util.RootAccountManagerService;
 import org.duracloud.account.db.util.error.DBNotFoundException;
@@ -34,30 +35,32 @@ import org.duracloud.account.db.util.error.InvalidPasswordException;
 import org.duracloud.account.db.util.error.UnsentEmailException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Andrew Woods
  *         Date: Oct 9, 2010
  */
+@Component("rootAccountManagerService")
 public class RootAccountManagerServiceImpl implements RootAccountManagerService {
 
 	private Logger log = LoggerFactory.getLogger(RootAccountManagerServiceImpl.class);
 
     private DuracloudRepoMgr repoMgr;
     private DuracloudUserService userService;
+    private AccountChangeNotifier accountChangeNotifier; 
+    
+    @Autowired
     public RootAccountManagerServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
-                                         DuracloudUserService userService) {
+                                         DuracloudUserService userService,
+                                         AccountChangeNotifier accountChangeNotifier) {
         this.repoMgr = duracloudRepoMgr;
         this.userService = userService;
+        this.accountChangeNotifier = accountChangeNotifier;
     }
 
-	@Override
-	public void addDuracloudImage(String imageId,
-                                  String version,
-			                      String description) {
-		throw new NotImplementedException("addDuracloudImage not implemented");
-	}
 
 	@Override
 	public void resetUsersPassword(Long userId)
@@ -87,7 +90,7 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         for(AccountRights right : accountRights){
             this.userService.revokeUserRights(right.getAccount().getId(), userId);
         }
-
+        
         // Remove user from all groups
         DuracloudUser user = repoMgr.getUserRepo().findOne(userId);
         DuracloudGroupRepo groupRepo = getGroupRepo();
@@ -102,7 +105,46 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
         // Remove the user
         getUserRepo().delete(userId);
+        
+        notifyUserChange(accountRights);
 	}
+ 
+    private void notifyUserChange(List<AccountRights> accountRights) {
+        for(AccountRights  right : accountRights){
+            try {
+                this.accountChangeNotifier
+                        .userStoreChanged(right.getAccount().getSubdomain());
+            } catch (Exception ex) {
+                log.error("failed to notify of user change: " + ex.getMessage(), ex);
+            }
+        }
+    }
+
+    private void notifyAccountChange(List<AccountRights> accountRights) {
+        for(AccountRights  right : accountRights){
+            try {
+                this.accountChangeNotifier
+                        .accountChanged(right.getAccount().getSubdomain());
+            } catch (Exception ex) {
+                log.error("failed to notify of account change: " + ex.getMessage(), ex);
+            }
+        }
+        
+    }
+
+    private AccountInfo getAccountByStorageProvider(Long providerId) {
+        DuracloudServerDetailsRepo serverDetailsRepo = this.repoMgr.getServerDetailsRepo();
+        ServerDetails details = serverDetailsRepo.findByPrimaryStorageProviderAccountId(providerId);
+        if(details == null){
+            details = serverDetailsRepo.findBySecondaryStorageProviderAccountsId(providerId);
+        }
+
+        return getAccountRepo().findByServerDetailsId(details.getId());
+    }
+    
+    private void notifyStorageProviderChange(String accountId) {
+        this.accountChangeNotifier.storageProvidersChanged(accountId);
+    }
 
     @Override
 	public void deleteAccount(Long accountId) {
@@ -131,6 +173,8 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
         // Delete account
         getAccountRepo().delete(accountId);
+        
+        notifyAccountChange(rightsList);
 	}
 
 
@@ -155,10 +199,10 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         storageProviderAccount.getProperties().putAll(properties);
         storageProviderAccount.setStorageLimit(storageLimit);
         getStorageRepo().save(storageProviderAccount);
+        notifyStorageProviderChange(getAccountByStorageProvider(providerId).getSubdomain());
     }
 
-
-	@Override
+    @Override
 	public AccountInfo getAccount(Long id) {
         return getAccountRepo().findOne(id);
     }
@@ -169,6 +213,7 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         AccountInfo accountInfo = getAccountRepo().findOne(accountId);
         accountInfo.setStatus(AccountInfo.AccountStatus.ACTIVE);
         getAccountRepo().save(accountInfo);
+        this.accountChangeNotifier.accountChanged(accountInfo.getSubdomain());
     }
 
 	@Override

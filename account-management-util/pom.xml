@@ -66,6 +66,12 @@
 
         <dependency>
             <groupId>org.duracloud</groupId>
+            <artifactId>common-json</artifactId>
+            <version>${duracloud.artifact.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.duracloud</groupId>
             <artifactId>security</artifactId>
             <version>${duracloud.artifact.version}</version>
             <scope>compile</scope>

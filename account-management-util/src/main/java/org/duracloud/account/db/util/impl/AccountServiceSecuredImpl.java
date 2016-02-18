@@ -107,12 +107,6 @@ public class AccountServiceSecuredImpl implements AccountService {
     }
 
     @Override
-    public void storeSubdomain(String subdomain) {
-        throwIfAccessDenied(subdomain);
-        accountService.storeSubdomain(subdomain);
-    }
-
-    @Override
     public String getSubdomain() {
         throwIfAccessDenied();
         return accountService.getSubdomain();

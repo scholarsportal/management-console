@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
-import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.model.DuracloudGroup;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.Role;
@@ -25,6 +25,7 @@ import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.db.repo.DuracloudRightsRepo;
 import org.duracloud.account.db.repo.DuracloudUserInvitationRepo;
 import org.duracloud.account.db.repo.DuracloudUserRepo;
+import org.duracloud.account.db.util.AccountChangeNotifier;
 import org.duracloud.account.db.util.DuracloudUserService;
 import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.duracloud.account.db.util.error.InvalidPasswordException;
@@ -40,14 +41,17 @@ import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.ChecksumUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Andrew Woods
  *         Date: Oct 9, 2010
  */
+@Component("duracloudUserService")
 public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetailsService {
     
 	private Logger log = LoggerFactory.getLogger(DuracloudUserServiceImpl.class);
@@ -56,13 +60,17 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     private NotificationMgr notificationMgr;
     private Notifier notifier;
     private AmaEndpoint amaEndpoint;
+    private AccountChangeNotifier accountChangeNotifier;
     
+    @Autowired
     public DuracloudUserServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
                                     NotificationMgr notificationMgr,
-                                    AmaEndpoint amaEndpoint) {
+                                    AmaEndpoint amaEndpoint, 
+                                    AccountChangeNotifier accountChangeNotifier) {
         this.repoMgr = duracloudRepoMgr;
         this.notificationMgr = notificationMgr;
         this.amaEndpoint = amaEndpoint;
+        this.accountChangeNotifier = accountChangeNotifier;
     }
 
     @Override
@@ -134,6 +142,11 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
         log.info("New user created with username {}", username);
         getNotifier().sendNotificationCreateNewUser(user);
+        
+        if(user.isRoot()){
+            this.accountChangeNotifier.rootUsersChanged();
+        }
+
         return user;
     }
 
@@ -154,9 +167,15 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
         boolean result = doSetUserRights(acctId, userId, roleSet);
         if(result) {
-            //TODO notify instances of user changes.
+            notifyAccountChanged(acctId);
         }
         return result;
+    }
+
+    private void notifyAccountChanged(Long acctId) {
+        AccountInfo account = this.repoMgr.getAccountRepo().getOne(acctId);
+        String accountId = account.getSubdomain();
+        this.accountChangeNotifier.accountChanged(accountId);
     }
 
     private boolean doSetUserRights(Long acctId, Long userId, Set<Role> roles) {
@@ -215,6 +234,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         } else {
             rights.setRoles(roles);
         }
+        
         repoMgr.getRightsRepo().save(rights);
     }
 
@@ -224,8 +244,6 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
         doRevokeUserRights(acctId, userId);
         removeUserFromAccountGroups(acctId, userId);
-        //TODO notify instances of user changes.
-
     }
 
     private void doRevokeUserRights(Long acctId, Long userId) {
@@ -320,8 +338,11 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
                     repoMgr.getRightsRepo().findByUserId(userId);
 
             for(AccountRights rights : rightsList) {
-                //TODO notify instances of user changes.
+                this.accountChangeNotifier
+                        .userStoreChanged(rights.getAccount().getSubdomain());
             }
+        }else{
+            this.accountChangeNotifier.rootUsersChanged();
         }
     }
 

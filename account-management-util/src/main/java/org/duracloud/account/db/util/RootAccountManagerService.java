@@ -41,16 +41,6 @@ public interface RootAccountManagerService {
     @Secured({"role:ROLE_ROOT, scope:ANY"})
     public Set<DuracloudUser> listAllUsers(String filter);
 
-    /**
-     * 
-     * @param imageId
-     * @param version
-     * @param description
-     */
-    @Secured({"role:ROLE_ROOT, scope:ANY"})
-    public void addDuracloudImage(String imageId,
-                                  String version,
-                                  String description);
 
     /**
      * Delete a user from the system

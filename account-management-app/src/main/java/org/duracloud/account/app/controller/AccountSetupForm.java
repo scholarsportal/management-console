@@ -27,22 +27,6 @@ public class AccountSetupForm {
     @Valid
     private List<StorageProviderSettings> secondaryStorageProviderSettingsList;
 
-    private boolean computeCredentialsSame;
-
-    @NotBlank(message = "Compute account's username is required")
-    private String computeUsername;
-
-    @NotBlank(message = "Compute account's password is required")
-    private String computePassword;
-
-    @NotBlank(message = "Elastic IP is required")
-    private String computeElasticIP;
-
-    @NotBlank(message = "Keypair is required")
-    private String computeKeypair;
-
-    @NotBlank(message = "Security group is required")
-    private String computeSecurityGroup;
 
     public AccountSetupForm(StorageProviderAccount primary,
             List<StorageProviderAccount> secondaryList) {
@@ -69,53 +53,6 @@ public class AccountSetupForm {
 
     }
 
-    public boolean isComputeCredentialsSame() {
-        return computeCredentialsSame;
-    }
-
-    public void setComputeCredentialsSame(boolean computeCredentialsSame) {
-        this.computeCredentialsSame = computeCredentialsSame;
-    }
-
-    public String getComputeUsername() {
-        return computeUsername;
-    }
-
-    public void setComputeUsername(String computeUsername) {
-        this.computeUsername = computeUsername;
-    }
-
-    public String getComputePassword() {
-        return computePassword;
-    }
-
-    public void setComputePassword(String computePassword) {
-        this.computePassword = computePassword;
-    }
-
-    public String getComputeElasticIP() {
-        return computeElasticIP;
-    }
-
-    public void setComputeElasticIP(String computeElasticIP) {
-        this.computeElasticIP = computeElasticIP;
-    }
-
-    public String getComputeKeypair() {
-        return computeKeypair;
-    }
-
-    public void setComputeKeypair(String computeKeypair) {
-        this.computeKeypair = computeKeypair;
-    }
-
-    public String getComputeSecurityGroup() {
-        return computeSecurityGroup;
-    }
-
-    public void setComputeSecurityGroup(String computeSecurityGroup) {
-        this.computeSecurityGroup = computeSecurityGroup;
-    }
 
     public StorageProviderSettings getPrimaryStorageProviderSettings() {
         return primaryStorageProviderSettings;

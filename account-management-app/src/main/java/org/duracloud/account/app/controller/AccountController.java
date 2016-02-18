@@ -34,7 +34,6 @@ import org.springframework.web.servlet.view.RedirectView;
 public class AccountController extends AbstractAccountController {
 
     public static final String NEW_ACCOUNT_FORM_KEY = "newAccountForm";
-    public static final String NEW_INSTANCE_FORM = "instanceForm";
 
     @Autowired
     private AuthenticationManager authenticationManager;
