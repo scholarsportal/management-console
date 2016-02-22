@@ -7,16 +7,16 @@
  */
 package org.duracloud.account.db.util;
 
+import java.util.List;
+import java.util.Set;
+
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.DuracloudUser;
-import org.duracloud.account.db.model.ServerDetails;
 import org.duracloud.account.db.model.StorageProviderAccount;
 import org.duracloud.account.db.model.UserInvitation;
 import org.duracloud.notification.Emailer;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.security.access.annotation.Secured;
-
-import java.util.Set;
 
 /**
  * An interface for manipulating account data.
@@ -54,21 +54,6 @@ public interface AccountService {
      */
     @Secured({"role:ROLE_OWNER, scope:SELF_ACCT"})
     public void storeAccountStatus(AccountInfo.AccountStatus status);
-
-    /**
-     * Retrieves ServerDetails if they are available (if this account type
-     * makes user of ServerDetails).
-     *
-     * @return ServerDetails if available, otherwise null
-     */
-    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
-    public ServerDetails retrieveServerDetails();
-
-    /**
-     * @param serverDetails
-     */
-    @Secured({"role:ROLE_OWNER, scope:SELF_ACCT"})
-    public void storeServerDetails(ServerDetails serverDetails);
 
     /**
      * This method returns the subdomain associated with this account.

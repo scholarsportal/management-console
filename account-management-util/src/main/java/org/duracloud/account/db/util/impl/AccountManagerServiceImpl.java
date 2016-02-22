@@ -15,7 +15,6 @@ import java.util.Set;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
 import org.duracloud.account.db.model.DuracloudUser;
-import org.duracloud.account.db.model.ServerDetails;
 import org.duracloud.account.db.model.StorageProviderAccount;
 import org.duracloud.account.db.model.util.AccountCreationInfo;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
@@ -78,7 +77,6 @@ public class AccountManagerServiceImpl implements AccountManagerService {
             throw new SubdomainAlreadyExistsException();
         }
 
-        ServerDetails serverDetails = null;
         AccountInfo.AccountStatus status = AccountInfo.AccountStatus.ACTIVE;
 
         status = AccountInfo.AccountStatus.PENDING;
@@ -99,23 +97,17 @@ public class AccountManagerServiceImpl implements AccountManagerService {
             secondaryStorageProviderAccounts.add(storageProviderAccount);
         }
 
-        
-        serverDetails = new ServerDetails();
-        serverDetails.setPrimaryStorageProviderAccount(primaryStorageProviderAccount);
-        serverDetails.setSecondaryStorageProviderAccounts(secondaryStorageProviderAccounts);
-
-        repoMgr.getServerDetailsRepo().save(serverDetails);
-
         AccountInfo accountInfo = new AccountInfo();
+
+        accountInfo.setPrimaryStorageProviderAccount(primaryStorageProviderAccount);
+        accountInfo.setSecondaryStorageProviderAccounts(secondaryStorageProviderAccounts);
+
         accountInfo.setSubdomain(accountCreationInfo.getSubdomain());
         accountInfo.setAcctName(accountCreationInfo.getAcctName());
         accountInfo.setOrgName(accountCreationInfo.getOrgName());
         accountInfo.setDepartment(accountCreationInfo.getDepartment());
-        accountInfo.setServerDetails(serverDetails);
         accountInfo.setStatus(status);
-
         accountInfo = repoMgr.getAccountRepo().save(accountInfo);
-
         return accountServiceFactory.getAccount(accountInfo);
     }
 
@@ -128,7 +120,7 @@ public class AccountManagerServiceImpl implements AccountManagerService {
     @Override
     public Set<AccountInfo> findAccountsByUserId(Long userId) {
         
-        DuracloudUser user = repoMgr.getUserRepo().findOne(userId);
+        DuracloudUser user = repoMgr.getUserRepo().getOne(userId);
         if(user.isRoot()){
             return new HashSet<>(repoMgr.getAccountRepo().findAll());
         }else{

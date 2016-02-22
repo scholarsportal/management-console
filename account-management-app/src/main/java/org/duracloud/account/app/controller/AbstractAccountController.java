@@ -42,7 +42,6 @@ public abstract class AbstractAccountController extends AbstractController {
     public static final String EDIT_PATH = "/edit";
     public static final String STATEMENT_PATH =  ACCOUNT_PATH + "/statement";
     public static final String ACCOUNT_INFO_KEY = "accountInfo";
-    public static final String SERVER_DETAILS_KEY = "serverDetails";
     public static final String DC_VERSIONS_KEY = "dcVersions";
     public static final String ACTION_STATUS = "actionStatus";
 
@@ -71,10 +70,8 @@ public abstract class AbstractAccountController extends AbstractController {
         this.userService = userService;
     }
 
-    protected void addAccountInfoToModel(AccountInfo info,
-                                         ServerDetails serverDetails, Model model){
+    protected void addAccountInfoToModel(AccountInfo info, Model model){
         model.addAttribute(ACCOUNT_INFO_KEY, info);
-        model.addAttribute(SERVER_DETAILS_KEY, serverDetails);
     }
 
     protected void addAccountOwnersToModel(List<DuracloudUser> owners, Model model)
@@ -98,8 +95,7 @@ public abstract class AbstractAccountController extends AbstractController {
     protected AccountInfo loadAccountInfo(AccountService accountService,
                                           Model model) {
         AccountInfo accountInfo = accountService.retrieveAccountInfo();
-        ServerDetails serverDetails = accountInfo.getServerDetails();
-        addAccountInfoToModel(accountInfo, serverDetails, model);
+        addAccountInfoToModel(accountInfo, model);
         return accountInfo;
     }
 

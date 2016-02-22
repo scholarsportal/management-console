@@ -17,13 +17,11 @@ import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
 import org.duracloud.account.db.model.DuracloudGroup;
 import org.duracloud.account.db.model.DuracloudUser;
-import org.duracloud.account.db.model.ServerDetails;
 import org.duracloud.account.db.model.StorageProviderAccount;
 import org.duracloud.account.db.repo.DuracloudAccountRepo;
 import org.duracloud.account.db.repo.DuracloudGroupRepo;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.db.repo.DuracloudRightsRepo;
-import org.duracloud.account.db.repo.DuracloudServerDetailsRepo;
 import org.duracloud.account.db.repo.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.repo.DuracloudUserInvitationRepo;
 import org.duracloud.account.db.repo.DuracloudUserRepo;
@@ -133,13 +131,13 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
     }
 
     private AccountInfo getAccountByStorageProvider(Long providerId) {
-        DuracloudServerDetailsRepo serverDetailsRepo = this.repoMgr.getServerDetailsRepo();
-        ServerDetails details = serverDetailsRepo.findByPrimaryStorageProviderAccountId(providerId);
-        if(details == null){
-            details = serverDetailsRepo.findBySecondaryStorageProviderAccountsId(providerId);
+        DuracloudAccountRepo accountRepo = this.repoMgr.getAccountRepo();
+        AccountInfo account = accountRepo.findByPrimaryStorageProviderAccountId(providerId);
+        if(account == null){
+            account = accountRepo.findBySecondaryStorageProviderAccountsId(providerId);
         }
 
-        return getAccountRepo().findByServerDetailsId(details.getId());
+        return account;
     }
     
     private void notifyStorageProviderChange(String accountId) {
@@ -181,8 +179,7 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
     @Override
     public List<StorageProviderAccount> getSecondaryStorageProviders(Long accountId) {
         AccountInfo account = repoMgr.getAccountRepo().findOne(accountId);
-        ServerDetails serverDetails = account.getServerDetails();
-        return new ArrayList(serverDetails.getSecondaryStorageProviderAccounts());
+        return new ArrayList(account.getSecondaryStorageProviderAccounts());
     }
 
 	@Override

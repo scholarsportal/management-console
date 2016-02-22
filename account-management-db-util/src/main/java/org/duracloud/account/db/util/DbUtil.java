@@ -20,7 +20,6 @@ import org.duracloud.account.db.model.BaseEntity;
 import org.duracloud.account.db.model.DuracloudGroup;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.Role;
-import org.duracloud.account.db.model.ServerDetails;
 import org.duracloud.account.db.model.StorageProviderAccount;
 import org.duracloud.account.db.model.UserInvitation;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
@@ -100,8 +99,8 @@ public class DbUtil {
 
                 // Entities with relationship need to have their related
                 // entities looked up and then set to save properly.
-                if (entity instanceof ServerDetails) {
-                    ServerDetails sd = (ServerDetails) entity;
+                if (entity instanceof AccountInfo) {
+                    AccountInfo sd = (AccountInfo) entity;
                     sd.setPrimaryStorageProviderAccount(repoMgr
                             .getStorageProviderAccountRepo().findOne(
                                     sd.getPrimaryStorageProviderAccount()
@@ -177,8 +176,6 @@ public class DbUtil {
             repo = repoMgr.getStorageProviderAccountRepo();
         } else if(item instanceof DuracloudGroup) {
             repo = repoMgr.getGroupRepo();
-        } else if (item instanceof ServerDetails) {
-            repo = repoMgr.getServerDetailsRepo();
         } else {
             throw new RuntimeException("Item is not a known type: "
                     + item.getClass().getName());
@@ -197,7 +194,6 @@ public class DbUtil {
         xstream.alias(DuracloudGroup.class.getSimpleName(),
                 DuracloudGroup.class);
         xstream.alias(AccountInfo.class.getSimpleName(), AccountInfo.class);
-        xstream.alias(ServerDetails.class.getSimpleName(), ServerDetails.class);
         xstream.alias(AccountRights.class.getSimpleName(), AccountRights.class);
         xstream.alias(UserInvitation.class.getSimpleName(),
                 UserInvitation.class);
