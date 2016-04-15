@@ -17,4 +17,6 @@ alter table account_info drop foreign key `<server_details_foreign_key>`;
 drop index `<server_details_foreign_key>` on account_info;
 alter table account_info drop column server_details_id;
 
+drop table server_details;
+
  SET FOREIGN_KEY_CHECKS=1;
