@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.duracloud</groupId>
   <artifactId>duracloud-mc</artifactId>
@@ -19,12 +20,6 @@
     <developer>
       <name>Branan, Bill</name>
       <email>bbranan@duraspace.org</email>
-      <organization>DuraSpace</organization>
-    </developer>
-
-    <developer>
-      <name>Woods, Andrew</name>
-      <email>awoods@duraspace.org</email>
       <organization>DuraSpace</organization>
     </developer>
 
@@ -74,23 +69,23 @@
       <build>
         <plugins>
           <plugin>
-              <groupId>org.apache.tomcat.maven</groupId>
-              <artifactId>tomcat7-maven-plugin</artifactId>
-              <version>2.2</version>
-              <executions>
-                  <execution>
-                      <id>tomcat-deploy</id>
-                      <phase>pre-integration-test</phase>
-                      <goals>
-                          <goal>deploy-only</goal>
-                      </goals>
-                      <configuration>
-                          <server>tomcat-server</server>
-                          <url>http://localhost:${tomcat.port}/manager/text</url>
-                          <update>true</update>
-                      </configuration>
-                  </execution>
-              </executions>
+            <groupId>org.apache.tomcat.maven</groupId>
+            <artifactId>tomcat7-maven-plugin</artifactId>
+            <version>2.2</version>
+            <executions>
+              <execution>
+                <id>tomcat-deploy</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>deploy-only</goal>
+                </goals>
+                <configuration>
+                  <server>tomcat-server</server>
+                  <url>http://localhost:${tomcat.port}/manager/text</url>
+                  <update>true</update>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>
@@ -111,7 +106,7 @@
         <tomcat.port>${tomcat.port.default}</tomcat.port>
         <database.home>${database.home.default}</database.home>
       </properties>
-      
+
       <build>
         <plugins>
           <plugin>
@@ -213,10 +208,11 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <duracloud.artifact.version>4.0.0-SNAPSHOT</duracloud.artifact.version>
-    <duracloud.db.version>3.7.0-SNAPSHOT</duracloud.db.version>
-    <org.springframework.version>4.0.5.RELEASE</org.springframework.version>
-    <org.springframework.security.version>3.2.3.RELEASE</org.springframework.security.version>
-    <org.springframework.webflow.version>2.3.3.RELEASE</org.springframework.webflow.version>
+    <aws.version>1.10.69</aws.version>
+    <duracloud.db.version>4.0.0-SNAPSHOT</duracloud.db.version>
+    <org.springframework.version>4.2.5.RELEASE</org.springframework.version>
+    <org.springframework.security.version>4.0.4.RELEASE</org.springframework.security.version>
+    <org.springframework.webflow.version>2.4.2.RELEASE</org.springframework.webflow.version>
     <org.springframework.data.jpa.version>1.6.0.RELEASE</org.springframework.data.jpa.version>
     <slf4j.version>1.7.6</slf4j.version>
   </properties>
@@ -264,7 +260,7 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
-    
+
   </repositories>
 
   <scm>
@@ -287,7 +283,7 @@
         <filtering>true</filtering>
       </testResource>
     </testResources>
-  
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -308,7 +304,7 @@
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
@@ -346,7 +342,7 @@
         <version>2.3.4</version>
         <extensions>true</extensions>
 
-        <executions> 
+        <executions>
           <execution>
             <id>bundle-manifest</id>
             <phase>process-classes</phase>
@@ -388,28 +384,28 @@
           </execution>
         </executions>
       </plugin>
-      
+
       <plugin>
-          <groupId>com.google.code.maven-svn-revision-number-plugin
+        <groupId>com.google.code.maven-svn-revision-number-plugin
           </groupId>
-          <artifactId>maven-svn-revision-number-plugin</artifactId>
-          <version>1.5</version>
-          <executions>
-              <execution>
-                  <goals>
-                      <goal>revision</goal>
-                  </goals>
-              </execution>
-          </executions>
-          <configuration>
-              <entries>
-                  <entry>
-                      <prefix>prefix</prefix>
-                  </entry>
-              </entries>
-          </configuration>
-      </plugin>      
-      
+        <artifactId>maven-svn-revision-number-plugin</artifactId>
+        <version>1.5</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>revision</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <entries>
+            <entry>
+              <prefix>prefix</prefix>
+            </entry>
+          </entries>
+        </configuration>
+      </plugin>
+
     </plugins>
 
     <pluginManagement>
@@ -428,16 +424,16 @@
         </plugin>
 
         <plugin>
-           <groupId>org.apache.maven.plugins</groupId>
-           <artifactId>maven-shade-plugin</artifactId>
-           <version>2.3</version>
-         </plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>2.3</version>
+        </plugin>
 
         <plugin>
-           <groupId>org.codehaus.mojo</groupId>
-            <artifactId>selenium-maven-plugin</artifactId>
-           <version>2.2</version>
-         </plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>selenium-maven-plugin</artifactId>
+          <version>2.2</version>
+        </plugin>
 
       </plugins>
     </pluginManagement>
@@ -459,10 +455,56 @@
         <artifactId>account-management-db-repo</artifactId>
         <version>${duracloud.db.version}</version>
       </dependency>
-      
+
       <dependency>
         <groupId>org.duracloud</groupId>
         <artifactId>storageprovider</artifactId>
+        <version>${duracloud.artifact.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.duracloud</groupId>
+        <artifactId>common-event</artifactId>
+        <version>${duracloud.artifact.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.duracloud</groupId>
+        <artifactId>common</artifactId>
+        <version>${duracloud.artifact.version}</version>
+      </dependency>
+
+
+      <dependency>
+        <groupId>org.duracloud</groupId>
+        <artifactId>notification</artifactId>
+        <version>${duracloud.artifact.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.duracloud</groupId>
+        <artifactId>notification-amazon</artifactId>
+        <version>${duracloud.artifact.version}</version>
+      </dependency>
+
+
+      <dependency>
+        <groupId>org.duracloud</groupId>
+        <artifactId>storeclient</artifactId>
+        <version>${duracloud.artifact.version}</version>
+      </dependency>
+
+
+      <dependency>
+        <groupId>org.duracloud</groupId>
+        <artifactId>common-json</artifactId>
+        <version>${duracloud.artifact.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.duracloud</groupId>
+        <artifactId>security</artifactId>
+        <scope>compile</scope>
         <version>${duracloud.artifact.version}</version>
       </dependency>
 
@@ -522,10 +564,10 @@
       </dependency>
 
       <dependency>
-          <groupId>javax.servlet.jsp</groupId>
-          <artifactId>jsp-api</artifactId>
-          <version>2.1</version>
-          <scope>provided</scope>
+        <groupId>javax.servlet.jsp</groupId>
+        <artifactId>jsp-api</artifactId>
+        <version>2.1</version>
+        <scope>provided</scope>
       </dependency>
 
       <dependency>
@@ -609,7 +651,7 @@
         <artifactId>jersey-server</artifactId>
         <version>1.0.1</version>
       </dependency>
-      
+
       <dependency>
         <groupId>com.sun.jersey.contribs</groupId>
         <artifactId>jersey-spring</artifactId>
@@ -639,7 +681,7 @@
         <artifactId>xmlbeans</artifactId>
         <version>2.3.0</version>
       </dependency>
-      
+
       <dependency>
         <groupId>commons-cli</groupId>
         <artifactId>commons-cli</artifactId>
@@ -672,8 +714,8 @@
 
       <dependency>
         <groupId>com.amazonaws</groupId>
-        <artifactId>aws-java-sdk</artifactId>
-        <version>1.9.22</version>
+        <artifactId>aws-java-sdk-sns</artifactId>
+        <version>${aws.version}</version>
         <exclusions>
           <exclusion>
             <groupId>commons-logging</groupId>
@@ -702,168 +744,168 @@
         </exclusions>
       </dependency>
 
-    <!-- Spring framework -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-      <version>${org.springframework.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+      <!-- Spring framework -->
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-core</artifactId>
+        <version>${org.springframework.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
 
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-beans</artifactId>
-      <version>${org.springframework.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-beans</artifactId>
+        <version>${org.springframework.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
 
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-aop</artifactId>
-      <version>${org.springframework.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-aop</artifactId>
+        <version>${org.springframework.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
 
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-tx</artifactId>
-      <version>${org.springframework.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-tx</artifactId>
+        <version>${org.springframework.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
 
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-jdbc</artifactId>
-      <version>${org.springframework.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-jdbc</artifactId>
+        <version>${org.springframework.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
 
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-orm</artifactId>
-      <version>${org.springframework.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-orm</artifactId>
+        <version>${org.springframework.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
 
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-web</artifactId>
-      <version>${org.springframework.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-webmvc</artifactId>
-      <version>${org.springframework.version}</version>
-    </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-web</artifactId>
+        <version>${org.springframework.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-webmvc</artifactId>
+        <version>${org.springframework.version}</version>
+      </dependency>
 
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.aop</artifactId>
-      <version>${org.springframework.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-expression</artifactId>
-      <version>${org.springframework.version}</version>
-    </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>org.springframework.aop</artifactId>
+        <version>${org.springframework.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-expression</artifactId>
+        <version>${org.springframework.version}</version>
+      </dependency>
 
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.test</artifactId>
-      <version>${org.springframework.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.webflow</groupId>
-      <artifactId>spring-webflow</artifactId>
-      <version>${org.springframework.webflow.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>org.springframework.test</artifactId>
+        <version>${org.springframework.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.webflow</groupId>
+        <artifactId>spring-webflow</artifactId>
+        <version>${org.springframework.webflow.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
 
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-core</artifactId>
-      <version>${org.springframework.security.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-core</artifactId>
+        <version>${org.springframework.security.version}</version>
+        <scope>compile</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
 
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-taglibs</artifactId>
-      <version>${org.springframework.security.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-web</artifactId>
-      <version>${org.springframework.security.version}</version>
-      <scope>compile</scope>
-    </dependency>
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-taglibs</artifactId>
+        <version>${org.springframework.security.version}</version>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-web</artifactId>
+        <version>${org.springframework.security.version}</version>
+        <scope>compile</scope>
+      </dependency>
 
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-config</artifactId>
-      <version>${org.springframework.security.version}</version>
-      <scope>compile</scope>
-    </dependency>
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-config</artifactId>
+        <version>${org.springframework.security.version}</version>
+        <scope>compile</scope>
+      </dependency>
 
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-      <version>${org.springframework.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-     </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>${org.springframework.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
 
-     <dependency>
-       <groupId>org.springframework.data</groupId>
-       <artifactId>spring-data-jpa</artifactId>
-       <version>${org.springframework.data.jpa.version}</version>
-     </dependency>
+      <dependency>
+        <groupId>org.springframework.data</groupId>
+        <artifactId>spring-data-jpa</artifactId>
+        <version>${org.springframework.data.jpa.version}</version>
+      </dependency>
 
     </dependencies>
   </dependencyManagement>

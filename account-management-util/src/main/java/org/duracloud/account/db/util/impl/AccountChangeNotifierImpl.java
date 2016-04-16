@@ -7,8 +7,8 @@
  */
 package org.duracloud.account.db.util.impl;
 
-import org.duracloud.account.db.model.AccountChangeEvent;
-import org.duracloud.account.db.model.AccountChangeEvent.EventType;
+import org.duracloud.common.event.AccountChangeEvent;
+import org.duracloud.common.event.AccountChangeEvent.EventType;
 import org.duracloud.account.db.model.GlobalProperties;
 import org.duracloud.account.db.util.AccountChangeNotifier;
 import org.duracloud.account.db.util.GlobalPropertiesConfigService;

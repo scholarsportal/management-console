@@ -55,25 +55,6 @@ public abstract class AbstractIntegrationTest {
         return port;
     }
 
-    @BeforeClass
-    public static void initializeAma() throws Exception {
-        String initUrl =
-            "http://localhost:" + AMATestConfig.getPort() + "/ama/init";
-        File credentialsFile = AMATestConfig.getCredentialsFile();
-        log.info("attempting to initialize ama: url={}; credentialsFile={}",
-                 initUrl,
-                 credentialsFile.getAbsolutePath());
-
-        RestHttpHelper rest = new RestHttpHelper(new InitUserCredential());
-        HttpResponse response =
-            rest.post(initUrl,
-                      new FileInputStream(credentialsFile),
-                      credentialsFile.length() + "",
-                      "text/xml",
-                      null);
-        Assert.assertEquals(200, response.getStatusCode());
-    }
-
     @Before
     public void before() throws Exception {
         String url = createAppUrl();
