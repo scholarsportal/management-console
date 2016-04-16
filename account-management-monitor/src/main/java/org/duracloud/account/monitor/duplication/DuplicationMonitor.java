@@ -7,11 +7,16 @@
  */
 package org.duracloud.account.monitor.duplication;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.duracloud.account.db.model.AccountInfo;
-import org.duracloud.account.db.model.DuracloudInstance;
 import org.duracloud.account.db.repo.DuracloudAccountRepo;
-import org.duracloud.account.db.repo.DuracloudInstanceRepo;
-import org.duracloud.account.db.repo.DuracloudServerImageRepo;
+import org.duracloud.account.db.util.GlobalPropertiesConfigService;
 import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.duracloud.account.monitor.common.BaseMonitor;
 import org.duracloud.account.monitor.duplication.domain.DuplicationInfo;
@@ -23,13 +28,6 @@ import org.duracloud.common.model.Credential;
 import org.duracloud.error.ContentStoreException;
 import org.duracloud.storage.util.StorageProviderUtil;
 import org.slf4j.LoggerFactory;
-
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This class manages the actual monitoring of content duplication across
@@ -47,13 +45,13 @@ public class DuplicationMonitor extends BaseMonitor {
         Arrays.asList("x-duracloud-admin", "x-service-out");
 
     private Map<String, String> dupHosts;
-
+    
+    
     public DuplicationMonitor(DuracloudAccountRepo acctRepo,
-                              DuracloudInstanceRepo instanceRepo,
-                              DuracloudServerImageRepo imageRepo,
+                              GlobalPropertiesConfigService configService,
                               Map<String, String> dupHosts) {
         this.log = LoggerFactory.getLogger(DuplicationMonitor.class);
-        super.init(acctRepo, instanceRepo, imageRepo);
+        super.init(acctRepo, configService);
         this.dupHosts = dupHosts;
     }
 
@@ -118,15 +116,7 @@ public class DuplicationMonitor extends BaseMonitor {
         ContentStoreManager storeManager =
             new ContentStoreManagerImpl(host, PORT, CONTEXT);
         AccountInfo account = getAccount(host);
-        DuracloudInstance instance = account.getInstance();
-        if(instance == null){
-            String errorMessage =
-                MessageFormat.format("There is no instance associated with " +
-                                     "account host ({0}): account id = {1}",
-                                     host, account.getId());
-            throw new DBNotFoundException(errorMessage);
-        }
-        Credential credential = getRootCredential(instance);
+        Credential credential = getRootCredential();
         storeManager.login(credential);
         return storeManager;
     }

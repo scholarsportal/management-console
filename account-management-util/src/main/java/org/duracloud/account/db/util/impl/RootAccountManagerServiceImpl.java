@@ -13,74 +13,52 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.NotImplementedException;
-import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
-import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.DuracloudGroup;
 import org.duracloud.account.db.model.DuracloudUser;
-import org.duracloud.account.db.model.ServerDetails;
-import org.duracloud.account.db.model.ServerImage;
 import org.duracloud.account.db.model.StorageProviderAccount;
 import org.duracloud.account.db.repo.DuracloudAccountRepo;
 import org.duracloud.account.db.repo.DuracloudGroupRepo;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.db.repo.DuracloudRightsRepo;
-import org.duracloud.account.db.repo.DuracloudServerImageRepo;
 import org.duracloud.account.db.repo.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.repo.DuracloudUserInvitationRepo;
 import org.duracloud.account.db.repo.DuracloudUserRepo;
-import org.duracloud.account.db.util.DuracloudInstanceManagerService;
-import org.duracloud.account.db.util.DuracloudInstanceService;
+import org.duracloud.account.db.util.AccountChangeNotifier;
 import org.duracloud.account.db.util.DuracloudUserService;
 import org.duracloud.account.db.util.RootAccountManagerService;
 import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.duracloud.account.db.util.error.InvalidPasswordException;
 import org.duracloud.account.db.util.error.UnsentEmailException;
-import org.duracloud.account.db.util.notification.NotificationMgr;
-import org.duracloud.account.db.util.notification.Notifier;
-import org.duracloud.account.db.util.usermgmt.UserDetailsPropagator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Andrew Woods
  *         Date: Oct 9, 2010
  */
+@Component("rootAccountManagerService")
 public class RootAccountManagerServiceImpl implements RootAccountManagerService {
 
 	private Logger log = LoggerFactory.getLogger(RootAccountManagerServiceImpl.class);
 
     private DuracloudRepoMgr repoMgr;
-    private UserDetailsPropagator propagator;
-    private NotificationMgr notificationMgr;
-    private Notifier notifier;
-    private DuracloudInstanceManagerService instanceManagerService;
     private DuracloudUserService userService;
-    private AmaEndpoint amaEndpoint;
+    private AccountChangeNotifier accountChangeNotifier; 
+    
+    @Autowired
     public RootAccountManagerServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
-                                         NotificationMgr notificationMgr,
-                                         UserDetailsPropagator propagator,
-                                         DuracloudInstanceManagerService instanceManagerService,
                                          DuracloudUserService userService,
-                                         AmaEndpoint amaEndpoint) {
+                                         AccountChangeNotifier accountChangeNotifier) {
         this.repoMgr = duracloudRepoMgr;
-        this.notificationMgr = notificationMgr;
-        this.propagator = propagator;
-        this.instanceManagerService = instanceManagerService;
         this.userService = userService;
-        this.amaEndpoint = amaEndpoint;
+        this.accountChangeNotifier = accountChangeNotifier;
     }
 
-	@Override
-	public void addDuracloudImage(String imageId,
-                                  String version,
-			                      String description) {
-		throw new NotImplementedException("addDuracloudImage not implemented");
-	}
 
 	@Override
 	public void resetUsersPassword(Long userId)
@@ -110,7 +88,7 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         for(AccountRights right : accountRights){
             this.userService.revokeUserRights(right.getAccount().getId(), userId);
         }
-
+        
         // Remove user from all groups
         DuracloudUser user = repoMgr.getUserRepo().findOne(userId);
         DuracloudGroupRepo groupRepo = getGroupRepo();
@@ -125,21 +103,50 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
         // Remove the user
         getUserRepo().delete(userId);
+        
+        notifyUserChange(accountRights);
 	}
+ 
+    private void notifyUserChange(List<AccountRights> accountRights) {
+        for(AccountRights  right : accountRights){
+            try {
+                this.accountChangeNotifier
+                        .userStoreChanged(right.getAccount().getSubdomain());
+            } catch (Exception ex) {
+                log.error("failed to notify of user change: " + ex.getMessage(), ex);
+            }
+        }
+    }
+
+    private void notifyAccountChange(List<AccountRights> accountRights) {
+        for(AccountRights  right : accountRights){
+            try {
+                this.accountChangeNotifier
+                        .accountChanged(right.getAccount().getSubdomain());
+            } catch (Exception ex) {
+                log.error("failed to notify of account change: " + ex.getMessage(), ex);
+            }
+        }
+        
+    }
+
+    private AccountInfo getAccountByStorageProvider(Long providerId) {
+        DuracloudAccountRepo accountRepo = this.repoMgr.getAccountRepo();
+        AccountInfo account = accountRepo.findByPrimaryStorageProviderAccountId(providerId);
+        if(account == null){
+            account = accountRepo.findBySecondaryStorageProviderAccountsId(providerId);
+        }
+
+        return account;
+    }
+    
+    private void notifyStorageProviderChange(String accountId) {
+        this.accountChangeNotifier.storageProvidersChanged(accountId);
+    }
 
     @Override
 	public void deleteAccount(Long accountId) {
         log.info("Deleting account with ID {}", accountId);
-        AccountInfo account = getAccount(accountId);
-
-        Set<DuracloudInstanceService> instanceServices =
-            instanceManagerService.getInstanceServices(accountId);
-        if (instanceServices.size() > 0) {
-            log.error("Unable to delete account {} found an instance",
-                      accountId);
-            return;
-        }
-
 
         // Delete the account rights
         List<AccountRights > rightsList =
@@ -164,14 +171,15 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
         // Delete account
         getAccountRepo().delete(accountId);
+        
+        notifyAccountChange(rightsList);
 	}
 
 
     @Override
     public List<StorageProviderAccount> getSecondaryStorageProviders(Long accountId) {
         AccountInfo account = repoMgr.getAccountRepo().findOne(accountId);
-        ServerDetails serverDetails = account.getServerDetails();
-        return new ArrayList(serverDetails.getSecondaryStorageProviderAccounts());
+        return new ArrayList(account.getSecondaryStorageProviderAccounts());
     }
 
 	@Override
@@ -188,27 +196,10 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         storageProviderAccount.getProperties().putAll(properties);
         storageProviderAccount.setStorageLimit(storageLimit);
         getStorageRepo().save(storageProviderAccount);
+        notifyStorageProviderChange(getAccountByStorageProvider(providerId).getSubdomain());
     }
 
-	@Override
-	public void setupComputeProvider(Long providerId,
-                                     String username,
-                                     String password,
-                                     String elasticIp,
-                                     String keypair,
-                                     String securityGroup) {
-        log.info("Setting up compute provider with ID {}", providerId);
-        ComputeProviderAccount computeProviderAcct =
-            repoMgr.getComputeProviderAccountRepo().findOne(providerId);
-        computeProviderAcct.setUsername(username);
-        computeProviderAcct.setPassword(password);
-        computeProviderAcct.setElasticIp(elasticIp);
-        computeProviderAcct.setKeypair(keypair);
-        computeProviderAcct.setSecurityGroup(securityGroup);
-        repoMgr.getComputeProviderAccountRepo().save(computeProviderAcct);
-    }
-
-	@Override
+    @Override
 	public AccountInfo getAccount(Long id) {
         return getAccountRepo().findOne(id);
     }
@@ -219,6 +210,7 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         AccountInfo accountInfo = getAccountRepo().findOne(accountId);
         accountInfo.setStatus(AccountInfo.AccountStatus.ACTIVE);
         getAccountRepo().save(accountInfo);
+        this.accountChangeNotifier.accountChanged(accountInfo.getSubdomain());
     }
 
 	@Override
@@ -249,112 +241,6 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 		return users;
     }
 
-	@Override
-	public Set<ServerImage> listAllServerImages(String filter) {
-		List<ServerImage> imageList = getServerImageRepo().findAll(new Sort(Direction.DESC, "version"));
-		Set<ServerImage> images = new LinkedHashSet<ServerImage>();
-        for(ServerImage image : imageList){
-            if(filter == null ||
-                    (image.getProviderImageId().startsWith(filter))){
-                images.add(image);
-            }
-		}
-		return images;
-	}
-
-
-	@Override
-	public void createServerImage(String providerImageId,
-                                  String version,
-                                  String description,
-                                  String password,
-                                  boolean latest,
-                                  String iamRole,
-                                  String cfKeyPath, 
-                                  String cfAccountId, 
-                                  String cfKeyId) {
-        DuracloudServerImageRepo imageRepo = getServerImageRepo();
-        if(latest) {
-            //Remove current latest
-            ServerImage latestImage = imageRepo.findLatest();
-            latestImage.setLatest(!latest);
-            imageRepo.save(latestImage);
-        }
-
-        //make the new server image the 'latest' if it is
-        //the first image.
-        Long imageCount = imageRepo.count();
-        if(imageCount == 0){
-            latest = true;
-        }
-
-
-        ServerImage serverImage = new ServerImage();
-        serverImage.setProviderImageId(providerImageId);
-        serverImage.setVersion(version);
-        serverImage.setDescription(description);
-        serverImage.setDcRootPassword(password);
-        serverImage.setLatest(latest);
-        serverImage.setIamRole(iamRole);
-        serverImage.setCfKeyPath(cfKeyPath);
-        serverImage.setCfAccountId(cfAccountId);
-        serverImage.setCfKeyId(cfKeyId);
-        getServerImageRepo().save(serverImage);
-    }
-
-	@Override
-	public void editServerImage(Long id,
-                                String providerImageId,
-                                String version,
-                                String description,
-                                String password,
-                                boolean latest,
-                                String iamRole, 
-                                String cfKeyPath, 
-                                String cfAccountId, 
-                                String cfKeyId) {
-
-        ServerImage serverImage = getServerImageRepo().findOne(id);
-
-	    //Remove current latest
-        ServerImage latestImage = getServerImageRepo().findLatest();
-
-        if (!latestImage.getId().equals(id)) {
-            if(latest){
-                latestImage.setLatest(false);
-                getServerImageRepo().save(latestImage);
-            }
-            serverImage.setLatest(latest);
-        }
-
-        serverImage.setProviderImageId(providerImageId);
-        serverImage.setVersion(version);
-        serverImage.setDescription(description);
-        serverImage.setDcRootPassword(password);
-        serverImage.setIamRole(iamRole);
-        serverImage.setCfKeyPath(cfKeyPath);
-        serverImage.setCfAccountId(cfAccountId);
-        serverImage.setCfKeyId(cfKeyId);
-        getServerImageRepo().save(serverImage);
-    }
-
-	@Override
-	public ServerImage getServerImage(Long id) {
-        return getServerImageRepo().findOne(id);
-    }
-
-	@Override
-	public void deleteServerImage(Long id) {
-        log.info("Deleting server image with ID {}", id);
-
-        getServerImageRepo().delete(id);
-	}
-
-
-    private DuracloudServerImageRepo getServerImageRepo() {
-        return repoMgr.getServerImageRepo();
-    }
-
 
     private DuracloudUserRepo getUserRepo() {
         return repoMgr.getUserRepo();
@@ -375,13 +261,4 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
     private DuracloudStorageProviderAccountRepo getStorageRepo() {
         return repoMgr.getStorageProviderAccountRepo();
     }
-
-
-    private Notifier getNotifier() {
-        if(null == notifier) {
-            notifier = new Notifier(notificationMgr.getEmailer(), amaEndpoint);
-        }
-        return notifier;
-    }
-  
 }

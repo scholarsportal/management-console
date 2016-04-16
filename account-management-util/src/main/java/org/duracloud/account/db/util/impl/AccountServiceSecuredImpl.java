@@ -7,11 +7,13 @@
  */
 package org.duracloud.account.db.util.impl;
 
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.aopalliance.intercept.MethodInvocation;
 import org.duracloud.account.db.model.AccountInfo;
-import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.DuracloudUser;
-import org.duracloud.account.db.model.ServerDetails;
 import org.duracloud.account.db.model.StorageProviderAccount;
 import org.duracloud.account.db.model.UserInvitation;
 import org.duracloud.account.db.util.AccountService;
@@ -27,10 +29,6 @@ import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
-
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This class wraps another AccountService implementation with
@@ -108,12 +106,6 @@ public class AccountServiceSecuredImpl implements AccountService {
     }
 
     @Override
-    public void storeSubdomain(String subdomain) {
-        throwIfAccessDenied(subdomain);
-        accountService.storeSubdomain(subdomain);
-    }
-
-    @Override
     public String getSubdomain() {
         throwIfAccessDenied();
         return accountService.getSubdomain();
@@ -174,21 +166,4 @@ public class AccountServiceSecuredImpl implements AccountService {
         accountService.deleteUserInvitation(invitationId);
     }
 
-    @Override
-    public ServerDetails retrieveServerDetails() {
-        throwIfAccessDenied();
-        return accountService.retrieveServerDetails();
-    }
-
-    @Override
-    public void storeServerDetails(ServerDetails serverDetails) {
-        throwIfAccessDenied(serverDetails);
-        accountService.storeServerDetails(serverDetails);
-    }
-
-    @Override
-    public ComputeProviderAccount getComputeProvider() {
-        throwIfAccessDenied();
-        return accountService.getComputeProvider();
-    }
 }

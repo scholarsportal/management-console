@@ -36,7 +36,6 @@
     <constructor-arg value="${db.pass}"/>
   </bean>
 
-  <import resource="config/jpa-config.xml" />
   <import resource="config/service-config.xml" />  
   <import resource="config/security-config.xml" />  
   <import resource="config/view-config.xml" />

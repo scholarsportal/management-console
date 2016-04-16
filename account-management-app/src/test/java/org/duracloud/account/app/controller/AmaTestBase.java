@@ -105,8 +105,9 @@ public class AmaTestBase {
         accountInfo.setOrgName("test");
         accountInfo.setDepartment("test");
 
-        ServerDetails serverDetails = createServerDetails(0L);
-        accountInfo.setServerDetails(serverDetails);
+        StorageProviderAccount primaryStorage = new StorageProviderAccount();
+        primaryStorage.setId(0L);
+        accountInfo.setPrimaryStorageProviderAccount(primaryStorage);
 
         return accountInfo;
     }
@@ -138,26 +139,6 @@ public class AmaTestBase {
         return user;
     }
 
-    protected ServerDetails createServerDetails() {
-        return createServerDetails(TEST_ACCOUNT_ID);
-        
-    }
-
-    protected ServerDetails createServerDetails(Long id) {
-        if(id == null) {
-            id = TEST_ACCOUNT_ID;
-        }
-        ServerDetails serverDetails = new ServerDetails();
-        serverDetails.setId(id);
-        ComputeProviderAccount compute = new ComputeProviderAccount();
-        compute.setId(0L);;
-        serverDetails.setComputeProviderAccount(compute);
-        StorageProviderAccount primaryStorage = new StorageProviderAccount();
-        primaryStorage.setId(0L);
-        serverDetails.setPrimaryStorageProviderAccount(primaryStorage);
-
-        return serverDetails;
-    }
 
     protected void setupGenericAccountAndUserServiceMocks(Long accountId)
         throws AccountNotFoundException, DBNotFoundException {
@@ -180,9 +161,6 @@ public class AmaTestBase {
                 .andReturn(createAccountInfo())
                 .anyTimes();
         
-        EasyMock.expect(accountService.retrieveServerDetails())
-        .andReturn(createServerDetails())
-        .anyTimes();
 
         DuracloudUser user = createUser();
 

@@ -15,14 +15,10 @@ import javax.validation.Valid;
 import org.duracloud.account.app.controller.AccountSetupForm.StorageProviderSettings;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountInfo.AccountStatus;
-import org.duracloud.account.db.model.ComputeProviderAccount;
-import org.duracloud.account.db.model.ServerDetails;
 import org.duracloud.account.db.model.StorageProviderAccount;
 import org.duracloud.account.db.util.AccountService;
-import org.duracloud.account.db.util.DuracloudInstanceManagerService;
 import org.duracloud.account.db.util.RootAccountManagerService;
 import org.duracloud.account.db.util.error.AccountNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -48,8 +44,6 @@ public class AccountsController extends AbstractRootController{
     public static final String ACCOUNT_SETUP_MAPPING = BY_ID_MAPPING + "/setup";
     private static final String SETUP_ACCOUNT_FORM_KEY = "setupAccountForm";
 
-    @Autowired
-    private DuracloudInstanceManagerService instanceManagerService;
 
     @RequestMapping("")
     public ModelAndView get() {
@@ -110,8 +104,7 @@ public class AccountsController extends AbstractRootController{
         List<StorageProviderAccount> secondary =
             rams.getSecondaryStorageProviders(id);
         
-        ComputeProviderAccount compute = as.getComputeProvider();
-        AccountSetupForm form = new AccountSetupForm(primary, secondary,compute);
+        AccountSetupForm form = new AccountSetupForm(primary, secondary);
         model.addAttribute(AbstractAccountController.ACCOUNT_INFO_KEY, info);
         model.addAttribute(SETUP_ACCOUNT_FORM_KEY, form);
         model.addAttribute("pending",
@@ -140,10 +133,6 @@ public class AccountsController extends AbstractRootController{
             return new ModelAndView(ACCOUNT_SETUP_VIEW, model.asMap());
         }
 
-        AccountService accountService =
-            getAccountManagerService().getAccount(id);
-        ServerDetails serverDetails = accountService.retrieveServerDetails();
-        
         //save primary
         saveStorageProvider(accountSetupForm.getPrimaryStorageProviderSettings());
         
@@ -151,15 +140,6 @@ public class AccountsController extends AbstractRootController{
         for(StorageProviderSettings sp :  accountSetupForm.getSecondaryStorageProviderSettingsList()){
             saveStorageProvider(sp);
         }
-
-        //save compute
-        rams.setupComputeProvider(
-            serverDetails.getComputeProviderAccount().getId(),
-            accountSetupForm.getComputeUsername(),
-            accountSetupForm.getComputePassword(),
-            accountSetupForm.getComputeElasticIP(),
-            accountSetupForm.getComputeKeypair(),
-            accountSetupForm.getComputeSecurityGroup());
 
         String message = MessageFormat
                 .format("Successfully configured providers for {0}",info.getAcctName());
@@ -186,12 +166,4 @@ public class AccountsController extends AbstractRootController{
         
     }
 
-    public DuracloudInstanceManagerService getInstanceManagerService() {
-        return instanceManagerService;
-    }
-
-    public void
-        setInstanceManagerService(DuracloudInstanceManagerService instanceManagerService) {
-        this.instanceManagerService = instanceManagerService;
-    }
-}
+ }

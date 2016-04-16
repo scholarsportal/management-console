@@ -47,7 +47,7 @@
             </c:when>
             <c:otherwise>
               <sec:authorize
-                ifAnyGranted="ROLE_USER,ROLE_ADMIN,ROLE_OWNER,ROLE_ROOT">
+                access="hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
                 <sec:authentication
                   property="principal.username"
                   var="username" />
@@ -69,7 +69,7 @@
           <ul
             class="horizontal-list">
             <sec:authorize
-              ifAnyGranted="ROLE_USER,ROLE_ADMIN,ROLE_OWNER,ROLE_ROOT">
+                access="hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
               <sec:authentication
                 property="principal.username"
                 var="username" />
@@ -80,7 +80,7 @@
                 href="${cp}/users/byid/${username}/edit">
                   My Profile</a>
               </li>
-              <sec:authorize ifAnyGranted="ROLE_ROOT">
+              <sec:authorize access="hasAnyRole('ROLE_ROOT')">
                 <li><a
                   id="root-console-link"
                   accesskey="p"

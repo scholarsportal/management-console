@@ -7,18 +7,7 @@
  */
 package org.duracloud.account.monitor;
 
-import org.apache.commons.io.IOUtils;
-import org.duracloud.account.db.repo.DuracloudRepoMgr;
-import org.duracloud.account.email.EmailUtil;
-import org.duracloud.account.email.EmailUtilImpl;
-import org.duracloud.account.monitor.duplication.DuplicationMonitorDriver;
-import org.duracloud.account.monitor.instance.InstanceMonitorDriver;
-import org.duracloud.account.monitor.storereporter.StoreReporterMonitorDriver;
-import org.duracloud.common.error.DuraCloudRuntimeException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import static org.duracloud.account.monitor.MonitorsDriver.Monitor.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -30,9 +19,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import static org.duracloud.account.monitor.MonitorsDriver.Monitor.DUPLICATION;
-import static org.duracloud.account.monitor.MonitorsDriver.Monitor.INSTANCE;
-import static org.duracloud.account.monitor.MonitorsDriver.Monitor.STORE_REPORTER;
+import org.apache.commons.io.IOUtils;
+import org.duracloud.account.db.repo.DuracloudRepoMgr;
+import org.duracloud.account.db.util.GlobalPropertiesConfigService;
+import org.duracloud.account.email.EmailUtil;
+import org.duracloud.account.email.EmailUtilImpl;
+import org.duracloud.account.monitor.duplication.DuplicationMonitorDriver;
+import org.duracloud.common.error.DuraCloudRuntimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * This class is the command-line driver for executing monitors for
@@ -61,21 +58,15 @@ public class MonitorsDriver {
     private Properties props;
     private EmailUtil emailUtil;
     private DuracloudRepoMgr repoMgr;
+    private GlobalPropertiesConfigService configService;
 
     /**
      * This enum defines the types of monitors available through this driver.
      */
-    public enum Monitor {
-        INSTANCE, STORE_REPORTER, DUPLICATION;
+    public enum Monitor {DUPLICATION;
 
-        public Runnable getMonitorDriver(Properties props) {
-            if (this.equals(INSTANCE)) {
-                return new InstanceMonitorDriver(props);
-
-            } else if (this.equals(STORE_REPORTER)) {
-                return new StoreReporterMonitorDriver(props);
-
-            } else if (this.equals(DUPLICATION)) {
+        public Runnable getMonitorDriver(Properties props, GlobalPropertiesConfigService configService) {
+            if (this.equals(DUPLICATION)) {
                 return new DuplicationMonitorDriver(props);
 
             } else {
@@ -95,10 +86,15 @@ public class MonitorsDriver {
         ApplicationContext context =
                 new ClassPathXmlApplicationContext("jpa-config.xml");
         this.repoMgr = context.getBean("repoMgr", DuracloudRepoMgr.class);
+        this.configService = context.getBean(GlobalPropertiesConfigService.class);
     }
 
     public DuracloudRepoMgr getRepoMgr() {
         return repoMgr;
+    }
+
+    public GlobalPropertiesConfigService getGlobalConfigService() {
+        return configService;
     }
 
     /**
@@ -110,7 +106,7 @@ public class MonitorsDriver {
         log.info("starting monitor: {}", target);
 
         try {
-            target.getMonitorDriver(props).run();
+            target.getMonitorDriver(props, configService).run();
 
         } catch (Exception e) {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -188,10 +184,6 @@ public class MonitorsDriver {
 
         } catch (Exception e) {
             StringBuilder msg = new StringBuilder("Target must be '");
-            msg.append(INSTANCE);
-            msg.append("' | '");
-            msg.append(STORE_REPORTER);
-            msg.append("' | '");
             msg.append(DUPLICATION);
             msg.append("'");
             System.err.println(usage(msg.toString()));
@@ -235,10 +227,6 @@ public class MonitorsDriver {
         sb.append("<properties-file>");
         sb.append("\n\t");
         sb.append("Where '");
-        sb.append(INSTANCE);
-        sb.append("', '");
-        sb.append(STORE_REPORTER);
-        sb.append("', or '");
         sb.append(DUPLICATION);
         sb.append("' must be provided to indicate the monitoring target.");
         sb.append("\n\t");

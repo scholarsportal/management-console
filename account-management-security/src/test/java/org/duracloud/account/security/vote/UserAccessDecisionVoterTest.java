@@ -433,7 +433,7 @@ public class UserAccessDecisionVoterTest {
 
         DuracloudUserServiceImpl serviceImpl = new DuracloudUserServiceImpl(null,
                                                                             null,
-                                                                            null,
+                                                                            null, 
                                                                             null);
 
         EasyMock.expect(inv.getThis()).andReturn(serviceImpl).times(2);
