@@ -15,8 +15,6 @@ import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.duracloud.common.model.Credential;
 import org.slf4j.Logger;
 
-import java.util.List;
-
 /**
  * @author Bill Branan
  *         Date: 4/16/13
@@ -48,9 +46,9 @@ public abstract class BaseMonitor {
 
     protected Credential getRootCredential() {
         GlobalProperties props = this.globalPropertiesConfigService.get();
-        String rootUsername = props.getDuracloudRootUsername();
+        String rootUsername = System.getProperty("monitor.username", "monitor");
         
-        String rootPassword = props.getDuracloudRootPassword();
+        String rootPassword = System.getProperty("monitor.password", "password");
         return new Credential(rootUsername, rootPassword);
     }
 

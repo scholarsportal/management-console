@@ -23,8 +23,6 @@ public interface GlobalPropertiesConfigService {
 
     @Secured({ "role:ROLE_ADMIN, scope:SELF_ACCT" })
     public void set(String instanceNotificationTopicArn,
-            String duracloudRootUsername, 
-            String duracloudRootPassword,
             String cloudFrontAccountId, 
             String cloudFrontKeyId,
             String cloudFrontKeyPath);

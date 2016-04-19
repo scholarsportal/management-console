@@ -61,8 +61,6 @@ public class GlobalPropertiesController {
             return new GlobalPropertiesForm();
         } else {
             form.setInstanceNotificationTopicArn(entity.getInstanceNotificationTopicArn());
-            form.setDuracloudRootUsername(entity.getDuracloudRootUsername());
-            form.setDuracloudRootPassword(entity.getDuracloudRootPassword());
             form.setCloudFrontAccountId(entity.getCloudFrontAccountId());
             form.setCloudFrontKeyId(entity.getCloudFrontKeyId());
             form.setCloudFrontKeyPath(entity.getCloudFrontKeyPath());
@@ -88,8 +86,6 @@ public class GlobalPropertiesController {
         
         this.globalPropertiesConfigService.set(
                 form.getInstanceNotificationTopicArn(),
-                form.getDuracloudRootUsername(),
-                form.getDuracloudRootPassword(),
                 form.getCloudFrontAccountId(),
                 form.getCloudFrontKeyId(), 
                 form.getCloudFrontKeyPath());

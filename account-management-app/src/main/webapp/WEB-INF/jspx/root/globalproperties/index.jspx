@@ -61,16 +61,6 @@
 					</tr>
           <tr>
             <td><spring:message
-             code="globalproperties.duracloudrootusername" /></td>
-            <td>${globalProperties.duracloudRootUsername}</td>
-          </tr>
-          <tr>
-            <td><spring:message
-             code="globalproperties.duracloudrootpassword" /></td>
-            <td>${globalProperties.duracloudRootPassword}</td>
-          </tr>
-          <tr>
-            <td><spring:message
              code="globalproperties.cloudfrontaccountid" /></td>
             <td>${globalProperties.cloudFrontAccountId}</td>
           </tr>

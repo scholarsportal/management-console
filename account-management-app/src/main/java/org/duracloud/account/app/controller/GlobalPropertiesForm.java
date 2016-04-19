@@ -20,12 +20,6 @@ public class GlobalPropertiesForm {
     @NotNull
     private String instanceNotificationTopicArn;
 
-    @NotNull
-    private String duracloudRootPassword;
-
-    @NotNull
-    private String duracloudRootUsername;
-
     @NotBlank(message = "You must specify a CloudFront Account Id")
     private String cloudFrontAccountId;
 
@@ -35,22 +29,6 @@ public class GlobalPropertiesForm {
     @NotBlank(message = "You must specify a CloudFront Key Path")
     private String cloudFrontKeyPath;
     
-
-    public String getDuracloudRootPassword() {
-        return duracloudRootPassword;
-    }
-
-    public void setDuracloudRootPassword(String duracloudRootPassword) {
-        this.duracloudRootPassword = duracloudRootPassword;
-    }
-
-    public String getDuracloudRootUsername() {
-        return duracloudRootUsername;
-    }
-
-    public void setDuracloudRootUsername(String duracloudRootUsername) {
-        this.duracloudRootUsername = duracloudRootUsername;
-    }
     
     public String getInstanceNotificationTopicArn() {
         return instanceNotificationTopicArn;
