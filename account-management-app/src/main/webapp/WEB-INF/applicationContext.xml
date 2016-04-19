@@ -15,8 +15,6 @@
   <context:annotation-config/>
   <context:component-scan base-package="org.duracloud"/>
 
-  <context:property-placeholder location="file:///${user.home}/duracloud-mc/mc-config.properties" />
-
   <bean id="amaEndpoint" class="org.duracloud.account.config.AmaEndpoint">
     <constructor-arg ref="mcConfig"/>
   </bean>
