@@ -7,8 +7,6 @@
  */
 package org.duracloud.account.app.controller;
 
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.validator.constraints.NotBlank;
 
 /**
@@ -17,7 +15,7 @@ import org.hibernate.validator.constraints.NotBlank;
  *
  */
 public class GlobalPropertiesForm {
-    @NotNull
+    @NotBlank
     private String instanceNotificationTopicArn;
 
     @NotBlank(message = "You must specify a CloudFront Account Id")

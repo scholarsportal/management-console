@@ -34,6 +34,8 @@ import org.springframework.web.servlet.view.RedirectView;
 @RequestMapping(GlobalPropertiesController.BASE_MAPPING)
 public class GlobalPropertiesController {
 
+    private static final String GLOBAL_PROPERTIES_ATTRIBUTE = "globalProperties";
+
     @Autowired
     private GlobalPropertiesConfigService globalPropertiesConfigService;
 
@@ -53,7 +55,7 @@ public class GlobalPropertiesController {
         return mav;
     }
 
-    @ModelAttribute("globalProperties")
+    @ModelAttribute(GLOBAL_PROPERTIES_ATTRIBUTE)
     public GlobalPropertiesForm form() {
         GlobalPropertiesForm form = new GlobalPropertiesForm();
         GlobalProperties entity = this.globalPropertiesConfigService.get();
@@ -76,7 +78,7 @@ public class GlobalPropertiesController {
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     @Transactional
     public ModelAndView update(
-            @ModelAttribute("GlobalProperties") @Valid GlobalPropertiesForm form,
+            @ModelAttribute(GLOBAL_PROPERTIES_ATTRIBUTE) @Valid GlobalPropertiesForm form,
             BindingResult bindingResult, Model model,
             RedirectAttributes redirectAttributes) {
         boolean hasErrors = bindingResult.hasErrors();
