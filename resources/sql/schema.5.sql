@@ -2,8 +2,6 @@ CREATE TABLE IF NOT EXISTS `global_properties` (
  `id` bigint(20) NOT NULL AUTO_INCREMENT,
  `modified` datetime DEFAULT NULL,
  `instance_notification_topic_arn` varchar(255) NOT NULL,
- `duracloud_root_username` varchar(255) NOT NULL DEFAULT 'root',
- `duracloud_root_password` varchar(255) NOT NULL DEFAULT 'rpw',
  `cloud_front_account_id` varchar(255) NOT NULL DEFAULT 'cloud front account id',
  `cloud_front_key_id` varchar(255) NOT NULL DEFAULT 'cloud front key id',
  `cloud_front_key_path` varchar(255) NOT NULL DEFAULT 'cloud front key path',
