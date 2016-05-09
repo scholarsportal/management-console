@@ -62,6 +62,11 @@
 
         <dependency>
             <groupId>org.duracloud</groupId>
+            <artifactId>common-sns</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.duracloud</groupId>
             <artifactId>security</artifactId>
             <scope>compile</scope>
         </dependency>

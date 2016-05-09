@@ -7,24 +7,24 @@
  */
 package org.duracloud.account.db.util.impl;
 
-import org.duracloud.account.db.model.AccountInfo;
-import org.duracloud.account.db.model.DuracloudGroup;
-import org.duracloud.account.db.model.DuracloudUser;
-import org.duracloud.account.db.repo.DuracloudRepoMgr;
-import org.duracloud.account.db.util.AccountChangeNotifier;
-import org.duracloud.account.db.util.DuracloudGroupService;
-import org.duracloud.account.db.util.error.DuracloudGroupAlreadyExistsException;
-import org.duracloud.account.db.util.error.DuracloudGroupNotFoundException;
-import org.duracloud.account.db.util.error.InvalidGroupNameException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.DuracloudGroup;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.repo.DuracloudRepoMgr;
+import org.duracloud.account.db.util.DuracloudGroupService;
+import org.duracloud.account.db.util.error.DuracloudGroupAlreadyExistsException;
+import org.duracloud.account.db.util.error.DuracloudGroupNotFoundException;
+import org.duracloud.account.db.util.error.InvalidGroupNameException;
+import org.duracloud.common.sns.AccountChangeNotifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Daniel Bernstein
