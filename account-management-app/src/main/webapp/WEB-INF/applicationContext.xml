@@ -13,7 +13,7 @@
         http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd        
         " >
   <context:annotation-config/>
-  <context:component-scan base-package="org.duracloud"/>
+  <context:component-scan base-package="org.duracloud.account,org.duracloud.common.sns.impl"/>
 
   <bean id="amaEndpoint" class="org.duracloud.account.config.AmaEndpoint">
     <constructor-arg ref="mcConfig"/>

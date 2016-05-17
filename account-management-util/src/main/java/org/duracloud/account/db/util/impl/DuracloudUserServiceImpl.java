@@ -244,6 +244,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
         doRevokeUserRights(acctId, userId);
         removeUserFromAccountGroups(acctId, userId);
+        notifyAccountChanged(acctId);
     }
 
     private void doRevokeUserRights(Long acctId, Long userId) {

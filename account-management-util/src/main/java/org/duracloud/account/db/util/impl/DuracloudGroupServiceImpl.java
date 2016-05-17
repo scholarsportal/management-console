@@ -78,7 +78,7 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
         group = repoMgr.getGroupRepo().save(group);
         return group;
     }
-
+    
     /**
      * This method is 'protected' for testing purposes only.
      */
@@ -111,7 +111,7 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
             return;
         }
         repoMgr.getGroupRepo().delete(group.getId());
-        propagateUpdate(acctId, group);
+        propagateUpdate(acctId);
     }
 
     @Override
@@ -121,11 +121,15 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
         throws DuracloudGroupNotFoundException {
         group.setUsers(users);
         repoMgr.getGroupRepo().save(group);
-        propagateUpdate(acctId, group);
+        propagateUpdate(acctId);
     }
 
-    private void propagateUpdate(Long acctId, DuracloudGroup group) {
-        AccountInfo account = this.repoMgr.getAccountRepo().getOne(acctId);
-        this.accountChangeNotifier.userStoreChanged(account.getSubdomain());
+    private void propagateUpdate(Long acctId) {
+        try {
+            AccountInfo account = this.repoMgr.getAccountRepo().getOne(acctId);
+            this.accountChangeNotifier.userStoreChanged(account.getSubdomain());
+        }catch(Exception ex){
+            log.error("failed to notify of change to account " + acctId, ex);
+        }
     }
 }
