@@ -132,7 +132,7 @@
               <li><a
                 id="logout-link"
                 accesskey="l"
-                href="${pageContext.request.contextPath}/j_spring_security_logout"
+                href="${pageContext.request.contextPath}/logout"
                 class="icon-link logout"><i class="pre logoff"><!--  --></i>Logout</a></li>
             </sec:authorize>
           </ul>
