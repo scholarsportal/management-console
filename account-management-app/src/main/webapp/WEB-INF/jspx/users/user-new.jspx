@@ -42,6 +42,8 @@
                id="new-user-form"
                modelAttribute="newUserForm"
                method="POST">
+               <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
+                            
                 <form:hidden path="redemptionCode"/>
                 <table
                  class="datatablesimple">

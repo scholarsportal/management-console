@@ -82,6 +82,9 @@
                             <td width="90" align="right" valign="middle">
                           <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/deactivate"
                               method="post">
+ 				                    <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
+                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                              
                             <button style="padding-bottom: 5px" type="submit" onclick="AskAndDeactivate(this); return false;">Deactivate Account</button>
                           </form>
                             </td>
@@ -236,6 +239,8 @@
                             <td width="90" align="right" valign="middle">
                           <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/activate"
                               method="post">
+                               <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
+                            
                             <button style="padding-bottom: 5px" type="submit" onclick="AskAndActivate(this); return false;">Activate Account</button>
                           </form>
                             </td>
@@ -309,6 +314,8 @@
                             <td width="90" align="right" valign="middle">
                           <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/activate"
                               method="post">
+                               <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
+                            
                             <button style="padding-bottom: 5px" type="submit" onclick="AskAndActivate(this); return false;">Activate Account</button>
                           </form>
                             </td>

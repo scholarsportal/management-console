@@ -26,6 +26,8 @@
       <form:form
        modelAttribute="setupAccountForm"
        method="POST">
+       <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
+                            
           <jsp:include page="/WEB-INF/jspx/includes/storage-provider-form.jspx">
             <jsp:param value="primaryStorageProviderSettings" name="storageProvider"/>
             <jsp:param value="Primary Storage Provider" name="storageProviderName"/>

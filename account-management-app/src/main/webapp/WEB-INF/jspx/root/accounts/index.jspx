@@ -135,6 +135,7 @@
                         <form
                          action="${currentUri}/byid/${a.id}/activate"
                          method="post">
+                         <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
                           <button
                            type="submit"
                            class="activate"><spring:message code="activate" /></button>
@@ -145,6 +146,7 @@
                         <form
                          action="${currentUri}/byid/${a.id}/deactivate"
                          method="post">
+                         <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
                           <button class="deactivate"
                            type="submit">
                           <spring:message
@@ -168,6 +170,7 @@
                     <form
                      action="${currentUri}/byid/${a.id}/delete"
                      method="post">
+                      <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
                       <input type="hidden"
                        name="id"
                        value="${a.id}" />

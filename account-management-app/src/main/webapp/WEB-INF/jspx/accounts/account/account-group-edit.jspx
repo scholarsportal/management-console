@@ -32,6 +32,8 @@
               <tiles:putAttribute name="detail">
                   <h1>${group.prettyName}</h1>
                 <form:form modelAttribute="groupForm" method="post">
+                <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
+                            
                 <table class="shuttle">
                   <tr>
                     <td>

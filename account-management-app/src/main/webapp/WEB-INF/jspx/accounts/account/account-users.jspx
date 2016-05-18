@@ -79,6 +79,8 @@
                          method="post"
                          action="${usersPath}/byid/${u.id}/edit"
                          modelAttribute="accountUsersEditForm">
+                         <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
+                         
                           <jsp:include
                            page="/WEB-INF/jspx/includes/global-errors.jspx">
                             <jsp:param
@@ -146,6 +148,8 @@
                                 <form
                                  action="${usersPath}/byid/${u.id}/delete"
                                  method="post">
+                                 <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
+                         
                                   <button style="margin-right:8px !important" 
                                    type="submit" onclick="AskAndSubmit(this); return false;">
                                   <i
@@ -239,6 +243,8 @@
                                 <form
                                  action="${pageContext.request.contextPath}/accounts/byid/${account.accountInfo.id}/users/invitations/byid/${up.invitationId}/delete"
                                  method="post">
+                                 <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
+                                 
                                   <button
                                    type="submit">
                                   <i

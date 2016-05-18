@@ -36,6 +36,8 @@
            action="${pageContext.request.contextPath}/users/byid/${user.username}/edit"
            method="POST"
            modelAttribute="userProfileEditForm" >
+           <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
+                            
              <table border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td class="accountlabel">Account Identification</td>

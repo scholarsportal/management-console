@@ -42,6 +42,8 @@
                  method="post"
                  action="edit"
                  modelAttribute="accountInfoEditForm">
+                 <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
+                            
                   <jsp:include page="/WEB-INF/jspx/includes/required-field-text.jspx"/>
                   <jsp:include
                    page="/WEB-INF/jspx/includes/global-errors.jspx">

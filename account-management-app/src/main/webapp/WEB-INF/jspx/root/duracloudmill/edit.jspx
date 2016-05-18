@@ -36,6 +36,8 @@
   <form:form
    modelAttribute="duracloudMill"
    method="POST">
+   <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
+                            
     <fieldset>
       <legend>
         Database

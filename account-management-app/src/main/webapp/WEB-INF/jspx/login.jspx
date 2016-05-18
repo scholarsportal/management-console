@@ -96,7 +96,7 @@
         id="loginForm"
         action="${pageContext.request.contextPath}/login"
         method="POST">
-        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
         <fieldset>
           <ol>
             <li><label for="username">Username</label> <input

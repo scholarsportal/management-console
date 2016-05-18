@@ -23,6 +23,8 @@
         </jsp:include>
       
         <form:form modelAttribute="groupsForm" action="${pageContext.request.contextPath}/accounts/byid/${accountId}/groups" method="post">
+          <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
+                            
           <div >
           
           <div style="padding:5px">
