@@ -11,15 +11,6 @@
            http://www.springframework.org/schema/mvc
            http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
 
-  <!--Security Filters for REST endpoints-->
-  <http pattern="/init"
-        auto-config="false"
-        use-expressions="true"
-        create-session="stateless">
-    <intercept-url pattern="**" access="hasRole('ROLE_INIT')"/>
-    <http-basic/>
-  </http>
-
   <!--Security Filters for Anonymous endpoints-->
   <http pattern="/users/forgot-password"
         auto-config="false"
@@ -64,7 +55,7 @@
                 default-target-url="/users/profile"
                 authentication-failure-url="/login?error=true" />
     <http-basic />
-    <logout invalidate-session="true" delete-cookies="jsessionid"/>
+    <logout logout-url="/logout" logout-success-url="/" invalidate-session="true"/>
   </http>
 
 
