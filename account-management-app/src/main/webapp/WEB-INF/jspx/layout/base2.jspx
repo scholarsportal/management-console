@@ -89,12 +89,11 @@
                     Console</a>
                 </li>
               </sec:authorize>
-              <li><a
-                id="logout-link"
-                accesskey="l"
-                href="${cp}/logout"
-                class="icon-link logout"><i class="pre logoff"><!--  --></i>Logout</a>
+              <li>
+                 <jsp:include page="/WEB-INF/jspx/includes/logout-link.jspx" />
               </li>
+
+              
             </sec:authorize>
           </ul>
         </div>
