@@ -7,15 +7,15 @@
  */
 package org.duracloud.account.app.integration;
 
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.duracloud.account.db.model.AccountInfo.AccountStatus;
 import org.duracloud.account.flow.createaccount.CreateAccountFlowHandler;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 

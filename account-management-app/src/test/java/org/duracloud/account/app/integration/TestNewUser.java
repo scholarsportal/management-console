@@ -7,8 +7,6 @@
  */
 package org.duracloud.account.app.integration;
 
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Assert;
 import org.junit.Test;
 

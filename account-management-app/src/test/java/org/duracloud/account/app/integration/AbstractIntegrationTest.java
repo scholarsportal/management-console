@@ -7,21 +7,16 @@
  */
 package org.duracloud.account.app.integration;
 
-import com.thoughtworks.selenium.DefaultSelenium;
-import com.thoughtworks.selenium.Selenium;
-import junit.framework.Assert;
 import org.duracloud.account.app.AMATestConfig;
-import org.duracloud.account.db.model.util.InitUserCredential;
-import org.duracloud.common.web.RestHttpHelper;
-import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
+import com.thoughtworks.selenium.DefaultSelenium;
+import com.thoughtworks.selenium.Selenium;
+
+import junit.framework.Assert;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"

@@ -7,7 +7,7 @@
  */
 package org.duracloud.account.app.integration;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.duracloud.account.app.AMATestConfig;
 
