@@ -207,9 +207,9 @@
     <log.level.default>INFO</log.level.default>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <duracloud.artifact.version>4.0.0-SNAPSHOT</duracloud.artifact.version>
+    <duracloud.artifact.version>4.0.0</duracloud.artifact.version>
     <aws.version>1.10.69</aws.version>
-    <duracloud.db.version>4.0.0-SNAPSHOT</duracloud.db.version>
+    <duracloud.db.version>4.0.0</duracloud.db.version>
     <org.springframework.version>4.2.5.RELEASE</org.springframework.version>
     <org.springframework.security.version>4.0.4.RELEASE</org.springframework.security.version>
     <org.springframework.webflow.version>2.4.2.RELEASE</org.springframework.webflow.version>
@@ -299,8 +299,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.1</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>

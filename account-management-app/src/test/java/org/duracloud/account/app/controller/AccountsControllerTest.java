@@ -15,7 +15,6 @@ import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountInfo.AccountStatus;
 import org.duracloud.account.db.model.StorageProviderAccount;
 import org.duracloud.account.db.util.RootAccountManagerService;
-import org.duracloud.computeprovider.domain.ComputeProviderType;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.easymock.EasyMock;
 import org.junit.Before;
