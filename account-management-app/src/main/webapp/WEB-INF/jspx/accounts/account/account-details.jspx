@@ -120,6 +120,7 @@
                         method="post"
                         action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/details/providers/add"
                         modelAttribute="providerForm">
+                        <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
 
                         <c:if test="${providerForm.storageProviders != null}">
                             <br />

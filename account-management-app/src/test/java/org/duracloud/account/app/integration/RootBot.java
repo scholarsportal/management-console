@@ -7,15 +7,14 @@
  */
 package org.duracloud.account.app.integration;
 
-import junit.framework.Assert;
-
 import org.apache.commons.lang.StringUtils;
-import org.duracloud.common.model.RootUserCredential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.thoughtworks.selenium.Selenium;
 import com.thoughtworks.selenium.SeleniumException;
+
+import junit.framework.Assert;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"

@@ -14,9 +14,7 @@ import java.util.Set;
 
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
-import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.DuracloudUser;
-import org.duracloud.account.db.model.ServerDetails;
 import org.duracloud.account.db.model.StorageProviderAccount;
 import org.duracloud.account.db.model.util.AccountCreationInfo;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
@@ -26,7 +24,6 @@ import org.duracloud.account.db.util.AccountServiceFactory;
 import org.duracloud.account.db.util.error.AccountNotFoundException;
 import org.duracloud.account.db.util.error.SubdomainAlreadyExistsException;
 import org.duracloud.account.db.util.sys.EventMonitor;
-import org.duracloud.computeprovider.domain.ComputeProviderType;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,51 +77,37 @@ public class AccountManagerServiceImpl implements AccountManagerService {
             throw new SubdomainAlreadyExistsException();
         }
 
-        ServerDetails serverDetails = null;
         AccountInfo.AccountStatus status = AccountInfo.AccountStatus.ACTIVE;
 
         status = AccountInfo.AccountStatus.PENDING;
-
-        ComputeProviderAccount computeProviderAccount = new ComputeProviderAccount();
-        computeProviderAccount.setProviderType(ComputeProviderType.AMAZON_EC2);
-        computeProviderAccount = repoMgr.getComputeProviderAccountRepo()
-                .save(computeProviderAccount);
 
         StorageProviderType primaryStorageType =
             accountCreationInfo.getPrimaryStorageProviderType();
         StorageProviderAccount primaryStorageProviderAccount = new StorageProviderAccount();
         primaryStorageProviderAccount.setProviderType(primaryStorageType);
         primaryStorageProviderAccount = repoMgr.getStorageProviderAccountRepo()
-                .save(primaryStorageProviderAccount);
+                                               .save(primaryStorageProviderAccount);
 
         Set<StorageProviderAccount> secondaryStorageProviderAccounts = new HashSet<>();
         for(StorageProviderType storageType :
             accountCreationInfo.getSecondaryStorageProviderTypes()) {
             StorageProviderAccount storageProviderAccount = new StorageProviderAccount();
             storageProviderAccount.setProviderType(storageType);
-            storageProviderAccount = repoMgr.getStorageProviderAccountRepo()
-                    .save(storageProviderAccount);
+            storageProviderAccount = repoMgr.getStorageProviderAccountRepo().save(storageProviderAccount);
             secondaryStorageProviderAccounts.add(storageProviderAccount);
         }
 
-        
-        serverDetails = new ServerDetails();
-        serverDetails.setComputeProviderAccount(computeProviderAccount);
-        serverDetails.setPrimaryStorageProviderAccount(primaryStorageProviderAccount);
-        serverDetails.setSecondaryStorageProviderAccounts(secondaryStorageProviderAccounts);
-
-        repoMgr.getServerDetailsRepo().save(serverDetails);
-
         AccountInfo accountInfo = new AccountInfo();
+
+        accountInfo.setPrimaryStorageProviderAccount(primaryStorageProviderAccount);
+        accountInfo.setSecondaryStorageProviderAccounts(secondaryStorageProviderAccounts);
+
         accountInfo.setSubdomain(accountCreationInfo.getSubdomain());
         accountInfo.setAcctName(accountCreationInfo.getAcctName());
         accountInfo.setOrgName(accountCreationInfo.getOrgName());
         accountInfo.setDepartment(accountCreationInfo.getDepartment());
-        accountInfo.setServerDetails(serverDetails);
         accountInfo.setStatus(status);
-
         accountInfo = repoMgr.getAccountRepo().save(accountInfo);
-
         return accountServiceFactory.getAccount(accountInfo);
     }
 
@@ -137,7 +120,7 @@ public class AccountManagerServiceImpl implements AccountManagerService {
     @Override
     public Set<AccountInfo> findAccountsByUserId(Long userId) {
         
-        DuracloudUser user = repoMgr.getUserRepo().findOne(userId);
+        DuracloudUser user = repoMgr.getUserRepo().getOne(userId);
         if(user.isRoot()){
             return new HashSet<>(repoMgr.getAccountRepo().findAll());
         }else{

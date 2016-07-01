@@ -30,6 +30,8 @@
       <form:form
         modelAttribute="fullAccountForm"
         method="POST">
+        <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
+        
         <fieldset>
           <ol>
               <c:forEach items="${fullAccountForm.storageProviderOptions}" var="provider">

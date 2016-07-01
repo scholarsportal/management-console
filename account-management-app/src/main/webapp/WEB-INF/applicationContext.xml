@@ -13,9 +13,7 @@
         http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd        
         " >
   <context:annotation-config/>
-  <context:component-scan base-package="org.duracloud"/>
-
-  <context:property-placeholder location="file:///${user.home}/duracloud-mc/mc-config.properties" />
+  <context:component-scan base-package="org.duracloud.account,org.duracloud.common.sns.impl"/>
 
   <bean id="amaEndpoint" class="org.duracloud.account.config.AmaEndpoint">
     <constructor-arg ref="mcConfig"/>
@@ -36,7 +34,6 @@
     <constructor-arg value="${db.pass}"/>
   </bean>
 
-  <import resource="config/jpa-config.xml" />
   <import resource="config/service-config.xml" />  
   <import resource="config/security-config.xml" />  
   <import resource="config/view-config.xml" />

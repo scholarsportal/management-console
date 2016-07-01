@@ -14,13 +14,11 @@ import java.util.Set;
 
 import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.model.AccountInfo;
-import org.duracloud.account.db.model.ServerDetails;
 import org.duracloud.account.db.model.StorageProviderAccount;
+import org.duracloud.account.db.repo.DuracloudAccountRepo;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
-import org.duracloud.account.db.repo.DuracloudServerDetailsRepo;
 import org.duracloud.account.db.util.AccountService;
 import org.duracloud.storage.domain.StorageProviderType;
-import org.duracloud.storage.domain.impl.StorageAccountImpl;
 import org.easymock.EasyMockRunner;
 import org.easymock.EasyMockSupport;
 import org.junit.After;
@@ -44,9 +42,10 @@ public class AccountServiceImplTest extends EasyMockSupport{
         DuracloudRepoMgr repoMgr = createMock(DuracloudRepoMgr.class);
         AmaEndpoint amaEndpoint = createMock(AmaEndpoint.class);
         AccountInfo acct = createMock(AccountInfo.class);
-        ServerDetails details = createMock(ServerDetails.class);
+        DuracloudAccountRepo accountRepo = createMock(DuracloudAccountRepo.class);
+        expect(repoMgr.getAccountRepo()).andReturn(accountRepo);
+        expect(accountRepo.save(acct)).andReturn(acct);
         Long storageProviderId = 1l;
-        
         StorageProviderAccount primary = createStorageProviderAccount(3l, StorageProviderType.AMAZON_S3);
         StorageProviderAccount secondary = createStorageProviderAccount(
                 storageProviderId,  StorageProviderType.SNAPSHOT);
@@ -56,18 +55,14 @@ public class AccountServiceImplTest extends EasyMockSupport{
         Set<StorageProviderAccount> result = new HashSet<>();
         result.add(primary);
 
-        expect(details.getSecondaryStorageProviderAccounts()).andReturn(secondaryaccounts);
-        expect(details.getPrimaryStorageProviderAccount()).andReturn(primary);
-        details.setPrimaryStorageProviderAccount(secondary);
-        details.setSecondaryStorageProviderAccounts(eq(result));
+        expect(acct.getSecondaryStorageProviderAccounts()).andReturn(secondaryaccounts);
+        expect(acct.getPrimaryStorageProviderAccount()).andReturn(primary);
+        acct.setPrimaryStorageProviderAccount(secondary);
+        acct.setSecondaryStorageProviderAccounts(eq(result));
         expectLastCall();
         
         expect(acct.getSubdomain()).andReturn("test");
-        expect(acct.getServerDetails()).andReturn(details);
         
-        DuracloudServerDetailsRepo serverDetailsRepo = createMock(DuracloudServerDetailsRepo.class);
-        expect(repoMgr.getServerDetailsRepo()).andReturn(serverDetailsRepo);
-        expect(serverDetailsRepo.save(details)).andReturn(details);
         replayAll();
         AccountService service = new AccountServiceImpl(amaEndpoint, acct, repoMgr);
 

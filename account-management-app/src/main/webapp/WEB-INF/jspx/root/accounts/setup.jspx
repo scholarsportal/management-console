@@ -19,14 +19,6 @@
 
     <tiles:putAttribute
      name="header-extensions">
-      <script type="text/javascript" language="JavaScript">
-        function same(form) {
-            if(form.computeCredentialsSame.checked){
-                form.computeUsername.value = form.primaryStorageProviderSettingsusername.value;
-                form.computePassword.value = form.primaryStorageProviderSettingspassword.value;
-            }
-        }
-      </script>
     </tiles:putAttribute>
     <tiles:putAttribute
      name="mainContent" cascade="true">
@@ -34,6 +26,8 @@
       <form:form
        modelAttribute="setupAccountForm"
        method="POST">
+       <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
+                            
           <jsp:include page="/WEB-INF/jspx/includes/storage-provider-form.jspx">
             <jsp:param value="primaryStorageProviderSettings" name="storageProvider"/>
             <jsp:param value="Primary Storage Provider" name="storageProviderName"/>
@@ -53,88 +47,8 @@
 		          </jsp:include>
               </c:forEach>
           </c:if>    
-          <fieldset>
-            <legend>Compute Configuration</legend> 
-            <ol>                      
-            <li>
-              <form:label
-               cssErrorClass="error"
-               path="computeCredentialsSame">Use Primary Storage Credentials</form:label>
-              <form:checkbox
-               cssErrorClass="error"
-               path="computeCredentialsSame"
-               onclick="same(this.form)"/>
-
-            </li>
-            <li>                    
-              <form:label
-               cssErrorClass="error"
-               path="computeUsername"><spring:message code="username"/></form:label>
-              <form:input
-               cssErrorClass="error"
-               path="computeUsername" />
-              <form:errors
-               path="computeUsername"
-               cssClass="error"
-               element="div" />               
-            </li>
-            <li>                    
-              <form:label
-               cssErrorClass="error"
-               path="computePassword"><spring:message code="password"/></form:label>
-              <form:password
-               cssErrorClass="error"
-               showPassword="true"
-               path="computePassword" />
-              <form:errors
-               path="computePassword"
-               cssClass="error"
-               element="div" />               
-            </li>
-            <li>                    
-              <form:label
-               cssErrorClass="error"
-               path="computeElasticIP">Elastic IP</form:label>
-              <form:input
-               cssErrorClass="error"
-               path="computeElasticIP" />
-              <form:errors
-               path="computeElasticIP"
-               cssClass="error"
-               element="div" />               
-            </li>
-            <li>                    
-              <form:label
-               cssErrorClass="error"
-               path="computeKeypair">Keypair</form:label>
-              <form:input
-               cssErrorClass="error"
-               path="computeKeypair" />
-              <form:errors
-               path="computeKeypair"
-               cssClass="error"
-               element="div" />               
-            </li>
-
-            <li>                    
-              <form:label
-               cssErrorClass="error"
-               path="computeSecurityGroup">Security Group</form:label>
-              <form:input
-               cssErrorClass="error"
-               path="computeSecurityGroup" />
-              <form:errors
-               path="computeSecurityGroup"
-               cssClass="error"
-               element="div" />               
-            </li>
-
-
-          </ol>
-         </fieldset>                    
          <fieldset
          class="button-bar">
-
           <button
            id="ok"
            type="submit">

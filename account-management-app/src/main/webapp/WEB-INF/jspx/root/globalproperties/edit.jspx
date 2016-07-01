@@ -16,12 +16,12 @@
    value="${requestScope['javax.servlet.forward.request_uri']}" />
 
   <tiles:insertDefinition
-   name="duracloudmill-base"
+   name="globalproperties-base"
    flush="true">
     <tiles:putAttribute
      name="title">
       <spring:message
-       code="duracloudmill" />
+       code="globalproperties" />
     </tiles:putAttribute>
    <tiles:putAttribute
      name="header-extensions">
@@ -34,13 +34,13 @@
      
 
   <form:form
-   modelAttribute="duracloudMill"
+   modelAttribute="globalProperties"
    method="POST">
    <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
-                            
+
     <fieldset>
       <legend>
-        Database
+        Notification
       </legend>
 
       <ol>
@@ -48,138 +48,87 @@
         <li>
           <form:label
            cssErrorClass="error"
-           path="dbHost">
+           path="instanceNotificationTopicArn">
             <spring:message
-             code="duracloudmill.dbhost" />
+             code="globalproperties.instancenotificationtopicarn" />
           </form:label>
 
           <form:input
            cssErrorClass="error"
-           path="dbHost" />
+           path="instanceNotificationTopicArn" />
 
           <form:errors
-           path="dbHost"
+           path="instanceNotificationTopicArn"
            cssClass="error"
            element="div" />
         </li>
-
-        <li>
-          <form:label
-           cssErrorClass="error"
-           path="dbPort">
-            <spring:message
-             code="duracloudmill.dbport" />
-          </form:label>
-
-          <form:input
-           cssErrorClass="error"
-           path="dbPort" />
-
-          <form:errors
-           path="dbPort"
-           cssClass="error"
-           element="div" />
-        </li>
-
-        <li>
-          <form:label
-           cssErrorClass="error"
-           path="dbName">
-            <spring:message
-             code="duracloudmill.dbname" />
-          </form:label>
-
-          <form:input
-           cssErrorClass="error"
-           path="dbName" />
-
-          <form:errors
-           path="dbName"
-           cssClass="error"
-           element="div" />
-        </li>
-
-        <li>
-          <form:label
-           cssErrorClass="error"
-           path="dbUsername">
-            <spring:message
-             code="username" />
-          </form:label>
-
-          <form:input
-           cssErrorClass="error"
-           path="dbUsername" />
-
-          <form:errors
-           path="dbUsername"
-           cssClass="error"
-           element="div" />
-        </li>
-        <li>
-          <form:label
-           cssErrorClass="error"
-           path="dbPassword">
-            <spring:message
-             code="password" />
-          </form:label>
-
-          <form:password
-           cssErrorClass="error"
-           path="dbPassword" showPassword="true" />
-
-          <form:errors
-           path="dbPassword"
-           cssClass="error"
-           element="div" />
-        </li>
-
       </ol>
     </fieldset>
 
-    <fieldset>
-      <legend>Audit</legend>
+     <fieldset>
+      <legend>
+        CloudFront
+      </legend>
 
       <ol>
+
         <li>
           <form:label
            cssErrorClass="error"
-           path="auditQueue">
+           path="cloudFrontAccountId">
             <spring:message
-             code="duracloudmill.auditqueue" />
+             code="globalproperties.cloudfrontaccountid" />
           </form:label>
 
           <form:input
            cssErrorClass="error"
-           path="auditQueue" />
+           path="cloudFrontAccountId" />
 
           <form:errors
-           path="auditQueue"
+           path="cloudFrontAccountId"
            cssClass="error"
            element="div" />
         </li>
         
-        <li>
+       <li>
           <form:label
            cssErrorClass="error"
-           path="auditLogSpaceId">
+           path="cloudFrontKeyId">
             <spring:message
-             code="duracloudmill.auditlogspaceid" />
+             code="globalproperties.cloudfrontkeyid" />
           </form:label>
 
           <form:input
            cssErrorClass="error"
-           path="auditLogSpaceId" />
+           path="cloudFrontKeyId" />
 
           <form:errors
-           path="auditLogSpaceId"
+           path="cloudFrontKeyId"
            cssClass="error"
            element="div" />
-        </li>
+        </li>        
+        
+       <li>
+          <form:label
+           cssErrorClass="error"
+           path="cloudFrontKeyPath">
+            <spring:message
+             code="globalproperties.cloudfrontkeypath" />
+          </form:label>
 
+          <form:input
+           cssErrorClass="error"
+           path="cloudFrontKeyPath" />
+
+          <form:errors
+           path="cloudFrontKeyPath"
+           cssClass="error"
+           element="div" />
+        </li>                  
       </ol>
     </fieldset>
-
+  
+  
     <fieldset
      class="button-bar">
       <button
@@ -191,7 +140,7 @@
          code="ok" />
       </button>
       <a
-       href="${pageContext.request.contextPath}/root/duracloudmill"
+       href="${pageContext.request.contextPath}/root/globalproperties"
        id="cancel"
        class="button"
        name="action">

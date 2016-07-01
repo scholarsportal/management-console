@@ -13,7 +13,7 @@ import org.apache.tiles.AttributeContext;
 import org.apache.tiles.context.TilesRequestContext;
 import org.apache.tiles.preparer.ViewPreparer;
 import org.duracloud.account.app.controller.DuracloudMillController;
-import org.duracloud.account.app.controller.ServerImageController;
+import org.duracloud.account.app.controller.GlobalPropertiesController;
 import org.springframework.stereotype.Component;
 
 @Component("rootPreparer")
@@ -35,8 +35,8 @@ public class RootPreparer implements ViewPreparer {
             super();
             add(new Tab("/root/accounts", "accounts"));
             add(new Tab("/root/users", "users"));
-            add(new Tab(ServerImageController.BASE_MAPPING, "serverimages"));
             add(new Tab(DuracloudMillController.BASE_MAPPING, "duracloudmill"));
+            add(new Tab(GlobalPropertiesController.BASE_MAPPING, "globalproperties"));
 
         }
     }

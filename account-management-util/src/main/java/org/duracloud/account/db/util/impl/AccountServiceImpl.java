@@ -15,9 +15,7 @@ import java.util.Set;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
 import org.duracloud.account.config.AmaEndpoint;
-import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.DuracloudUser;
-import org.duracloud.account.db.model.ServerDetails;
 import org.duracloud.account.db.model.StorageProviderAccount;
 import org.duracloud.account.db.model.UserInvitation;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
@@ -25,7 +23,6 @@ import org.duracloud.account.db.repo.DuracloudRightsRepo;
 import org.duracloud.account.db.util.AccountService;
 import org.duracloud.account.db.util.error.DuracloudProviderAccountNotAvailableException;
 import org.duracloud.account.db.util.error.UnsentEmailException;
-import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.notification.Emailer;
 import org.duracloud.storage.domain.StorageProviderType;
@@ -45,7 +42,8 @@ public class AccountServiceImpl implements AccountService {
     /**
      * @param acct
      */
-    public AccountServiceImpl(AmaEndpoint amaEndpoint, AccountInfo acct,
+    public AccountServiceImpl(AmaEndpoint amaEndpoint, 
+                              AccountInfo acct,
                               DuracloudRepoMgr repoMgr) {
         this.amaEndpoint = amaEndpoint;
         this.account = acct;
@@ -80,31 +78,13 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public ServerDetails retrieveServerDetails() {
-        return account.getServerDetails();
-    }
-
-    @Override
-    public void storeServerDetails(ServerDetails serverDetails) {
-        repoMgr.getServerDetailsRepo().save(serverDetails);
-    }
-
-    @Override
     public StorageProviderAccount getPrimaryStorageProvider() {
-        ServerDetails serverDetails = retrieveServerDetails();
-        return serverDetails.getPrimaryStorageProviderAccount();
+        return retrieveAccountInfo().getPrimaryStorageProviderAccount();
     }
     
     @Override
-    public ComputeProviderAccount getComputeProvider() {
-        ServerDetails serverDetails = retrieveServerDetails();
-        return serverDetails.getComputeProviderAccount();
-    }
-
-    @Override
     public Set<StorageProviderAccount> getSecondaryStorageProviders() {
-        ServerDetails serverDetails = retrieveServerDetails();
-        return serverDetails.getSecondaryStorageProviderAccounts();
+       return retrieveAccountInfo().getSecondaryStorageProviderAccounts();
     }
 
     @Override
@@ -115,9 +95,9 @@ public class AccountServiceImpl implements AccountService {
         StorageProviderAccount storageProviderAccount = new StorageProviderAccount();
         storageProviderAccount.setProviderType(storageProviderType);
 
-        ServerDetails serverDetails = retrieveServerDetails();
-        serverDetails.getSecondaryStorageProviderAccounts().add(storageProviderAccount);
-        storeServerDetails(serverDetails);
+        AccountInfo account = retrieveAccountInfo();
+        account.getSecondaryStorageProviderAccounts().add(storageProviderAccount);
+        saveAccountInfo(account);
     }
 
     @Override
@@ -125,12 +105,12 @@ public class AccountServiceImpl implements AccountService {
         log.info("Removing storage provider with ID {} from account {}",
                  storageProviderId, account.getSubdomain());
 
-        ServerDetails serverDetails = retrieveServerDetails();
         StorageProviderAccount storageProviderAccount =
                 repoMgr.getStorageProviderAccountRepo().findOne(storageProviderId);
-        if(serverDetails.getSecondaryStorageProviderAccounts()
+        AccountInfo accountInfo = retrieveAccountInfo();
+        if(accountInfo.getSecondaryStorageProviderAccounts()
                         .remove(storageProviderAccount)) {
-            storeServerDetails(serverDetails);
+            saveAccountInfo(accountInfo);
             repoMgr.getStorageProviderAccountRepo().delete(storageProviderId);
         } else {
             throw new DuracloudProviderAccountNotAvailableException(
@@ -140,21 +120,24 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
+    private void saveAccountInfo(AccountInfo accountInfo) {
+        this.repoMgr.getAccountRepo().save(accountInfo);
+    }
+
     @Override
     public void changePrimaryStorageProvider(Long storageProviderId) {
         log.info("Changing primary storage provider to {} from account {}",
                  storageProviderId, account.getSubdomain());
-
-        ServerDetails serverDetails = retrieveServerDetails();
         
-        Set<StorageProviderAccount> secondaryAccounts = serverDetails.getSecondaryStorageProviderAccounts();
+        AccountInfo accountInfo = retrieveAccountInfo();
+        Set<StorageProviderAccount> secondaryAccounts = accountInfo.getSecondaryStorageProviderAccounts();
         for(StorageProviderAccount secondary : secondaryAccounts){
             if(secondary.getId().equals(storageProviderId)){
                 secondaryAccounts.remove(secondary);
-                secondaryAccounts.add(serverDetails.getPrimaryStorageProviderAccount());
-                serverDetails.setPrimaryStorageProviderAccount(secondary);
-                serverDetails.setSecondaryStorageProviderAccounts(secondaryAccounts);
-                storeServerDetails(serverDetails);
+                secondaryAccounts.add(accountInfo.getPrimaryStorageProviderAccount());
+                accountInfo.setPrimaryStorageProviderAccount(secondary);
+                accountInfo.setSecondaryStorageProviderAccounts(secondaryAccounts);
+                saveAccountInfo(accountInfo);
                 return;
             }
         }
@@ -187,11 +170,6 @@ public class AccountServiceImpl implements AccountService {
 
         account.setStatus(status);
         repoMgr.getAccountRepo().save(account);
-    }
-
-    @Override
-    public void storeSubdomain(String subdomain) {
-        // TODO Auto-generated method stub
     }
 
     @Override

@@ -7,21 +7,20 @@
  */
 package org.duracloud.account.monitor.duplication;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.Map;
+import java.util.Properties;
+
 import org.apache.commons.io.IOUtils;
 import org.duracloud.account.db.repo.DuracloudAccountRepo;
-import org.duracloud.account.db.repo.DuracloudInstanceRepo;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
-import org.duracloud.account.db.repo.DuracloudServerImageRepo;
+import org.duracloud.account.db.util.GlobalPropertiesConfigService;
 import org.duracloud.account.monitor.MonitorsDriver;
 import org.duracloud.account.monitor.duplication.domain.DuplicationReport;
 import org.duracloud.account.monitor.duplication.util.DuplicationPropReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * This class is the driver that collects the input configuration elements
@@ -43,15 +42,13 @@ public class DuplicationMonitorDriver extends MonitorsDriver implements Runnable
         DuracloudRepoMgr repoMgr = getRepoMgr();
 
         DuracloudAccountRepo acctRepo = repoMgr.getAccountRepo();
-        DuracloudInstanceRepo instanceRepo = repoMgr.getInstanceRepo();
-        DuracloudServerImageRepo imageRepo = repoMgr.getServerImageRepo();
 
         DuplicationPropReader propReader = new DuplicationPropReader();
         Map<String, String> dupHosts = propReader.readDupProps(props);
 
+       
         duplicationMonitor = new DuplicationMonitor(acctRepo,
-                                                    instanceRepo,
-                                                    imageRepo,
+                                                    getGlobalConfigService(),
                                                     dupHosts);
     }
 

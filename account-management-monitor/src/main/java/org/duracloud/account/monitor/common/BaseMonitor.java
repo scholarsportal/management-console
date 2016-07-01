@@ -8,16 +8,12 @@
 package org.duracloud.account.monitor.common;
 
 import org.duracloud.account.db.model.AccountInfo;
-import org.duracloud.account.db.model.DuracloudInstance;
-import org.duracloud.account.db.model.ServerImage;
+import org.duracloud.account.db.model.GlobalProperties;
 import org.duracloud.account.db.repo.DuracloudAccountRepo;
-import org.duracloud.account.db.repo.DuracloudInstanceRepo;
-import org.duracloud.account.db.repo.DuracloudServerImageRepo;
+import org.duracloud.account.db.util.GlobalPropertiesConfigService;
 import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.duracloud.common.model.Credential;
 import org.slf4j.Logger;
-
-import java.util.List;
 
 /**
  * @author Bill Branan
@@ -30,15 +26,13 @@ public abstract class BaseMonitor {
     protected Logger log;
 
     protected DuracloudAccountRepo acctRepo;
-    protected DuracloudInstanceRepo instanceRepo;
-    protected DuracloudServerImageRepo imageRepo;
 
+    protected GlobalPropertiesConfigService globalPropertiesConfigService;
+    
     protected void init(DuracloudAccountRepo acctRepo,
-                     DuracloudInstanceRepo instanceRepo,
-                     DuracloudServerImageRepo imageRepo) {
+            GlobalPropertiesConfigService globalPropertiesConfigService) {
         this.acctRepo = acctRepo;
-        this.instanceRepo = instanceRepo;
-        this.imageRepo = imageRepo;
+        this.globalPropertiesConfigService = globalPropertiesConfigService;
     }
 
     protected AccountInfo getAccount(String host)
@@ -50,20 +44,12 @@ public abstract class BaseMonitor {
         return acctRepo.findBySubdomain(subdomain);
     }
 
-     protected ServerImage findServerImage(AccountInfo acct)
-        throws DBNotFoundException {
-        List<DuracloudInstance> instances =
-            instanceRepo.findByAccountId(acct.getId());
-        return instances.iterator().next().getImage();
-    }
-
-    protected List<DuracloudInstance> getDuracloudInstances() {
-        return instanceRepo.findAll();
-    }
-
-    protected Credential getRootCredential(DuracloudInstance instance) {
-        String rootPassword = instance.getImage().getDcRootPassword();
-        return new Credential(ServerImage.DC_ROOT_USERNAME, rootPassword);
+    protected Credential getRootCredential() {
+        GlobalProperties props = this.globalPropertiesConfigService.get();
+        String rootUsername = System.getProperty("monitor.username", "monitor");
+        
+        String rootPassword = System.getProperty("monitor.password", "password");
+        return new Credential(rootUsername, rootPassword);
     }
 
 

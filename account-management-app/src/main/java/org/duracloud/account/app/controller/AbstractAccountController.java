@@ -41,32 +41,12 @@ public abstract class AbstractAccountController extends AbstractController {
     public static final String ACCOUNT_PATH = "/byid/{accountId}";
     public static final String EDIT_PATH = "/edit";
     public static final String STATEMENT_PATH =  ACCOUNT_PATH + "/statement";
-    public static final String INSTANCE_PATH = ACCOUNT_PATH + "/instance";
-    public static final String INSTANCE_REINIT_USERS_PATH =
-        INSTANCE_PATH + "/byid/{instanceId}/reinitusers";
-    public static final String INSTANCE_REINIT_PATH =
-        INSTANCE_PATH + "/byid/{instanceId}/reinit";
-    public static final String INSTANCE_RESTART_PATH =
-        INSTANCE_PATH + "/byid/{instanceId}/restart";
-    public static final String INSTANCE_STOP_PATH =
-        INSTANCE_PATH + "/byid/{instanceId}/stop";
-    public static final String INSTANCE_UPGRADE_PATH =
-        INSTANCE_PATH + "/byid/{instanceId}/upgrade";
-    public static final String INSTANCE_START_PATH =
-        INSTANCE_PATH + "/start";
-    public static final String INSTANCE_AVAILABLE_PATH =
-        INSTANCE_PATH + "/available";
     public static final String ACCOUNT_INFO_KEY = "accountInfo";
-    public static final String SERVER_DETAILS_KEY = "serverDetails";
-    public static final String INSTANCE_INFO_KEY = "instanceInfo";
-    public static final String INSTANCE_STATUS_KEY = "instanceStatus";
     public static final String DC_VERSIONS_KEY = "dcVersions";
     public static final String ACTION_STATUS = "actionStatus";
 
     @Autowired(required = true)
     protected AccountManagerService accountManagerService;
-    @Autowired(required = true)
-    protected DuracloudInstanceManagerService instanceManagerService;
 
     @Autowired(required = true)
     protected DuracloudUserService userService;
@@ -82,11 +62,6 @@ public abstract class AbstractAccountController extends AbstractController {
         this.accountManagerService = accountManagerService;
     }
 
-    public void setInstanceManagerService(
-        DuracloudInstanceManagerService instanceManagerService) {
-        this.instanceManagerService = instanceManagerService;
-    }
-
     public DuracloudUserService getUserService() {
         return userService;
     }
@@ -95,10 +70,8 @@ public abstract class AbstractAccountController extends AbstractController {
         this.userService = userService;
     }
 
-    protected void addAccountInfoToModel(AccountInfo info,
-                                         ServerDetails serverDetails, Model model){
+    protected void addAccountInfoToModel(AccountInfo info, Model model){
         model.addAttribute(ACCOUNT_INFO_KEY, info);
-        model.addAttribute(SERVER_DETAILS_KEY, serverDetails);
     }
 
     protected void addAccountOwnersToModel(List<DuracloudUser> owners, Model model)
@@ -122,8 +95,7 @@ public abstract class AbstractAccountController extends AbstractController {
     protected AccountInfo loadAccountInfo(AccountService accountService,
                                           Model model) {
         AccountInfo accountInfo = accountService.retrieveAccountInfo();
-        ServerDetails serverDetails = accountInfo.getServerDetails();
-        addAccountInfoToModel(accountInfo, serverDetails, model);
+        addAccountInfoToModel(accountInfo, model);
         return accountInfo;
     }
 

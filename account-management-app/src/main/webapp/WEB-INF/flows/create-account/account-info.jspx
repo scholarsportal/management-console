@@ -29,6 +29,8 @@
       cascade="true">
 
       <form:form method="POST" modelAttribute="newAccountForm">
+        <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
+
         <fieldset>
           <ol>
             <li>

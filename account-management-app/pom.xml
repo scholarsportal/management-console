@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.duracloud</groupId>
     <artifactId>duracloud-mc</artifactId>
-    <version>2.2.3</version>
+    <version>3.0.0</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   
@@ -11,7 +11,7 @@
   <groupId>org.duracloud</groupId>
   <artifactId>ama</artifactId>
   <packaging>war</packaging>
-  <version>2.2.3</version>
+  <version>3.0.0</version>
   <name>Account Management App</name>
   <url>http://duraspace.org</url>
 
@@ -197,9 +197,18 @@
     <dependency>
       <groupId>org.duracloud</groupId>
       <artifactId>notification-amazon</artifactId>
-      <version>${duracloud.artifact.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>common-rest</artifactId>
+    </dependency>
+ 
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>common-sns</artifactId>
+    </dependency>
+     
     <dependency>
         <groupId>org.duracloud.db</groupId>
         <artifactId>account-management-db-model</artifactId>
@@ -220,19 +229,6 @@
       <groupId>org.codehaus.woodstox</groupId>
       <artifactId>wstx-lgpl</artifactId>
       <version>3.2.4</version>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.duracloud</groupId>
-      <artifactId>account-management-compute</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.duracloud</groupId>
-      <artifactId>account-management-compute-amazon</artifactId>
-      <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
 

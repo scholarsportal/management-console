@@ -135,16 +135,18 @@
                         <form
                          action="${currentUri}/byid/${a.id}/activate"
                          method="post">
+                         <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
                           <button
                            type="submit"
                            class="activate"><spring:message code="activate" /></button>
                         </form>
                       </c:when>
                       <c:when
-                       test="${a.status == 'ACTIVE' and a.instance == null}">
+                       test="${a.status == 'ACTIVE'}">
                         <form
                          action="${currentUri}/byid/${a.id}/deactivate"
                          method="post">
+                         <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
                           <button class="deactivate"
                            type="submit">
                           <spring:message
@@ -165,12 +167,10 @@
                     </a>
                   </td>
                   <td><!-- placeholder -->
-                    <c:if
-                     test="${a.instance == null}">
-
                     <form
                      action="${currentUri}/byid/${a.id}/delete"
                      method="post">
+                      <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
                       <input type="hidden"
                        name="id"
                        value="${a.id}" />
@@ -185,7 +185,6 @@
                          code="delete" />
                       </button>
                     </form>
-                    </c:if>
                   </td>
                 </tr>
               </c:forEach>

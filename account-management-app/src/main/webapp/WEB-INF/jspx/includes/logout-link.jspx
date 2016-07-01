@@ -1,0 +1,14 @@
+<jsp:root version="2.0" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:jsp="http://java.sun.com/JSP/Page"
+	>
+	<jsp:directive.page contentType="text/html;charset=UTF-8" />
+	<a id="logout-link" accesskey="l" onclick="$('#logoutForm').submit()" class="icon-link logout"><i class="pre logoff">
+	<!--  -->
+	</i>Logout</a>
+	
+	<form action="${pageContext.request.contextPath}/logout" method="post"
+		id="logoutForm">
+		   <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
+		</form>
+</jsp:root>
+

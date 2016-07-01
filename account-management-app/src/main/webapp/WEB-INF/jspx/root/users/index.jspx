@@ -100,6 +100,7 @@
                                   <button 
                                    class="reset"
                                    type="submit" >
+                                  <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
                                   <spring:message code="reset"/>${' '}<spring:message code="password"/></button>
                                 </form>
                           </li>
@@ -115,6 +116,8 @@
                                  method="post">
                                   <button class="delete"
                                    type="submit">
+                                   <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
+                                   
                                   <i
                                    class="pre trash"><!--  -->
                                   </i>
@@ -154,6 +157,7 @@
                                  method="post"
                                  action="${currentUri}/byid/${u.id}/changerole"
                                  modelAttribute="accountUsersEditForm">
+                                <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
                                 <ul class="horizontal-list">
                                   <li>
                                   <form:hidden path="accountId" value="${a.id}"/>
@@ -203,6 +207,8 @@
                             <form 
                              action="${currentUri}/byid/${u.id}/revoke"
                              method="post">
+                             <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
+                             
                               <input type="hidden" name="accountId" value="${a.id}"/>
                               <button
                                class="remove-user"

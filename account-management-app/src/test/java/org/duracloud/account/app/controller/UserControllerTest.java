@@ -7,12 +7,20 @@
  */
 package org.duracloud.account.app.controller;
 
-import org.duracloud.account.db.model.AccountInfo;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.duracloud.account.config.AmaEndpoint;
+import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.UserInvitation;
-import org.duracloud.account.db.util.DuracloudInstanceManagerService;
-import org.duracloud.account.db.util.DuracloudInstanceService;
 import org.duracloud.account.db.util.DuracloudUserService;
 import org.duracloud.account.db.util.error.AccountNotFoundException;
 import org.easymock.EasyMock;
@@ -22,24 +30,16 @@ import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.*;
-
 public class UserControllerTest extends AmaControllerTestBase {
     private UserController userController;
-    private DuracloudInstanceManagerService instanceManagerService;
 
     @Before
     public void before() throws Exception {
         super.before();
         setupGenericAccountAndUserServiceMocks(TEST_ACCOUNT_ID);
-        instanceManagerService =
-            createMock(DuracloudInstanceManagerService.class);
         userController = new UserController();
         userController.setUserService(userService);
         userController.setAccountManagerService(accountManagerService);
-        userController.setInstanceManagerService(instanceManagerService);
 
     }
 
@@ -111,8 +111,6 @@ public class UserControllerTest extends AmaControllerTestBase {
 
     @Test
     public void testGetUser() throws Exception {
-        EasyMock.expect(instanceManagerService.getLatestVersion())
-            .andReturn(null);
 
         HttpServletRequest request = createMock(HttpServletRequest.class);
         HttpSession session = createMock(HttpSession.class);
@@ -131,12 +129,6 @@ public class UserControllerTest extends AmaControllerTestBase {
         EasyMock.expect(accountManagerService.findAccountsByUserId(u.getId()))
                 .andReturn(accounts);
         
-        EasyMock.expect(instanceManagerService.getVersions()).andReturn(
-                new HashSet<>(Arrays.asList(
-                                new String[] { "version1",
-                                               "version2", 
-                                               "version3" })));
-
         replayMocks();
         
         ModelAndView mv = userController.getUser(TEST_USERNAME, request);

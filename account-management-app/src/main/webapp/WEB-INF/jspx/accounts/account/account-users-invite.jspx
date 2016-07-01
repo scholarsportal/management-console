@@ -56,6 +56,8 @@
                id="invitation-form"
                modelAttribute="invitationForm"
                method="POST">
+               <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
+               
                 <table
                  class="standard-form">
                   <tr>

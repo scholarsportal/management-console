@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<jsp:root
+ version="2.0"
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:jsp="http://java.sun.com/JSP/Page"
+ xmlns:tiles="http://tiles.apache.org/tags-tiles"
+ xmlns:c="http://java.sun.com/jsp/jstl/core"
+ xmlns:f="http://java.sun.com/jsp/jstl/functions"
+ xmlns:spring="http://www.springframework.org/tags"
+ xmlns:sec="http://www.springframework.org/security/tags">
+<jsp:directive.page contentType="text/html; charset=utf-8" />
+
+  <c:set
+   var="currentUri" scope="request"
+   value="${requestScope['javax.servlet.forward.request_uri']}" />
+
+  <tiles:insertDefinition
+   name="globalproperties-base"
+   flush="true">
+    <tiles:putAttribute
+     name="title">
+      <spring:message
+       code="globalproperties" />
+    </tiles:putAttribute>
+   <tiles:putAttribute
+     name="header-extensions">
+      
+   </tiles:putAttribute>
+
+    <tiles:putAttribute
+     name="mainContent"
+     cascade="true">
+            <div
+       class="button-bar clearfix">
+        <spring:message
+         code="globalproperties"
+         var="entityName" />
+
+        <a
+         id="edit"
+         href="${currentUri}/edit"
+         class="button">
+           Edit Configuration
+        </a>
+      </div>
+
+			<table id="global-properties-props" class="entity-list">
+				<thead>
+					<tr>
+						<th>Property</th>
+						<th>Value</th>
+					</tr>
+
+				</thead>
+
+				<tbody>
+					<tr>
+						<td><spring:message
+             code="globalproperties.instancenotificationtopicarn" /></td>
+						<td>${globalProperties.instanceNotificationTopicArn}</td>
+					</tr>
+          <tr>
+            <td><spring:message
+             code="globalproperties.cloudfrontaccountid" /></td>
+            <td>${globalProperties.cloudFrontAccountId}</td>
+          </tr>
+          <tr>
+            <td><spring:message
+             code="globalproperties.cloudfrontkeyid" /></td>
+            <td>${globalProperties.cloudFrontKeyId}</td>
+          </tr>
+          <tr>
+            <td><spring:message
+             code="globalproperties.cloudfrontkeypath" /></td>
+            <td>${globalProperties.cloudFrontKeyPath}</td>
+          </tr>
+
+				</tbody>
+			</table>
+
+		</tiles:putAttribute>
+  </tiles:insertDefinition>
+</jsp:root>
+
