@@ -19,7 +19,6 @@ import org.duracloud.account.db.model.DuracloudGroup;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.Role;
 import org.duracloud.account.db.model.UserInvitation;
-import org.duracloud.account.db.model.util.InitUserCredential;
 import org.duracloud.account.db.repo.DuracloudGroupRepo;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.db.repo.DuracloudRightsRepo;
@@ -104,8 +103,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     }
 
     private boolean isReservedName(String username) {
-        Credential init = new InitUserCredential();
-        return  init.getUsername().equalsIgnoreCase(username);
+        return false;
     }
 
     private boolean isReservedPrefix(String username) {
