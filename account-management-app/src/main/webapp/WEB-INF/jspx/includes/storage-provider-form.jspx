@@ -62,7 +62,7 @@
                  element="div" />               
               </li>
 	            
-	            <c:if test="${param.storageProviderType eq 'SNAPSHOT'}">
+	            <c:if test="${param.storageProviderType eq 'DPN' || param.storageProviderType eq 'CHRONOPOLIS'}">
 	              <li>
 	                <form:label
 	                 cssErrorClass="error"
