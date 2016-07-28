@@ -57,11 +57,6 @@
   <dependencies>
 
     <dependency>
-      <groupId>org.duracloud.db</groupId>
-      <artifactId>account-management-db-repo</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>org.duracloud</groupId>
       <artifactId>account-management-util</artifactId>
       <version>${project.version}</version>
@@ -71,7 +66,7 @@
       <groupId>org.duracloud</groupId>
       <artifactId>notification</artifactId>
     </dependency>
-
+    
     <dependency>
       <groupId>org.duracloud</groupId>
       <artifactId>notification-amazon</artifactId>

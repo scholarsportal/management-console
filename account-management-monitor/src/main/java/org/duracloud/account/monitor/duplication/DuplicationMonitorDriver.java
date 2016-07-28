@@ -13,9 +13,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
-import org.duracloud.account.db.repo.DuracloudAccountRepo;
-import org.duracloud.account.db.repo.DuracloudRepoMgr;
-import org.duracloud.account.db.util.GlobalPropertiesConfigService;
 import org.duracloud.account.monitor.MonitorsDriver;
 import org.duracloud.account.monitor.duplication.domain.DuplicationReport;
 import org.duracloud.account.monitor.duplication.util.DuplicationPropReader;
@@ -39,17 +36,11 @@ public class DuplicationMonitorDriver extends MonitorsDriver implements Runnable
     public DuplicationMonitorDriver(Properties props) {
         super(props);
 
-        DuracloudRepoMgr repoMgr = getRepoMgr();
-
-        DuracloudAccountRepo acctRepo = repoMgr.getAccountRepo();
-
         DuplicationPropReader propReader = new DuplicationPropReader();
         Map<String, String> dupHosts = propReader.readDupProps(props);
 
        
-        duplicationMonitor = new DuplicationMonitor(acctRepo,
-                                                    getGlobalConfigService(),
-                                                    dupHosts);
+        duplicationMonitor = new DuplicationMonitor(dupHosts);
     }
 
     @Override
