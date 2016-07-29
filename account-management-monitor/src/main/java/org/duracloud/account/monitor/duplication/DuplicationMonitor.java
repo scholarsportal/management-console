@@ -9,13 +9,11 @@ package org.duracloud.account.monitor.duplication;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.duracloud.account.db.model.AccountInfo;
-import org.duracloud.account.db.repo.DuracloudAccountRepo;
-import org.duracloud.account.db.util.GlobalPropertiesConfigService;
 import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.duracloud.account.monitor.common.BaseMonitor;
 import org.duracloud.account.monitor.duplication.domain.DuplicationInfo;
@@ -23,9 +21,9 @@ import org.duracloud.account.monitor.duplication.domain.DuplicationReport;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ContentStoreManagerImpl;
+import org.duracloud.client.SpaceStatsDTOList;
 import org.duracloud.common.model.Credential;
 import org.duracloud.error.ContentStoreException;
-import org.duracloud.storage.util.StorageProviderUtil;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -46,11 +44,8 @@ public class DuplicationMonitor extends BaseMonitor {
     private Map<String, String> dupHosts;
     
     
-    public DuplicationMonitor(DuracloudAccountRepo acctRepo,
-                              GlobalPropertiesConfigService configService,
-                              Map<String, String> dupHosts) {
+    public DuplicationMonitor(Map<String, String> dupHosts) {
         this.log = LoggerFactory.getLogger(DuplicationMonitor.class);
-        super.init(acctRepo, configService);
         this.dupHosts = dupHosts;
     }
 
@@ -114,7 +109,6 @@ public class DuplicationMonitor extends BaseMonitor {
         throws DBNotFoundException {
         ContentStoreManager storeManager =
             new ContentStoreManagerImpl(host, PORT, CONTEXT);
-        AccountInfo account = getAccount(host);
         Credential credential = getRootCredential();
         storeManager.login(credential);
         return storeManager;
@@ -127,7 +121,7 @@ public class DuplicationMonitor extends BaseMonitor {
                                                     String primaryStoreId)
         throws ContentStoreException {
         Map<String, ContentStore> stores =
-            new HashMap(storeManager.getContentStores());
+            new HashMap<>(storeManager.getContentStores());
         List<ContentStore> secondaryStores = new ArrayList<>();
 
         for(ContentStore store : stores.values()) {
@@ -148,7 +142,7 @@ public class DuplicationMonitor extends BaseMonitor {
         List<String> spaceList;
         String spaces = dupHosts.get(host);
         if(spaces.equals(ALL_SPACES)) { // Need to compare all spaces
-            spaceList = new ArrayList(store.getSpaces());
+            spaceList = new ArrayList<>(store.getSpaces());
             spaceList.removeAll(ADMIN_SPACES);
         } else { // Only compare specific set of spaces
             String[] spacesToCompare = spaces.split(",");
@@ -215,7 +209,15 @@ public class DuplicationMonitor extends BaseMonitor {
      */
     private long getSpaceCount(ContentStore store, String spaceId)
         throws ContentStoreException {
-        return StorageProviderUtil.count(store.getSpaceContents(spaceId));
+        SpaceStatsDTOList stats = store.getSpaceStats(spaceId, new Date(System.currentTimeMillis()-(24*60*60*1000)), new Date());
+        
+        long count = 0;
+        
+        if(stats != null && stats.size() > 0){
+            count = stats.getLast().getObjectCount();
+        }
+        
+        return count;
     }
 
     /*

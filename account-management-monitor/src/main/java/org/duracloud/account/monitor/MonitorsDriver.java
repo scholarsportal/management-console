@@ -28,8 +28,6 @@ import org.duracloud.account.monitor.duplication.DuplicationMonitorDriver;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * This class is the command-line driver for executing monitors for
@@ -82,11 +80,6 @@ public class MonitorsDriver {
     public MonitorsDriver(Properties props) {
         this.props = props;
         this.emailUtil = buildEmailUtil(props);
-
-        ApplicationContext context =
-                new ClassPathXmlApplicationContext("jpa-config.xml");
-        this.repoMgr = context.getBean("repoMgr", DuracloudRepoMgr.class);
-        this.configService = context.getBean(GlobalPropertiesConfigService.class);
     }
 
     public DuracloudRepoMgr getRepoMgr() {

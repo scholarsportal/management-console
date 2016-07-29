@@ -7,26 +7,24 @@
  */
 package org.duracloud.account.monitor.duplication;
 
-import org.duracloud.account.db.repo.DuracloudAccountRepo;
-import org.duracloud.account.db.util.GlobalPropertiesConfigService;
-import org.duracloud.account.monitor.duplication.domain.DuplicationInfo;
-import org.duracloud.client.ContentStore;
-import org.duracloud.client.ContentStoreImpl;
-import org.duracloud.client.ContentStoreManager;
-import org.easymock.EasyMock;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.duracloud.account.monitor.duplication.domain.DuplicationInfo;
+import org.duracloud.client.ContentStore;
+import org.duracloud.client.ContentStoreImpl;
+import org.duracloud.client.ContentStoreManager;
+import org.duracloud.client.SpaceStatsDTOList;
+import org.duracloud.reportdata.storage.SpaceStatsDTO;
+import org.easymock.EasyMock;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Bill Branan
@@ -36,30 +34,29 @@ public class DuplicationMonitorTest {
 
     private ContentStoreManager storeManager;
     private ContentStore store;
-    private DuracloudAccountRepo acctRepo;
-    private GlobalPropertiesConfigService configService;
     private Map<String, String> dupHosts;
     private DuplicationMonitor dupMonitor;
+    private SpaceStatsDTOList spaceStatsList;
+    private SpaceStatsDTO spaceStats;
 
     @Before
     public void setup() {
-        configService = EasyMock.createMock(GlobalPropertiesConfigService.class);
         storeManager = EasyMock.createMock(ContentStoreManager.class);
         store = EasyMock.createMock(ContentStore.class);
-        acctRepo = EasyMock.createMock(DuracloudAccountRepo.class);
+        spaceStatsList = EasyMock.createMock(SpaceStatsDTOList.class);
+        spaceStats = EasyMock.createMock(SpaceStatsDTO.class);
+
         dupHosts = new HashMap<>();
-        dupMonitor = new DuplicationMonitor(acctRepo,
-                                            configService,
-                                            dupHosts);
+        dupMonitor = new DuplicationMonitor(dupHosts);
     }
 
     private void replayMocks() {
-        EasyMock.replay(storeManager, store, acctRepo, configService);
+        EasyMock.replay(storeManager, store,spaceStats,spaceStatsList);
     }
 
     @After
     public void teardown() {
-        EasyMock.verify(storeManager, store, acctRepo, configService);
+        EasyMock.verify(storeManager, store,spaceStats,spaceStatsList);
     }
 
     @Test
@@ -129,10 +126,9 @@ public class DuplicationMonitorTest {
                 .andReturn(storeType);
         EasyMock.expect(store.getStoreId())
                 .andReturn(storeId);
-        EasyMock.expect(store.getSpaceContents(space1))
-                .andReturn(Arrays.asList("1").iterator());
-        EasyMock.expect(store.getSpaceContents(space2))
-                .andReturn(Arrays.asList("1", "2").iterator());
+
+        setupSpaceStats(space1,1);
+        setupSpaceStats(space2,2);
 
         replayMocks();
 
@@ -157,14 +153,25 @@ public class DuplicationMonitorTest {
                 .andReturn(storeType);
         EasyMock.expect(store.getStoreId())
                 .andReturn(storeId);
-        EasyMock.expect(store.getSpaceContents(space1))
-                .andReturn(Arrays.asList("1").iterator());
+        
+        setupSpaceStats(space1, 1);
+        
 
         replayMocks();
 
         dupMonitor.countSpaces(host, dupInfo, store, spaces, false);
         Map<String, Long> spaceCounts = dupInfo.getSpaceCounts(storeId);
         assertEquals(new Long(1), spaceCounts.get(space1));
+    }
+
+    private void setupSpaceStats(String spaceId, long count) throws Exception {
+        EasyMock.expect(store.getSpaceStats(EasyMock.eq(spaceId),
+                EasyMock.isA(Date.class), EasyMock.isA(Date.class)))
+                .andReturn(spaceStatsList);
+
+        EasyMock.expect(spaceStatsList.size()).andReturn(1);
+        EasyMock.expect(spaceStatsList.getLast()).andReturn(spaceStats);
+        EasyMock.expect(spaceStats.getObjectCount()).andReturn(count);
     }
 
     @Test
