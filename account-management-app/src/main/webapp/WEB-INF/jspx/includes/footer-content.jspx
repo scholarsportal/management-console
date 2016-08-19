@@ -9,7 +9,7 @@
   <jsp:directive.page contentType="text/html;charset=UTF-8" />
   <div id="footer-links" class="float-l">
   <ul class="horizontal-list">
-    <li><span>DuraCloud Management Console v${project.version} ${prefix.revision}${prefix.specialStatus}</span>${' '}&#169;<span id="copyright"></span></li>
+    <li><span><c:out value="DuraCloud Management Console v${project.version} ${prefix.revision}${prefix.specialStatus}"/></span>${' '}&#169;<span id="copyright"></span></li>
     <li><a
       target="_blank"
       href="http://www.duracloud.org">DuraCloud</a></li>

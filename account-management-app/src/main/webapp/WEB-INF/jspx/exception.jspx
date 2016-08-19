@@ -24,9 +24,9 @@
        class="dc-main-content">
         <div
          class="dc-subgroup">
-          <h2>An error has occurred, please try again. If the error continues contact Duracloud.</h2>
+          <h2>An error has occurred, please try again. If the error continues contact DuraCloud.</h2>
 
-          <p>${ex.message}</p>
+          <p><c:out value="${ex.message}"/></p>
 
         </div>
       </div>

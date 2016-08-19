@@ -73,7 +73,7 @@
                            var="p"
                            items="${secondaryProviders}">
                             <tr>
-                              <td>${p.providerType}</td>
+                              <td><c:out value="${p.providerType}"/></td>
 
                               <td>(Secondary)</td>
                               <td></td>

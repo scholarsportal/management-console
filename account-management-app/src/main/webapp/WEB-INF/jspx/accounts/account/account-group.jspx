@@ -51,14 +51,14 @@
                   <c:forEach items="${groupUsers}" var="u">
                   <tr>
                     <td>
-                      ${u.firstName} ${u.lastName}                    
+                      <c:out value="${u.firstName} ${u.lastName}"/>                  
                     </td>
 
                     <td>
-                      ${u.username}                      
+                       <c:out value="${u.username}"/>                      
                     </td>
                     <td>
-                      ${u.email}                      
+                       <c:out value="${u.email}"/>                     
                     </td>
                   
                   </tr>

@@ -80,15 +80,15 @@
                  var="u"
                  items="${users}">
                   <tr data-username="${u.username}">
-                    <td>${u.username}</td>
+                    <td><c:out value="${u.username}"/></td>
 
-                    <td>${u.firstName}</td>
+                    <td><c:out value="${u.firstName}"/></td>
 
-                    <td>${u.lastName}</td>
+                    <td><c:out value="${u.lastName}"/></td>
 
-                    <td>${u.email}</td>
+                    <td><c:out value="${u.email}"/></td>
 
-                    <td>${u.allowableIPAddressRange}</td>
+                    <td><c:out value="${u.allowableIPAddressRange}"/></td>
 
                     <td>
                       <ul
@@ -144,10 +144,10 @@
                     <a 
                       target="_blank"
                       href="${pageContext.request.contextPath}/accounts/byid/${a.id}/users">
-                        ${a.accountName} (${a.subdomain})
+                        <c:out value="${a.accountName} (${a.subdomain})"/>
                     </a>
                   </td>
-                  <td>${a.role.displayName}</td>
+                  <td><c:out value="${a.role.displayName}"/></td>
                     <td> <!--  -->
                           <div style="min-width:250px">
                           <ul class="horizontal-list">

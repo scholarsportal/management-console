@@ -60,7 +60,7 @@
                       </td>
                       <td>
                         <a href="${pageContext.request.contextPath}/accounts/byid/${accountId}/groups/${ug.name}">  
-                          ${ug.prettyName}
+                          <c:out value="${ug.prettyName}"/>
                         </a>                      
                       </td>
                       </tr>

@@ -46,7 +46,8 @@
           <td>
             <a
              href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/details">
-            ${accountInfo.acctName}</a>
+            <c:out value="${accountInfo.acctName}"/>
+            </a>
           </td>
           <td>
             <a
@@ -54,7 +55,7 @@
              target="_blank">${accountInfo.subdomain}</a>
           </td>
 
-          <td>${accountInfo.status}</td>
+          <td><c:out  value="${accountInfo.status}"/></td>
         </tr>
       </c:forEach>
     </tbody>

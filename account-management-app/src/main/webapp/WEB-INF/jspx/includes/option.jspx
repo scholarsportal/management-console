@@ -11,10 +11,10 @@
   <jsp:directive.page contentType="text/html;charset=UTF-8" />
    <c:choose>
    <c:when test="${param.selected}">
-      <option value="${param.value}" selected="selected">${param.label}</option>
+      <option value="${param.value}" selected="selected"><c:out value="${param.label}"/></option>
    </c:when>  
    <c:otherwise>
-      <option value="${param.value}">${param.label}</option>
+      <option value="${param.value}"><c:out value="${param.label}"/></option>
    </c:otherwise> 
    </c:choose>   
   
