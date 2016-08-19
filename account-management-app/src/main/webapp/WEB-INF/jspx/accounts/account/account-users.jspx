@@ -28,7 +28,7 @@
 
         <tiles:putAttribute
          name="content">
-          <h1>${accountInfo.acctName}: Manage Account Users</h1>
+          <h1><c:out value="${accountInfo.acctName}: Manage Account Users"/></h1>
           <div
            id="account-list"
            class="account-record user-list">
@@ -63,15 +63,15 @@
                  var="u"
                  items="${users}">
                   <tr>
-                    <td align="left">${u.username}</td>
+                    <td align="left"><c:out value="${u.username}"/></td>
 
-                    <td align="left">${u.firstName} ${u.lastName}</td>
+                    <td align="left"><c:out value="${u.firstName} ${u.lastName}"/></td>
 
-                    <td align="left">${u.email}</td>
+                    <td align="left"><c:out value="${u.email}"/></td>
 
-                    <td align="left">${u.allowableIPAddressRange}</td>
+                    <td align="left"><c:out value="${u.allowableIPAddressRange}"/></td>
 
-                    <td align="left">${u.role.displayName}</td>
+                    <td align="left"><c:out value="${u.role.displayName}"/></td>
                      <c:choose>
                      <c:when test="${u.editable}">
                         <form:form
@@ -232,9 +232,9 @@
                  var="up"
                  items="${pendingUserInvitations}">
                   <tr>
-                    <td align="left" valign="middle">${up.email}</td>
+                    <td align="left" valign="middle"><c:out value="${up.email}"/></td>
 
-                    <td align="left" valign="middle">${up.expirationDate}</td>
+                    <td align="left" valign="middle"><c:out value="${up.expirationDate}"/></td>
 
                     <td align="left" valign="middle">
                       <ul

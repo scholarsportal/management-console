@@ -56,27 +56,27 @@
 				<tbody>
 					<tr>
 						<td>Database Host</td>
-						<td>${duracloudMill.dbHost}</td>
+						<td><c:out value="${duracloudMill.dbHost}"/></td>
 					</tr>
 					<tr>
 						<td>Database Name</td>
-						<td>${duracloudMill.dbName}</td>
+						<td><c:out value="${duracloudMill.dbName}"/></td>
 					</tr>
 					<tr>
 						<td>Database Port</td>
-						<td>${duracloudMill.dbPort}</td>
+						<td><c:out value="${duracloudMill.dbPort}"/></td>
 					</tr>
 					<tr>
 						<td>Database Username</td>
-						<td>${duracloudMill.dbUsername}</td>
+						<td><c:out value="${duracloudMill.dbUsername}"/></td>
 					</tr>
 					<tr>
 						<td>Audit Queue Name</td>
-						<td>${duracloudMill.auditQueue}</td>
+						<td><c:out value="${duracloudMill.auditQueue}"/></td>
 					</tr>
 					<tr>
 						<td>Audit Log Space Id</td>
-						<td>${duracloudMill.auditLogSpaceId}</td>
+						<td><c:out value="${duracloudMill.auditLogSpaceId}"/></td>
 					</tr>
 				</tbody>
 			</table>

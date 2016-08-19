@@ -20,7 +20,7 @@
         <c:forEach
          var="error"
          items="${errors.allErrors}">
-          <li>${error.defaultMessage}</li>
+          <li><c:out value="${error.defaultMessage}"/></li>
         </c:forEach>
       </ul>
     </div>

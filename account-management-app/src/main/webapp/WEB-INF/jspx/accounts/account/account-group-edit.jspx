@@ -39,7 +39,7 @@
                     <td>
                       <form:select  size="10" style="width:200px;" path="availableUsernames">
                         <c:forEach items="${availableUsers}" var="u" >
-                          <form:option value="${u.username}">${u.firstName} ${u.lastName} (${u.email})</form:option>
+                          <form:option value="${u.username}"><c:out value="${u.firstName} ${u.lastName} (${u.email})"/></form:option>
                         </c:forEach>
                       </form:select>
                     </td>
@@ -52,7 +52,7 @@
                       <form:select size="10"  style="width:200px;" path="groupUsernames">
                         <c:if test="${not empty groupUsers}">
                         <c:forEach items="${groupUsers}" var="u" >
-                          <form:option value="${u.username}">${u.firstName} ${u.lastName} (${u.email})</form:option>
+                          <form:option value="${u.username}"><c:out value="${u.firstName} ${u.lastName} (${u.email})"/></form:option>
                         </c:forEach>
                         </c:if>
                       </form:select>

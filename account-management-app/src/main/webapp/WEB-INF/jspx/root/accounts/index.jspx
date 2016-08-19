@@ -107,15 +107,15 @@
                   <td>
                     <a target="_blank"
                      href="${pageContext.request.contextPath}/accounts/byid/${a.id}/details">
-                    ${a.acctName}</a>
+                    <c:out value="${a.acctName}"/></a>
                   </td>
                   <td>
                     <a
                       href="http://${a.subdomain}.duracloud.org/duradmin"
-                      target="_blank">${a.subdomain}</a>
+                      target="_blank"><c:out value="${a.subdomain}"/></a>
                   </td>
 
-                  <td class="status">${a.status}</td>
+                  <td class="status"><c:out value="${a.status}"/></td>
 
                   <td>
                     <a target="_blank"

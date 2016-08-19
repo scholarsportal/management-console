@@ -114,7 +114,7 @@
               <sec:authentication
                 property="principal.username"
                 var="username" />
-              <li>Welcome ${username}</li>
+              <li>Welcome <c:out value="${username}"/></li>
               <li><a
                 id="user-profile-link"
                 accesskey="p"

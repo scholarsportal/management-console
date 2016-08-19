@@ -70,10 +70,10 @@
                 <table width="100%">
                       <tr class="account">
                         <td align="left" valign="middle">
-                          <strong class="accountlabel">${a.accountInfo.acctName}</strong>
+                          <strong class="accountlabel"><c:out value="${a.accountInfo.acctName}"/></strong>
                             
                         </td>
-                        <td align="right" valign="middle"><span class="instructions" style="margin-left:">Status: ${a.accountInfo.status} </span></td>
+                        <td align="right" valign="middle"><span class="instructions" style="margin-left:"><c:out value="Status: ${a.accountInfo.status}"/> </span></td>
                         
                         <c:if test="${a.userRole != 'ROLE_USER'}">
 
@@ -115,7 +115,7 @@
                     <tr>
                       <td align="left" valign="middle" class="instructions">
                       	<a href="https://${a.accountInfo.subdomain}.duracloud.org">
-                      	  ${a.accountInfo.subdomain}.duracloud.org
+                      	  <c:out value="${a.accountInfo.subdomain}.duracloud.org"/>
                       	</a>
                       </td>
                     </tr>

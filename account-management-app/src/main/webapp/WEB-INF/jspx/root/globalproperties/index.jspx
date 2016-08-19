@@ -57,22 +57,22 @@
 					<tr>
 						<td><spring:message
              code="globalproperties.instancenotificationtopicarn" /></td>
-						<td>${globalProperties.instanceNotificationTopicArn}</td>
+						<td><c:out value="${globalProperties.instanceNotificationTopicArn}"/></td>
 					</tr>
           <tr>
             <td><spring:message
              code="globalproperties.cloudfrontaccountid" /></td>
-            <td>${globalProperties.cloudFrontAccountId}</td>
+            <td><c:out value="${globalProperties.cloudFrontAccountId}"/></td>
           </tr>
           <tr>
             <td><spring:message
              code="globalproperties.cloudfrontkeyid" /></td>
-            <td>${globalProperties.cloudFrontKeyId}</td>
+            <td><c:out value="${globalProperties.cloudFrontKeyId}"/></td>
           </tr>
           <tr>
             <td><spring:message
              code="globalproperties.cloudfrontkeypath" /></td>
-            <td>${globalProperties.cloudFrontKeyPath}</td>
+            <td><c:out value="${globalProperties.cloudFrontKeyPath}"/></td>
           </tr>
 
 				</tbody>

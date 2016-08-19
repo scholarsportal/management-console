@@ -37,7 +37,7 @@
         <tiles:putAttribute
          name="content">
 
-          <h1>${accountInfo.acctName}: Account Information</h1>
+          <h1><c:out value="${accountInfo.acctName}: Account Information"/></h1>
 
           <div
            class="two-by-one-layout">
@@ -71,30 +71,30 @@
                 <tr>
                   <td width="22%" align="right">Subdomain:</td>
 
-                  <td width="78%">${accountInfo.subdomain}</td>
+                  <td width="78%"><c:out value="${accountInfo.subdomain}"/></td>
                 </tr>
                 <tr>
                   <td align="right">Account Name:</td>
 
-                  <td>${accountInfo.acctName}</td>
+                  <td><c:out value="${accountInfo.acctName}"/></td>
                 </tr>
 
                 <tr>
                   <td align="right">Organization Name:</td>
 
-                  <td>${accountInfo.orgName}</td>
+                  <td><c:out value="${accountInfo.orgName}"/></td>
                 </tr>
 
                 <tr>
                   <td align="right">Department:</td>
 
-                  <td>${accountInfo.department}</td>
+                  <td><c:out value="${accountInfo.department}"/></td>
                 </tr>
 
                 <tr>
                   <td align="right">Status:</td>
 
-                  <td>${accountInfo.status}</td>
+                  <td><c:out value="${accountInfo.status}"/></td>
                 </tr>
 
               </table>
@@ -155,10 +155,10 @@
                            var="p"
                            items="${secondaryProviders}">
                             <tr>
-                              <td>${p.providerType}</td>
+                              <td><c:out value="${p.providerType}"/></td>
 
                               <td>(Secondary)</td>
-                              <td>${p.storageLimit} TB Limit</td>
+                              <td><c:out value="${p.storageLimit} TB Limit"/></td>
                               <td>
                                 <sec:authorize access="hasAnyRole('ROLE_ROOT')">
                                     <form style="display:inline; float:left;"
