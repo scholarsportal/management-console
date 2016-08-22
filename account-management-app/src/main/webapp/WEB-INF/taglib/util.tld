@@ -1,0 +1,17 @@
+<taglib>
+  <tlib-version>2.0</tlib-version>
+  <jsp-version>2.0</jsp-version>
+  <short-name>duracloud-util-taglib</short-name>
+  <uri>http://www.duracloud.org/tags/util</uri>
+  <tlib-version>1.0</tlib-version>
+  <tag>
+    <name>sanitize</name>
+    <tag-class>org.duracloud.account.jsp.SanitizeTag</tag-class>
+    <body-content>tagdependent</body-content>
+    <attribute>
+      <name>text</name>
+      <required>true</required>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+</taglib>
