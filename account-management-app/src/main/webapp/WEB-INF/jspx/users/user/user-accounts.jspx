@@ -163,7 +163,7 @@
                 <table width="100%">
                       <tr class="account">
                         <td align="left" valign="middle">
-                          <strong class="accountlabel">${a.accountInfo.acctName}</strong>
+                          <strong class="accountlabel"><c:out value="${a.accountInfo.acctName}"/></strong>
 
                         </td>
                         <td align="right" valign="middle"><span class="instructions" style="margin-left:">Status: ${a.accountInfo.status} </span></td>
@@ -230,7 +230,7 @@
                 <table width="100%">
                       <tr class="account">
                         <td align="left" valign="middle">
-                          <strong class="accountlabel">${a.accountInfo.acctName}</strong>
+                          <strong class="accountlabel"><c:out value="${a.accountInfo.acctName}"/></strong>
 
                         </td>
                         <td align="right" valign="middle"><span class="instructions" style="margin-left:">Status: ${a.accountInfo.status} </span></td>
@@ -305,7 +305,7 @@
                 <table width="100%">
                       <tr class="account">
                         <td align="left" valign="middle">
-                          <strong class="accountlabel">${a.accountInfo.acctName}</strong>
+                          <strong class="accountlabel"><c:out value="${a.accountInfo.acctName}"/></strong>
 
                         </td>
                         <td align="right" valign="middle"><span class="instructions" style="margin-left:">Status: ${a.accountInfo.status} </span></td>
