@@ -555,12 +555,8 @@ public class UserController extends AbstractController {
                                    @PathVariable String redemptionCode) throws DBNotFoundException {
         log.info("getting redeem invitation {}", redemptionCode);
 
-        // force logout
-        request.getSession().invalidate();
-        SecurityContextHolder.clearContext();
-
         // add the redemption code to the session
-        request.getSession(true).setAttribute("redemptionCode", redemptionCode);
+        request.getSession().setAttribute("redemptionCode", redemptionCode);
         ModelAndView mav = new ModelAndView(HomeController.HOME_VIEW_ID);
         mav.addObject("redemptionCode", redemptionCode);
         return mav;
