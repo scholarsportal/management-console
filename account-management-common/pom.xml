@@ -3,14 +3,14 @@
   <parent>
     <groupId>org.duracloud</groupId>
     <artifactId>duracloud-mc</artifactId>
-    <version>3.1.2</version>
+    <version>3.1.4</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.duracloud</groupId>
   <artifactId>account-management-common</artifactId>
-  <version>3.1.2</version>
+  <version>3.1.4</version>
   <name>Account Management Common</name>
 
 </project>

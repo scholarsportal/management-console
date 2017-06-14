@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.duracloud</groupId>
         <artifactId>duracloud-mc</artifactId>
-        <version>3.1.2</version>
+        <version>3.1.4</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -14,7 +14,7 @@
     <groupId>org.duracloud</groupId>
     <artifactId>account-management-util</artifactId>
     <packaging>jar</packaging>
-    <version>3.1.2</version>
+    <version>3.1.4</version>
     <name>Account Management Datastore Access Utilities</name>
 
     <dependencies>
