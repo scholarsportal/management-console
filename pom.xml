@@ -5,7 +5,7 @@
   <groupId>org.duracloud</groupId>
   <artifactId>duracloud-mc</artifactId>
   <packaging>pom</packaging>
-  <version>3.1.4</version>
+  <version>3.1.5</version>
   <name>DuraCloud Management Console</name>
   <description>Management console for the DuraCloud service</description>
   <url>http://duracloud.org</url>
@@ -208,7 +208,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <duracloud.artifact.version>4.1.1</duracloud.artifact.version>
-    <aws.version>1.10.69</aws.version>
+    <aws.version>1.11.155</aws.version>
     <duracloud.db.version>4.0.2</duracloud.db.version>
     <org.springframework.version>4.2.5.RELEASE</org.springframework.version>
     <org.springframework.security.version>4.0.4.RELEASE</org.springframework.security.version>

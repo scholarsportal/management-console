@@ -4,14 +4,14 @@
   <parent>
     <artifactId>duracloud-mc</artifactId>
     <groupId>org.duracloud</groupId>
-    <version>3.1.4</version>
+    <version>3.1.5</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.duracloud</groupId>
   <artifactId>account-management-security</artifactId>
-  <version>3.1.4</version>
+  <version>3.1.5</version>
   <packaging>jar</packaging>
   <name>Account Management Security</name>
 
