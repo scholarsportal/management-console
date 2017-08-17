@@ -24,7 +24,7 @@ deploy:
     region: $ARTIFACTS_REGION
     skip_cleanup: true
     local_dir: $TRAVIS_BUILD_DIR/target
-    upload-dir: duracloud/master
+    upload-dir: management-console/master
     on:
       branch: master
   - provider: s3
@@ -34,7 +34,7 @@ deploy:
     region: $ARTIFACTS_REGION
     skip_cleanup: true
     local_dir: $TRAVIS_BUILD_DIR/target
-    upload-dir: duracloud/tagged-releases/$TRAVIS_TAG
+    upload-dir: management-console/tagged-releases/$TRAVIS_TAG
     on:
       tags: true
   - provider: s3
@@ -44,7 +44,7 @@ deploy:
     region: $ARTIFACTS_REGION
     skip_cleanup: true
     local_dir: $TRAVIS_BUILD_DIR/account-management-app/target
-    upload-dir: duracloud/develop
+    upload-dir: management-console/develop
     on:
       branch: develop
   - provider: releases
