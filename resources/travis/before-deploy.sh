@@ -19,7 +19,6 @@ if [ "$TRAVIS_BRANCH" = 'develop' ] || [ "$TRAVIS_BRANCH" = 'master' ] || [ ! -z
    cp $TRAVIS_BUILD_DIR/account-management-app/target/ama-*.war $targetDir/
    #make a copy of the beanstalk file using fixed name:
    cp $targetDir/ama*.war $targetDir/ama-latest.war
-
 fi
 
 if [ ! -z "$TRAVIS_TAG" ]; then
