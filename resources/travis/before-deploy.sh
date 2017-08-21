@@ -8,8 +8,9 @@ if [ "$TRAVIS_BRANCH" = 'master' ] || [ "$TRAVIS_BRANCH" = 'develop' ]; then
     fi
 fi
 
-
 targetDir=$TRAVIS_BUILD_DIR/target
+mkdir -p $targetDir
+
 currentGitCommit=`git rev-parse HEAD`;
 projectVersion=`mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec`
 
@@ -31,8 +32,8 @@ if [ ! -z "$TRAVIS_TAG" ]; then
     zipFile=duracloud-management-console-${projectVersion}-apidocs.zip
     echo "Zipping javadocs..."
     zip -r ${zipFile} .
-    mv ${zipFile} $targetDir/ 
-    cd $targetDir 
+    mv ${zipFile} $targetDir/
+    cd $targetDir
     rm -rf install site javadoc-bundle-options
 fi
 
