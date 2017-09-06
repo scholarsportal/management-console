@@ -1,9 +1,3 @@
--- MySQL dump 10.13  Distrib 5.5.38, for osx10.6 (i386)
---
--- Host: amadb.cc3ipdilwekc.us-east-1.rds.amazonaws.com    Database: ama
--- ------------------------------------------------------
--- Server version	5.5.40-log
-
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -16,23 +10,10 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `account_cluster`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `account_cluster` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `modified` datetime DEFAULT NULL,
-  `cluster_name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `account_info`
 --
 
+DROP TABLE IF EXISTS `account_info`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `account_info` (
@@ -43,21 +24,16 @@ CREATE TABLE `account_info` (
   `org_name` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
   `subdomain` varchar(255) DEFAULT NULL,
-  `type` varchar(255) DEFAULT NULL,
-  `account_cluster_id` bigint(20) DEFAULT NULL,
-  `server_details_id` bigint(20) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_2d12xe3psrhkkv6ia9s8fef9q` (`account_cluster_id`),
-  KEY `FK_81nuyb23r7k65chj0lyohu09j` (`server_details_id`),
-  CONSTRAINT `FK_2d12xe3psrhkkv6ia9s8fef9q` FOREIGN KEY (`account_cluster_id`) REFERENCES `account_cluster` (`id`),
-  CONSTRAINT `FK_81nuyb23r7k65chj0lyohu09j` FOREIGN KEY (`server_details_id`) REFERENCES `server_details` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1020 DEFAULT CHARSET=utf8;
+  `primary_storage_provider_account_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1084 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `account_rights`
 --
 
+DROP TABLE IF EXISTS `account_rights`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `account_rights` (
@@ -70,13 +46,14 @@ CREATE TABLE `account_rights` (
   KEY `FK_rse1vjlmaucfng31iaw1fj7iu` (`user_id`),
   CONSTRAINT `FK_pqeqe896mkrol3d5fx83xkcwq` FOREIGN KEY (`account_id`) REFERENCES `account_info` (`id`),
   CONSTRAINT `FK_rse1vjlmaucfng31iaw1fj7iu` FOREIGN KEY (`user_id`) REFERENCES `duracloud_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1074 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1430 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `account_rights_role`
 --
 
+DROP TABLE IF EXISTS `account_rights_role`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `account_rights_role` (
@@ -84,33 +61,14 @@ CREATE TABLE `account_rights_role` (
   `role` varchar(255) DEFAULT NULL,
   KEY `FK_91wx1gbltwqx2ma0w10c798td` (`account_rights_id`),
   CONSTRAINT `FK_91wx1gbltwqx2ma0w10c798td` FOREIGN KEY (`account_rights_id`) REFERENCES `account_rights` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `compute_provider_account`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `compute_provider_account` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `modified` datetime DEFAULT NULL,
-  `password` varchar(255) DEFAULT NULL,
-  `username` varchar(255) DEFAULT NULL,
-  `audit_queue` varchar(255) DEFAULT NULL,
-  `elastic_ip` varchar(255) DEFAULT NULL,
-  `keypair` varchar(255) DEFAULT NULL,
-  `provider_type` varchar(255) DEFAULT NULL,
-  `security_group` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1018 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `duracloud_group`
 --
 
+DROP TABLE IF EXISTS `duracloud_group`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `duracloud_group` (
@@ -121,36 +79,35 @@ CREATE TABLE `duracloud_group` (
   PRIMARY KEY (`id`),
   KEY `FK_7tt58lodlxiqwjhvbyi9ytlyp` (`account_id`),
   CONSTRAINT `FK_7tt58lodlxiqwjhvbyi9ytlyp` FOREIGN KEY (`account_id`) REFERENCES `account_info` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=85 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=123 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `duracloud_instance`
+-- Table structure for table `duracloud_mill`
 --
 
+DROP TABLE IF EXISTS `duracloud_mill`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `duracloud_instance` (
+CREATE TABLE `duracloud_mill` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `modified` datetime DEFAULT NULL,
-  `host_name` varchar(255) DEFAULT NULL,
-  `initialized` tinyint(1) NOT NULL,
-  `provider_instance_id` varchar(255) DEFAULT NULL,
-  `account_id` bigint(20) NOT NULL,
-  `image_id` bigint(20) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `UK_64axdgak3svvybdj78m2macpo` (`account_id`),
-  KEY `FK_64axdgak3svvybdj78m2macpo` (`account_id`),
-  KEY `FK_lkytdgr5uo49cyd5c8urhx9xn` (`image_id`),
-  CONSTRAINT `FK_64axdgak3svvybdj78m2macpo` FOREIGN KEY (`account_id`) REFERENCES `account_info` (`id`),
-  CONSTRAINT `FK_lkytdgr5uo49cyd5c8urhx9xn` FOREIGN KEY (`image_id`) REFERENCES `server_image` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=422 DEFAULT CHARSET=utf8;
+  `audit_log_space_id` varchar(255) NOT NULL,
+  `audit_queue` varchar(255) NOT NULL,
+  `db_host` varchar(255) NOT NULL,
+  `db_name` varchar(255) NOT NULL,
+  `db_password` varchar(255) NOT NULL,
+  `db_port` int(11) NOT NULL,
+  `db_username` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `duracloud_user`
 --
 
+DROP TABLE IF EXISTS `duracloud_user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `duracloud_user` (
@@ -168,14 +125,34 @@ CREATE TABLE `duracloud_user` (
   `security_answer` varchar(255) DEFAULT NULL,
   `security_question` varchar(255) DEFAULT NULL,
   `username` varchar(255) DEFAULT NULL,
+  `allowableipaddress_range` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1105 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1425 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `global_properties`
+--
+
+DROP TABLE IF EXISTS `global_properties`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `global_properties` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `modified` datetime DEFAULT NULL,
+  `instance_notification_topic_arn` varchar(255) NOT NULL,
+  `cloud_front_account_id` varchar(255) NOT NULL DEFAULT 'cloud front account id',
+  `cloud_front_key_id` varchar(255) NOT NULL DEFAULT 'cloud front key id',
+  `cloud_front_key_path` varchar(255) NOT NULL DEFAULT 'cloud front key path',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `group_user`
 --
 
+DROP TABLE IF EXISTS `group_user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `group_user` (
@@ -186,52 +163,14 @@ CREATE TABLE `group_user` (
   KEY `FK_dx4jv6mpv63ufnjl3a7pec1vo` (`group_id`),
   CONSTRAINT `FK_dx4jv6mpv63ufnjl3a7pec1vo` FOREIGN KEY (`group_id`) REFERENCES `duracloud_group` (`id`),
   CONSTRAINT `FK_ns02np32pqhrbm8cwpifjerp9` FOREIGN KEY (`user_id`) REFERENCES `duracloud_user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `server_details`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `server_details` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `modified` datetime DEFAULT NULL,
-  `compute_provider_account_id` bigint(20) NOT NULL,
-  `primary_storage_provider_account_id` bigint(20) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `UK_45iqbwrm8q6qblm7960l8n83b` (`compute_provider_account_id`),
-  UNIQUE KEY `UK_7gwng60y7kx7wojyu2jkiesg5` (`primary_storage_provider_account_id`),
-  KEY `FK_45iqbwrm8q6qblm7960l8n83b` (`compute_provider_account_id`),
-  KEY `FK_7gwng60y7kx7wojyu2jkiesg5` (`primary_storage_provider_account_id`),
-  CONSTRAINT `FK_45iqbwrm8q6qblm7960l8n83b` FOREIGN KEY (`compute_provider_account_id`) REFERENCES `compute_provider_account` (`id`),
-  CONSTRAINT `FK_7gwng60y7kx7wojyu2jkiesg5` FOREIGN KEY (`primary_storage_provider_account_id`) REFERENCES `storage_provider_account` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1018 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `server_image`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `server_image` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `modified` datetime DEFAULT NULL,
-  `dc_root_password` varchar(255) DEFAULT NULL,
-  `description` varchar(255) DEFAULT NULL,
-  `latest` tinyint(1) NOT NULL,
-  `provider_image_id` varchar(255) DEFAULT NULL,
-  `version` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `storage_provider_account`
 --
 
+DROP TABLE IF EXISTS `storage_provider_account`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `storage_provider_account` (
@@ -240,18 +179,35 @@ CREATE TABLE `storage_provider_account` (
   `password` varchar(255) DEFAULT NULL,
   `username` varchar(255) DEFAULT NULL,
   `provider_type` varchar(255) DEFAULT NULL,
-  `rrs` tinyint(1) NOT NULL,
-  `server_details_id` bigint(20) DEFAULT NULL,
+  `storage_limit` int(11) NOT NULL DEFAULT '1',
+  `account_info_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `FK_hvnlrvdob3e30hby6lpqw3kxw` (`server_details_id`),
-  CONSTRAINT `FK_hvnlrvdob3e30hby6lpqw3kxw` FOREIGN KEY (`server_details_id`) REFERENCES `server_details` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1025 DEFAULT CHARSET=utf8;
+  KEY `FK_STORAGE_PROVIDER_ACCOUNT_INFO` (`account_info_id`),
+  CONSTRAINT `FK_STORAGE_PROVIDER_ACCOUNT_INFO` FOREIGN KEY (`account_info_id`) REFERENCES `account_info` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1133 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `storage_provider_account_properties`
+--
+
+DROP TABLE IF EXISTS `storage_provider_account_properties`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `storage_provider_account_properties` (
+  `storage_provider_account_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `map_value` varchar(255) DEFAULT NULL,
+  `map_key` varchar(255) NOT NULL,
+  PRIMARY KEY (`storage_provider_account_id`,`map_key`),
+  CONSTRAINT `FK_storage_provider_account_id` FOREIGN KEY (`storage_provider_account_id`) REFERENCES `storage_provider_account` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1131 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `user_invitation`
 --
 
+DROP TABLE IF EXISTS `user_invitation`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user_invitation` (
@@ -270,7 +226,7 @@ CREATE TABLE `user_invitation` (
   PRIMARY KEY (`id`),
   KEY `FK_nlwoj3r09ksyu15sp9ob5y8gx` (`account_id`),
   CONSTRAINT `FK_nlwoj3r09ksyu15sp9ob5y8gx` FOREIGN KEY (`account_id`) REFERENCES `account_info` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=152 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=267 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -282,4 +238,4 @@ CREATE TABLE `user_invitation` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-05-08 13:59:26
+-- Dump completed on 2017-09-05 21:17:03
