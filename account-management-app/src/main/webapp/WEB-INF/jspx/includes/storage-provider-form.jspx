@@ -62,7 +62,7 @@
                  element="div" />               
               </li>
 	            
-	            <c:if test="${param.storageProviderType eq 'AMAZON_S3'}">
+	            <c:if test="${param.storageProviderType eq 'AMAZON_S3' || param.storageProviderType eq 'AMAZON_GLACIER'}">
 	              <li>
 	                <form:label
 	                 cssErrorClass="error"
