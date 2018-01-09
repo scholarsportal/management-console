@@ -8,6 +8,8 @@
               model="newAccountForm" >
     <on-entry>
       <set name="flowScope.newAccountForm" value="newAccountForm"/>
+      <set name="flowScope.mcDomain" value="amaEndpoint.domain"/>
+
     </on-entry>
     
     <transition on="next" to="configureStorageProviders"/> 
