@@ -15,7 +15,7 @@ import org.duracloud.common.util.ApplicationConfig;
 
 /**
  * @author Andrew Woods
- *         Date: Oct 7, 2010
+ * Date: Oct 7, 2010
  */
 public class AMATestConfig extends ApplicationConfig {
 
@@ -43,25 +43,25 @@ public class AMATestConfig extends ApplicationConfig {
         return configFileName;
     }
 
-    public static  File getCredentialsFile() throws Exception{
+    public static File getCredentialsFile() throws Exception {
         return new File(getProps().getProperty(credentialsFilePath));
     }
-    
+
     public static String getTestEmail() {
-        String email =  System.getProperty("test.email");
-        
-        if(email == null){
+        String email = System.getProperty("test.email");
+
+        if (email == null) {
             try {
                 email = getProps().getProperty("test.email");
             } catch (Exception e) {
                 throw new DuraCloudRuntimeException(e);
             }
         }
-        
-        if(email == null){
+
+        if (email == null) {
             throw new DuraCloudRuntimeException("Missing test.email parameter. " +
-            		"Make sure it is set either in the " + getConfigFileName() + 
-            		" or on the command line (-Dtest.email)");
+                                                "Make sure it is set either in the " + getConfigFileName() +
+                                                " or on the command line (-Dtest.email)");
         }
         return email;
     }

@@ -7,7 +7,6 @@
  */
 package org.duracloud.account.db.util;
 
-import java.util.List;
 import java.util.Set;
 
 import org.duracloud.account.db.model.AccountInfo;
@@ -20,7 +19,7 @@ import org.springframework.security.access.annotation.Secured;
 
 /**
  * An interface for manipulating account data.
- * 
+ *
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  */
 public interface AccountService {
@@ -125,6 +124,7 @@ public interface AccountService {
 
     /**
      * Deletes an invitation to this account.
+     *
      * @param invitationId
      */
     @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
@@ -132,6 +132,7 @@ public interface AccountService {
 
     /**
      * Changes the primary storage provider to the one specified by the id.
+     *
      * @param id of the new primary storage provider.
      */
     @Secured({"role:ROLE_OWNER, scope:SELF_ACCT"})

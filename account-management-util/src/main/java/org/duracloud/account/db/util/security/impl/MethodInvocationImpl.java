@@ -7,13 +7,13 @@
  */
 package org.duracloud.account.db.util.security.impl;
 
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Method;
+
 import org.aopalliance.intercept.MethodInvocation;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Method;
 
 /**
  * This class provides an implementation of the aopalliance MethodInvocation
@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
  * application context is not managing the security AOP.
  *
  * @author Andrew Woods
- *         Date: 4/8/11
+ * Date: 4/8/11
  */
 public class MethodInvocationImpl implements MethodInvocation {
 
@@ -42,7 +42,7 @@ public class MethodInvocationImpl implements MethodInvocation {
 
         if (null == this.method) {
             String msg = "Method not found on class: " + methodName + ", " +
-                obj.getClass().getName();
+                         obj.getClass().getName();
             log.error(msg);
             throw new DuraCloudRuntimeException(msg);
         }

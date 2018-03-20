@@ -7,7 +7,6 @@
  */
 package org.duracloud.account.db.util.sys.impl;
 
-import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.util.AccountCreationInfo;
 import org.duracloud.account.db.util.notification.NotificationMgr;
 import org.duracloud.account.db.util.sys.EventMonitor;
@@ -17,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Andrew Woods
- *         Date: 3/22/11
+ * Date: 3/22/11
  */
 public abstract class EventMonitorBase implements EventMonitor {
 

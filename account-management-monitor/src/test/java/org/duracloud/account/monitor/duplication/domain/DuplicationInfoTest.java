@@ -7,18 +7,18 @@
  */
 package org.duracloud.account.monitor.duplication.domain;
 
-import org.junit.Test;
-
-import java.util.List;
-import java.util.Map;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Test;
+
 /**
  * @author Bill Branan
- *         Date: 4/19/13
+ * Date: 4/19/13
  */
 public class DuplicationInfoTest {
 

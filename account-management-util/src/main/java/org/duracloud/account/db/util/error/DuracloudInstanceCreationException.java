@@ -23,5 +23,5 @@ public class DuracloudInstanceCreationException extends DuraCloudRuntimeExceptio
                                               Throwable throwable) {
         super(message, throwable);
     }
-    
+
 }

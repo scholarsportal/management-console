@@ -19,10 +19,9 @@ public class RootConsoleHomeController {
     public static final String BASE_MAPPING = "/root";
     private static final String ROOT_HOME_VIEW_ID = "/root";
 
-    @RequestMapping(value={"/", ""})
-    public ModelAndView getHome(){
-        return new ModelAndView(
-            new RedirectView(AccountsController.BASE_MAPPING, true));
+    @RequestMapping(value = {"/", ""})
+    public ModelAndView getHome() {
+        return new ModelAndView(new RedirectView(AccountsController.BASE_MAPPING, true));
     }
 
 }

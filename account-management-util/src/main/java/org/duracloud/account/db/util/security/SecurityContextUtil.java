@@ -19,7 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
  * session.
  *
  * @author Andrew Woods
- *         Date: 4/7/11
+ * Date: 4/7/11
  */
 public class SecurityContextUtil {
 

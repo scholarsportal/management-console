@@ -18,10 +18,11 @@ import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.web.bind.support.ConfigurableWebBindingInitializer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
+
 /**
  * This class defines and extended version of the MVC Annotation configuration.
- * @author Daniel Bernstein
  *
+ * @author Daniel Bernstein
  */
 @Configuration
 public class WebConfig extends WebMvcConfigurationSupport {
@@ -30,9 +31,9 @@ public class WebConfig extends WebMvcConfigurationSupport {
     @Bean
     public RequestMappingHandlerAdapter requestMappingHandlerAdapter() {
         RequestMappingHandlerAdapter adapter = super.requestMappingHandlerAdapter();
-        ConfigurableWebBindingInitializer initializer = 
+        ConfigurableWebBindingInitializer initializer =
             (ConfigurableWebBindingInitializer) adapter.getWebBindingInitializer();
-        
+
         PropertyEditorRegistrar propertyEditorRegistrar = new PropertyEditorRegistrar() {
             @Override
             public void registerCustomEditors(PropertyEditorRegistry registry) {
@@ -44,14 +45,14 @@ public class WebConfig extends WebMvcConfigurationSupport {
         initializer.setPropertyEditorRegistrar(propertyEditorRegistrar);
         return adapter;
     }
-    
-    
+
     @Bean
     public DefaultFormattingConversionService defaultFormattingConversionService() {
         return new ApplicationFormattingConversionService();
     }
-    
-    @Bean ConversionService defaultConversionService() {
+
+    @Bean
+    ConversionService defaultConversionService() {
         return new DefaultConversionService(defaultFormattingConversionService());
     }
 }

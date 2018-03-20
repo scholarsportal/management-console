@@ -7,6 +7,14 @@
  */
 package org.duracloud.account.db.util.security.impl;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.duracloud.account.db.util.security.AnnotationParser;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
@@ -17,9 +25,6 @@ import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.core.type.classreading.SimpleMetadataReaderFactory;
 
-import java.io.IOException;
-import java.util.*;
-
 /**
  * This class provides a utility for searching through a class and its
  * hierarchy for a given annotation.
@@ -27,7 +32,7 @@ import java.util.*;
  * method names and annotation argument values is returned.
  *
  * @author Andrew Woods
- *         Date: 4/8/11
+ * Date: 4/8/11
  */
 public class AnnotationParserImpl implements AnnotationParser {
 
@@ -45,9 +50,9 @@ public class AnnotationParserImpl implements AnnotationParser {
 
         } catch (Exception e) {
             log.error("Error getting annotations {} over {}: {}",
-                      new Object[]{annotationClass.getName(),
-                                   targetClass.getName(),
-                                   e.getMessage()});
+                      new Object[] {annotationClass.getName(),
+                                    targetClass.getName(),
+                                    e.getMessage()});
             throw new DuraCloudRuntimeException(e);
         }
     }
@@ -91,9 +96,9 @@ public class AnnotationParserImpl implements AnnotationParser {
             }
         }
 
-        throw new DuraCloudRuntimeException(
-            "No annotationMetadata found of " + annotationClass.getName() +
-                " over " + targetClass.getName());
+        throw new DuraCloudRuntimeException("No annotationMetadata found of " +
+                                            annotationClass.getName() + " over " +
+                                            targetClass.getName());
     }
 
     private boolean hasAnnotatedMethods(Class annotationClass,

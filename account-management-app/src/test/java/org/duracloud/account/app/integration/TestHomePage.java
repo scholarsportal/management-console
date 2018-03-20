@@ -7,13 +7,12 @@
  */
 package org.duracloud.account.app.integration;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
- *
  */
 
 public class TestHomePage extends AbstractIntegrationTest {

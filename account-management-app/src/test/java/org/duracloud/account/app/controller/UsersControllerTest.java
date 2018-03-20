@@ -20,16 +20,16 @@ import org.junit.Test;
 
 /**
  * @author Daniel Bernstein
- *         Date: Feb 29, 2012
+ * Date: Feb 29, 2012
  */
 public class UsersControllerTest extends AmaControllerTestBase {
     private UsersController usersController;
     private RootAccountManagerService rootAccountManagerService;
-    
+
     @Before
     public void before() throws Exception {
         super.before();
-        
+
         setupGenericAccountAndUserServiceMocks(TEST_ACCOUNT_ID);
         rootAccountManagerService =
             createMock(RootAccountManagerService.class);
@@ -38,10 +38,10 @@ public class UsersControllerTest extends AmaControllerTestBase {
         usersController.setAccountManagerService(this.accountManagerService);
         usersController.setUserService(this.userService);
     }
-    
+
     /**
      * Test method for org.duracloud.account.app.controller.usersController
-     * 
+     *
      * @throws AccountNotFoundException
      */
     @Test
@@ -52,7 +52,7 @@ public class UsersControllerTest extends AmaControllerTestBase {
     }
 
     @Test
-    public void testReset() throws Exception{
+    public void testReset() throws Exception {
         this.rootAccountManagerService.resetUsersPassword(0L);
         EasyMock.expectLastCall();
         addFlashAttribute();
@@ -61,7 +61,6 @@ public class UsersControllerTest extends AmaControllerTestBase {
         usersController.resetUsersPassword(0L, redirectAttributes);
     }
 
-    
     @Test
     public void testDelete() throws Exception {
         this.rootAccountManagerService.deleteUser(0L);
@@ -72,18 +71,18 @@ public class UsersControllerTest extends AmaControllerTestBase {
     }
 
     @Test
-    public void testRevoke() throws Exception{
+    public void testRevoke() throws Exception {
         Long userId = TEST_USER_ID;
         Long accountId = TEST_ACCOUNT_ID;
         this.userService.revokeUserRights(accountId, userId);
         EasyMock.expectLastCall();
         addFlashAttribute();
-        replayMocks();         
+        replayMocks();
         usersController.revokeUserRightsFromAccount(userId, accountId, redirectAttributes);
     }
 
     @Test
-    public void testChange() throws Exception{
+    public void testChange() throws Exception {
         Long userId = TEST_USER_ID;
         Long accountId = TEST_ACCOUNT_ID;
         Role role = Role.ROLE_ADMIN;
@@ -95,7 +94,7 @@ public class UsersControllerTest extends AmaControllerTestBase {
         EasyMock.expectLastCall();
         addFlashAttribute();
         setupNoBindingResultErrors();
-        replayMocks();         
+        replayMocks();
         usersController.changeUserRole(userId, f, result, redirectAttributes);
     }
 

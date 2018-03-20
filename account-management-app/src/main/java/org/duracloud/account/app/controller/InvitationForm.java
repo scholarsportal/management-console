@@ -12,7 +12,6 @@ import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
- * 
  */
 public class InvitationForm {
     @EmailAddressesConstraint

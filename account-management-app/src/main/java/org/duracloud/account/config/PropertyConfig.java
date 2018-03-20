@@ -15,19 +15,26 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+
 /**
- * This configuration class ensures that the mc-config.properties are loaded before any downstream component 
+ * This configuration class ensures that the mc-config.properties are loaded before any downstream component
  * and/or configs read properties from the environment.
- * @author Daniel Bernstein
  *
+ * @author Daniel Bernstein
  */
 @Configuration
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @PropertySource("${mc.config.file}") //this references the system property.
 public class PropertyConfig {
+
+    private PropertyConfig() {
+        // Ensures no instances are made of this class, as there are only static members.
+    }
+
     @Bean
-    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() throws IOException{
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() throws IOException {
         PropertySourcesPlaceholderConfigurer p = new PropertySourcesPlaceholderConfigurer();
         return p;
     }
+
 }

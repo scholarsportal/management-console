@@ -31,19 +31,18 @@ import org.slf4j.LoggerFactory;
  * DuraCloud accounts with multiple storage providers.
  *
  * @author Bill Branan
- *         Date: 4/16/13
+ * Date: 4/16/13
  */
 public class DuplicationMonitor extends BaseMonitor {
 
     public static final String ALL_SPACES = "ALL";
-	private static final String PORT = "443";
-	private static final String CONTEXT = "durastore";
+    private static final String PORT = "443";
+    private static final String CONTEXT = "durastore";
     private static final List<String> ADMIN_SPACES =
         Arrays.asList("x-duracloud-admin", "x-service-out");
 
     private Map<String, String> dupHosts;
-    
-    
+
     public DuplicationMonitor(Map<String, String> dupHosts) {
         this.log = LoggerFactory.getLogger(DuplicationMonitor.class);
         this.dupHosts = dupHosts;
@@ -59,7 +58,7 @@ public class DuplicationMonitor extends BaseMonitor {
         log.info("starting duplication monitor");
         DuplicationReport report = new DuplicationReport();
 
-        for(String host : dupHosts.keySet()) {
+        for (String host : dupHosts.keySet()) {
             DuplicationInfo info = new DuplicationInfo(host);
             try {
                 // Connect to storage providers
@@ -74,9 +73,9 @@ public class DuplicationMonitor extends BaseMonitor {
                 countSpaces(host, info, primary, primarySpaces, true);
 
                 // Get space listing and space counts for secondary providers
-                for(ContentStore secondary : secondaryList) {
+                for (ContentStore secondary : secondaryList) {
                     List<String> secondarySpaces = getSpaces(host, secondary);
-                    if(primarySpaces.size() != secondarySpaces.size()) {
+                    if (primarySpaces.size() != secondarySpaces.size()) {
                         info.addIssue("The spaces listings do not match " +
                                       "between primary and secondary " +
                                       "provider: " +
@@ -90,8 +89,8 @@ public class DuplicationMonitor extends BaseMonitor {
                 compareSpaces(primaryStoreId, info);
             } catch (Exception e) {
                 String error = e.getClass() + " exception encountered while " +
-                    "running dup monitor for host " + host +
-                    ". Exception message: " + e.getMessage();
+                               "running dup monitor for host " + host +
+                               ". Exception message: " + e.getMessage();
                 log.error(error);
                 info.addIssue(error);
             } finally {
@@ -124,8 +123,8 @@ public class DuplicationMonitor extends BaseMonitor {
             new HashMap<>(storeManager.getContentStores());
         List<ContentStore> secondaryStores = new ArrayList<>();
 
-        for(ContentStore store : stores.values()) {
-            if(!store.getStoreId().equals(primaryStoreId)) {
+        for (ContentStore store : stores.values()) {
+            if (!store.getStoreId().equals(primaryStoreId)) {
                 secondaryStores.add(store);
             }
         }
@@ -141,7 +140,7 @@ public class DuplicationMonitor extends BaseMonitor {
         throws ContentStoreException {
         List<String> spaceList;
         String spaces = dupHosts.get(host);
-        if(spaces.equals(ALL_SPACES)) { // Need to compare all spaces
+        if (spaces.equals(ALL_SPACES)) { // Need to compare all spaces
             spaceList = new ArrayList<>(store.getSpaces());
             spaceList.removeAll(ADMIN_SPACES);
         } else { // Only compare specific set of spaces
@@ -161,20 +160,20 @@ public class DuplicationMonitor extends BaseMonitor {
                                boolean primary) {
         String storeId = store.getStoreId();
         String storeType = store.getStorageProviderType();
-        for(String spaceId : spaces) {
+        for (String spaceId : spaces) {
             boolean doCount = false;
             // Handle spaces which include space ID, formatted like: spaceId:storeId
-            if(spaceId.indexOf(":") > -1) {
+            if (spaceId.indexOf(":") > -1) {
                 String[] spaceAndStoreId = spaceId.split(":");
                 spaceId = spaceAndStoreId[0];
-                if(primary || storeId.equals(spaceAndStoreId[1])) {
-                    doCount  = true;
+                if (primary || storeId.equals(spaceAndStoreId[1])) {
+                    doCount = true;
                 }
             } else {
                 doCount = true;
             }
 
-            if(doCount) {
+            if (doCount) {
                 countSpace(host, spaceId, storeId, storeType, info, store);
             }
         }
@@ -188,16 +187,16 @@ public class DuplicationMonitor extends BaseMonitor {
                             ContentStore store) {
         try {
             log.info("Counting space '" + spaceId + "' in store " +
-                      storeType + " for host " + host + " ...");
+                     storeType + " for host " + host + " ...");
             long count = getSpaceCount(store, spaceId);
             log.info("Count for space '" + spaceId + "' in store " +
                      storeType + " for host " + host + ": " + count);
             info.addSpaceCount(storeId, spaceId, count);
-        } catch(ContentStoreException e) {
+        } catch (ContentStoreException e) {
             String error = "ContentStoreException encountered " +
-                "attempting to get count of space " + spaceId +
-                " for duplication check of host " + host +
-                ". Exception message: " + e.getMessage();
+                           "attempting to get count of space " + spaceId +
+                           " for duplication check of host " + host +
+                           ". Exception message: " + e.getMessage();
             log.error(error);
             info.addIssue(error);
             info.addSpaceCount(storeId, spaceId, -1);
@@ -209,14 +208,15 @@ public class DuplicationMonitor extends BaseMonitor {
      */
     private long getSpaceCount(ContentStore store, String spaceId)
         throws ContentStoreException {
-        SpaceStatsDTOList stats = store.getSpaceStats(spaceId, new Date(System.currentTimeMillis()-(24*60*60*1000)), new Date());
-        
+        SpaceStatsDTOList stats =
+            store.getSpaceStats(spaceId, new Date(System.currentTimeMillis() - (24 * 60 * 60 * 1000)), new Date());
+
         long count = 0;
-        
-        if(stats != null && stats.size() > 0){
+
+        if (stats != null && stats.size() > 0) {
             count = stats.getLast().getObjectCount();
         }
-        
+
         return count;
     }
 
@@ -226,24 +226,24 @@ public class DuplicationMonitor extends BaseMonitor {
     protected void compareSpaces(String primaryStoreId, DuplicationInfo info) {
         String spaces = dupHosts.get(info.getHost());
         Map<String, Long> primarySpaces = info.getSpaceCounts(primaryStoreId);
-        for(String storeId : info.getStoreIds()) {
+        for (String storeId : info.getStoreIds()) {
             Map<String, Long> secondarySpaces = info.getSpaceCounts(storeId);
 
-            for(String spaceId : primarySpaces.keySet()) {
+            for (String spaceId : primarySpaces.keySet()) {
                 // Determine if a space comparison should occur
                 boolean doCompare = false;
-                if(null == spaces || spaces.equals(ALL_SPACES)) {
+                if (null == spaces || spaces.equals(ALL_SPACES)) {
                     doCompare = true;
                 } else {
                     String[] spacesToCompare = spaces.split(",");
                     List<String> spaceList = Arrays.asList(spacesToCompare);
-                    if(spaceList.contains(spaceId)) {
+                    if (spaceList.contains(spaceId)) {
                         doCompare = true;
                     } else { // Check space and store IDs
-                        for(String spacesSpaceId : spaceList) {
+                        for (String spacesSpaceId : spaceList) {
                             String[] spaceAndStoreId = spacesSpaceId.split(":");
-                            if(spaceId.equals(spaceAndStoreId[0]) &&
-                               storeId.equals(spaceAndStoreId[1])) {
+                            if (spaceId.equals(spaceAndStoreId[0]) &&
+                                storeId.equals(spaceAndStoreId[1])) {
                                 doCompare = true;
                             }
                         }
@@ -251,19 +251,19 @@ public class DuplicationMonitor extends BaseMonitor {
                 }
 
                 // Do the comparison
-                if(doCompare) {
+                if (doCompare) {
                     Long primaryCount = primarySpaces.get(spaceId);
                     Long secondaryCount = secondarySpaces.get(spaceId);
 
-                    if(null == secondaryCount) {
+                    if (null == secondaryCount) {
                         info.addIssue("The secondary provider (ID=" + storeId +
                                       ") is missing space: " + spaceId);
-                    } else if(!primaryCount.equals(secondaryCount)) {
+                    } else if (!primaryCount.equals(secondaryCount)) {
                         info.addIssue("The content item counts for the space " +
-                            spaceId + " do not match between primary and secondary " +
-                            "providers. Primary count: " + primaryCount +
-                            ". Secondary (ID=" + storeId + ") " +
-                            "count: " + secondaryCount + ".");
+                                      spaceId + " do not match between primary and secondary " +
+                                      "providers. Primary count: " + primaryCount +
+                                      ". Secondary (ID=" + storeId + ") " +
+                                      "count: " + secondaryCount + ".");
                     }
                 }
             }

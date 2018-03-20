@@ -7,6 +7,8 @@
  */
 package org.duracloud.account.app.controller;
 
+import javax.validation.Valid;
+
 import org.duracloud.account.db.util.AccountService;
 import org.duracloud.account.db.util.error.AccountNotFoundException;
 import org.duracloud.account.db.util.error.DBNotFoundException;
@@ -22,15 +24,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.validation.Valid;
-
-
 @Controller
 @Lazy
 public class ProviderController extends AbstractAccountController {
     public static final String PROVIDER_PATH = ACCOUNT_PATH + "/providers";
 
-    @RequestMapping(value = { PROVIDER_PATH }, method = RequestMethod.GET)
+    @RequestMapping(value = {PROVIDER_PATH}, method = RequestMethod.GET)
     public String getProviders(@PathVariable Long accountId, Model model)
         throws AccountNotFoundException, DBNotFoundException {
         loadAccountInfo(accountId, model);
@@ -42,9 +41,9 @@ public class ProviderController extends AbstractAccountController {
     @Transactional
     @RequestMapping(value = ACCOUNT_PATH + "/providers/add", method = RequestMethod.POST)
     public ModelAndView addProvider(@PathVariable Long accountId,
-                           @ModelAttribute("providerForm") @Valid ProviderForm providerForm,
-					   BindingResult result,
-					   Model model) throws AccountNotFoundException {
+                                    @ModelAttribute("providerForm") @Valid ProviderForm providerForm,
+                                    BindingResult result,
+                                    Model model) throws AccountNotFoundException {
         log.info("addProvider account {}", accountId);
 
         AccountService accountService =

@@ -12,9 +12,13 @@ import java.util.List;
 
 /**
  * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
- * 
  */
 public class EmailAddressesParser {
+
+    private EmailAddressesParser() {
+        // Ensures no instances are made of this class, as there are only static members.
+    }
+
     public static List<String> parse(String emailAddresses) {
         if (emailAddresses == null) {
             return new ArrayList<String>(0);
@@ -27,7 +31,7 @@ public class EmailAddressesParser {
                 email = email.trim();
                 //other extraction, analysis might go here
                 //...
-                
+
                 if (email.length() > 0) {
                     emailList.add(email);
                 }
@@ -35,4 +39,5 @@ public class EmailAddressesParser {
             return emailList;
         }
     }
+
 }

@@ -11,7 +11,7 @@ import org.duracloud.common.error.DuraCloudRuntimeException;
 
 /**
  * @author Andrew Woods
- *         Date: 3/18/11
+ * Date: 3/18/11
  */
 public class UnsentEmailException extends DuraCloudRuntimeException {
 

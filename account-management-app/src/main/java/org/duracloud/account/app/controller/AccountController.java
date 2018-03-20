@@ -10,7 +10,6 @@ package org.duracloud.account.app.controller;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.util.AccountService;
 import org.duracloud.account.db.util.error.AccountNotFoundException;
-import org.duracloud.account.db.util.notification.NotificationMgr;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,9 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 /**
- * 
  * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
- * 
  */
 @Controller
 @Lazy
@@ -38,21 +35,21 @@ public class AccountController extends AbstractAccountController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @RequestMapping(value = { ACCOUNT_PATH }, method = RequestMethod.GET)
+    @RequestMapping(value = {ACCOUNT_PATH}, method = RequestMethod.GET)
     public String getHome(@PathVariable Long accountId, Model model)
         throws AccountNotFoundException {
         loadAccountInfo(accountId, model);
         return ACCOUNT_HOME;
     }
 
-    @RequestMapping(value = { STATEMENT_PATH }, method = RequestMethod.GET)
+    @RequestMapping(value = {STATEMENT_PATH}, method = RequestMethod.GET)
     public String getStatement(@PathVariable Long accountId, Model model)
         throws AccountNotFoundException {
         loadAccountInfo(accountId, model);
         return "account-statement";
     }
 
-    @RequestMapping(value = { ACCOUNT_PATH + "/activate" }, method = RequestMethod.POST)
+    @RequestMapping(value = {ACCOUNT_PATH + "/activate"}, method = RequestMethod.POST)
     @Transactional
     public ModelAndView activate(@PathVariable Long accountId)
         throws AccountNotFoundException {
@@ -65,10 +62,10 @@ public class AccountController extends AbstractAccountController {
         return createUserRedirectModelAndView(username);
     }
 
-    @RequestMapping(value = { ACCOUNT_PATH + "/deactivate" }, method = RequestMethod.POST)
+    @RequestMapping(value = {ACCOUNT_PATH + "/deactivate"}, method = RequestMethod.POST)
     @Transactional
     public ModelAndView deactivate(@PathVariable Long accountId,
-                           Model model)
+                                   Model model)
         throws AccountNotFoundException {
         AccountService accountService = accountManagerService.getAccount(accountId);
         accountService.storeAccountStatus(AccountInfo.AccountStatus.INACTIVE);
@@ -77,8 +74,8 @@ public class AccountController extends AbstractAccountController {
             SecurityContextHolder.getContext().getAuthentication().getName();
         return createUserRedirectModelAndView(username);
     }
-    
-    private ModelAndView createUserRedirectModelAndView(String username){
+
+    private ModelAndView createUserRedirectModelAndView(String username) {
         RedirectView view = UserController.formatUserRedirect(username);
         return new ModelAndView(view);
     }

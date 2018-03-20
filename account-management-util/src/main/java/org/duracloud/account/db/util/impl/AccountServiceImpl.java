@@ -12,9 +12,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
-import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.StorageProviderAccount;
 import org.duracloud.account.db.model.UserInvitation;
@@ -39,10 +39,11 @@ public class AccountServiceImpl implements AccountService {
     private AccountInfo account;
     private DuracloudRepoMgr repoMgr;
     private AmaEndpoint amaEndpoint;
+
     /**
      * @param acct
      */
-    public AccountServiceImpl(AmaEndpoint amaEndpoint, 
+    public AccountServiceImpl(AmaEndpoint amaEndpoint,
                               AccountInfo acct,
                               DuracloudRepoMgr repoMgr) {
         this.amaEndpoint = amaEndpoint;
@@ -81,10 +82,10 @@ public class AccountServiceImpl implements AccountService {
     public StorageProviderAccount getPrimaryStorageProvider() {
         return retrieveAccountInfo().getPrimaryStorageProviderAccount();
     }
-    
+
     @Override
     public Set<StorageProviderAccount> getSecondaryStorageProviders() {
-       return retrieveAccountInfo().getSecondaryStorageProviderAccounts();
+        return retrieveAccountInfo().getSecondaryStorageProviderAccounts();
     }
 
     @Override
@@ -106,10 +107,10 @@ public class AccountServiceImpl implements AccountService {
                  storageProviderId, account.getSubdomain());
 
         StorageProviderAccount storageProviderAccount =
-                repoMgr.getStorageProviderAccountRepo().findOne(storageProviderId);
+            repoMgr.getStorageProviderAccountRepo().findOne(storageProviderId);
         AccountInfo accountInfo = retrieveAccountInfo();
-        if(accountInfo.getSecondaryStorageProviderAccounts()
-                        .remove(storageProviderAccount)) {
+        if (accountInfo.getSecondaryStorageProviderAccounts()
+                       .remove(storageProviderAccount)) {
             saveAccountInfo(accountInfo);
             repoMgr.getStorageProviderAccountRepo().delete(storageProviderId);
         } else {
@@ -128,11 +129,11 @@ public class AccountServiceImpl implements AccountService {
     public void changePrimaryStorageProvider(Long storageProviderId) {
         log.info("Changing primary storage provider to {} from account {}",
                  storageProviderId, account.getSubdomain());
-        
+
         AccountInfo accountInfo = retrieveAccountInfo();
         Set<StorageProviderAccount> secondaryAccounts = accountInfo.getSecondaryStorageProviderAccounts();
-        for(StorageProviderAccount secondary : secondaryAccounts){
-            if(secondary.getId().equals(storageProviderId)){
+        for (StorageProviderAccount secondary : secondaryAccounts) {
+            if (secondary.getId().equals(storageProviderId)) {
                 secondaryAccounts.remove(secondary);
                 secondaryAccounts.add(accountInfo.getPrimaryStorageProviderAccount());
                 accountInfo.setPrimaryStorageProviderAccount(secondary);
@@ -147,7 +148,7 @@ public class AccountServiceImpl implements AccountService {
             " is not associated with account with id " + account.getId() +
             " as a secondary storage provider.");
     }
-    
+
     @Override
     public void storeAccountInfo(String acctName,
                                  String orgName,
@@ -217,7 +218,7 @@ public class AccountServiceImpl implements AccountService {
             String msg =
                 "Error: Unable to send email to: " + invitation.getUserEmail();
 
-            log.error(msg,e);
+            log.error(msg, e);
             throw new UnsentEmailException(msg, e);
         }
     }
@@ -231,7 +232,7 @@ public class AccountServiceImpl implements AccountService {
         Set<UserInvitation> pendingInvitations = new HashSet<UserInvitation>();
 
         for (UserInvitation ui : invitations) {
-            if(ui.getExpirationDate().before(now)) {
+            if (ui.getExpirationDate().before(now)) {
                 repoMgr.getUserInvitationRepo().delete(ui.getId());
             } else {
                 pendingInvitations.add(ui);

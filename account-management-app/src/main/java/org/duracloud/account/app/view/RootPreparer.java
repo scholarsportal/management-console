@@ -23,8 +23,8 @@ public class RootPreparer implements ViewPreparer {
                         AttributeContext attributeContext) {
         tilesContext.getRequestScope().put("primaryTabs", new RootTabs());
         String currentUri =
-            (String)tilesContext.getRequestScope()
-                        .get("javax.servlet.forward.request_uri");
+            (String) tilesContext.getRequestScope()
+                                 .get("javax.servlet.forward.request_uri");
         tilesContext.getRequestScope().put("currentUri", currentUri);
     }
 

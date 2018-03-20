@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
  * necessary to then execute the DuplicationMonitor.
  *
  * @author Bill Branan
- *         Date: 4/17/13
+ * Date: 4/17/13
  */
 public class DuplicationMonitorDriver extends MonitorsDriver implements Runnable {
 
@@ -39,7 +39,6 @@ public class DuplicationMonitorDriver extends MonitorsDriver implements Runnable
         DuplicationPropReader propReader = new DuplicationPropReader();
         Map<String, String> dupHosts = propReader.readDupProps(props);
 
-       
         duplicationMonitor = new DuplicationMonitor(dupHosts);
     }
 

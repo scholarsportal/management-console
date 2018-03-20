@@ -31,21 +31,19 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * 
- * @author Daniel Bernstein 
- *         Date: Mar 3, 2012
- * 
+ * @author Daniel Bernstein
+ * Date: Mar 3, 2012
  */
 @Component
 public class CreateAccountAction extends AbstractAction {
     @Autowired
     private AccountManagerService accountManagerService;
-    @Autowired 
+    @Autowired
     private MessageHelper messageHelper;
- 
+
     @Autowired
     private MessageSource messageSource = null;
-    
+
     @Transactional
     public Event doExecute(RequestContext context) throws Exception {
 
@@ -53,11 +51,11 @@ public class CreateAccountAction extends AbstractAction {
             (NewAccountForm) context.getFlowScope().get("newAccountForm");
         FullAccountForm fullAccountForm =
             (FullAccountForm) context.getFlowScope().get("fullAccountForm");
-        
+
         StorageProviderType primaryStorageProvider = fullAccountForm.getPrimaryStorageProvider();
         Set<StorageProviderType> secondaryStorageProviders =
             new HashSet<StorageProviderType>();
-        
+
         if (fullAccountForm.getStorageProviders() != null) {
             List<StorageProviderType> storageProviders = fullAccountForm.getStorageProviders();
             storageProviders.remove(primaryStorageProvider);
@@ -80,24 +78,20 @@ public class CreateAccountAction extends AbstractAction {
 
         Message message;
 
-        String pattern =
-            contextPath
-                + AccountsController.BASE_MAPPING
-                + AccountsController.ACCOUNT_SETUP_MAPPING;
+        String pattern = contextPath + AccountsController.BASE_MAPPING
+                         + AccountsController.ACCOUNT_SETUP_MAPPING;
         String accountUri = UrlHelper.formatId(accountId, pattern);
-        
-        Object[] args = new Object[] { accountName, accountUri };
-        message = 
-            messageHelper.createMessageSuccess(messageSource,
-                                               "account.create.full.success",
-                                               args);
-        
+
+        Object[] args = new Object[] {accountName, accountUri};
+        message = messageHelper.createMessageSuccess(messageSource,
+                                                     "account.create.full.success",
+                                                     args);
+
         context.getFlowScope().put(UserFeedbackUtil.FEEDBACK_KEY, message);
         return success();
     }
 
-    public void
-        setAccountManagerService(AccountManagerService accountManagerService) {
+    public void setAccountManagerService(AccountManagerService accountManagerService) {
         this.accountManagerService = accountManagerService;
     }
 

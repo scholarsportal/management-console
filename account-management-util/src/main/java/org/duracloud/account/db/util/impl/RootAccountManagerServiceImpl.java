@@ -39,17 +39,17 @@ import org.springframework.stereotype.Component;
 
 /**
  * @author Andrew Woods
- *         Date: Oct 9, 2010
+ * Date: Oct 9, 2010
  */
 @Component("rootAccountManagerService")
 public class RootAccountManagerServiceImpl implements RootAccountManagerService {
 
-	private Logger log = LoggerFactory.getLogger(RootAccountManagerServiceImpl.class);
+    private Logger log = LoggerFactory.getLogger(RootAccountManagerServiceImpl.class);
 
     private DuracloudRepoMgr repoMgr;
     private DuracloudUserService userService;
-    private AccountChangeNotifier accountChangeNotifier; 
-    
+    private AccountChangeNotifier accountChangeNotifier;
+
     @Autowired
     public RootAccountManagerServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
                                          DuracloudUserService userService,
@@ -59,43 +59,40 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         this.accountChangeNotifier = accountChangeNotifier;
     }
 
-
-	@Override
-	public void resetUsersPassword(Long userId)
+    @Override
+    public void resetUsersPassword(Long userId)
         throws DBNotFoundException, UnsentEmailException {
         log.info("Resetting password for user with ID {}", userId);
 
         DuracloudUser user = getUserRepo().findOne(userId);
-        if(user == null) {
-            throw new DBNotFoundException("User with ID: "+userId+" does not exist");
+        if (user == null) {
+            throw new DBNotFoundException("User with ID: " + userId + " does not exist");
         }
 
         try {
             userService.forgotPassword(user.getUsername(), user.getSecurityQuestion(), user.getSecurityAnswer());
         } catch (InvalidPasswordException e) {
-            log.error("This should never happen!",e);
+            log.error("This should never happen!", e);
         }
-	}
+    }
 
-
-	@Override
-	public void deleteUser(Long userId) {
+    @Override
+    public void deleteUser(Long userId) {
         log.info("Deleting user with ID {}", userId);
 
         // Remove all user rights
-        List<AccountRights> accountRights =
-            getRightsRepo().findByUserId(userId);
-        for(AccountRights right : accountRights){
+        List<AccountRights> accountRights = getRightsRepo().findByUserId(userId);
+        for (AccountRights right : accountRights) {
             this.userService.revokeUserRights(right.getAccount().getId(), userId);
         }
-        
+
         // Remove user from all groups
         DuracloudUser user = repoMgr.getUserRepo().findOne(userId);
         DuracloudGroupRepo groupRepo = getGroupRepo();
         List<DuracloudGroup> allGroups = groupRepo.findAll();
-        for(DuracloudGroup group : allGroups) {
+        for (DuracloudGroup group : allGroups) {
             Set<DuracloudUser> groupUsers = group.getUsers();
-            if(groupUsers.contains(user)) {
+            if (groupUsers.contains(user)) {
                 groupUsers.remove(user);
                 groupRepo.save(group);
             }
@@ -103,15 +100,14 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
         // Remove the user
         getUserRepo().delete(userId);
-        
+
         notifyUserChange(accountRights);
-	}
- 
+    }
+
     private void notifyUserChange(List<AccountRights> accountRights) {
-        for(AccountRights  right : accountRights){
+        for (AccountRights right : accountRights) {
             try {
-                this.accountChangeNotifier
-                        .userStoreChanged(right.getAccount().getSubdomain());
+                this.accountChangeNotifier.userStoreChanged(right.getAccount().getSubdomain());
             } catch (Exception ex) {
                 log.error("failed to notify of user change: " + ex.getMessage(), ex);
             }
@@ -119,45 +115,43 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
     }
 
     private void notifyAccountChange(List<AccountRights> accountRights) {
-        for(AccountRights  right : accountRights){
+        for (AccountRights right : accountRights) {
             try {
-                this.accountChangeNotifier
-                        .accountChanged(right.getAccount().getSubdomain());
+                this.accountChangeNotifier.accountChanged(right.getAccount().getSubdomain());
             } catch (Exception ex) {
                 log.error("failed to notify of account change: " + ex.getMessage(), ex);
             }
         }
-        
+
     }
 
     private AccountInfo getAccountByStorageProvider(Long providerId) {
         DuracloudAccountRepo accountRepo = this.repoMgr.getAccountRepo();
         AccountInfo account = accountRepo.findByPrimaryStorageProviderAccountId(providerId);
-        if(account == null){
+        if (account == null) {
             account = accountRepo.findBySecondaryStorageProviderAccountsId(providerId);
         }
 
         return account;
     }
-    
+
     private void notifyStorageProviderChange(String accountId) {
         this.accountChangeNotifier.storageProvidersChanged(accountId);
     }
 
     @Override
-	public void deleteAccount(Long accountId) {
+    public void deleteAccount(Long accountId) {
         log.info("Deleting account with ID {}", accountId);
 
         // Delete the account rights
-        List<AccountRights > rightsList =
-            getRightsRepo().findByAccountId(accountId);
-        for(AccountRights rights : rightsList){
+        List<AccountRights> rightsList = getRightsRepo().findByAccountId(accountId);
+        for (AccountRights rights : rightsList) {
             DuracloudUser user = rights.getUser();
             user.getAccountRights().remove(rights);
             rights.getRoles().clear();
             getRightsRepo().save(rights);
         }
-        
+
         getRightsRepo().deleteInBatch(rightsList);
 
         // Delete the groups associated with the account
@@ -171,10 +165,9 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
         // Delete account
         getAccountRepo().delete(accountId);
-        
-        notifyAccountChange(rightsList);
-	}
 
+        notifyAccountChange(rightsList);
+    }
 
     @Override
     public List<StorageProviderAccount> getSecondaryStorageProviders(Long accountId) {
@@ -182,30 +175,31 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         return new ArrayList(account.getSecondaryStorageProviderAccounts());
     }
 
-	@Override
-	public void setupStorageProvider(Long providerId,
+    @Override
+    public void setupStorageProvider(Long providerId,
                                      String username,
                                      String password,
-                                     Map<String,String> properties,
+                                     Map<String, String> properties,
                                      int storageLimit) {
         log.info("Setting up storage provider with ID {}", providerId);
-        StorageProviderAccount storageProviderAccount =
-            getStorageRepo().findOne(providerId);
+
+        StorageProviderAccount storageProviderAccount = getStorageRepo().findOne(providerId);
         storageProviderAccount.setUsername(username);
         storageProviderAccount.setPassword(password);
         storageProviderAccount.getProperties().putAll(properties);
         storageProviderAccount.setStorageLimit(storageLimit);
+
         getStorageRepo().save(storageProviderAccount);
         notifyStorageProviderChange(getAccountByStorageProvider(providerId).getSubdomain());
     }
 
     @Override
-	public AccountInfo getAccount(Long id) {
+    public AccountInfo getAccount(Long id) {
         return getAccountRepo().findOne(id);
     }
 
-	@Override
-	public void activateAccount(Long accountId) {
+    @Override
+    public void activateAccount(Long accountId) {
         log.info("Activating account with ID {}", accountId);
         AccountInfo accountInfo = getAccountRepo().findOne(accountId);
         accountInfo.setStatus(AccountInfo.AccountStatus.ACTIVE);
@@ -213,34 +207,33 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         this.accountChangeNotifier.accountChanged(accountInfo.getSubdomain());
     }
 
-	@Override
-	public Set<AccountInfo> listAllAccounts(String filter) {
-		List<AccountInfo> accounts = getAccountRepo().findAll(new Sort("acctName"));
-		Set<AccountInfo> accountInfos = new LinkedHashSet<AccountInfo>();
-		for(AccountInfo acct : accounts){
-            if(filter == null || acct.getOrgName().startsWith(filter)){
+    @Override
+    public Set<AccountInfo> listAllAccounts(String filter) {
+        List<AccountInfo> accounts = getAccountRepo().findAll(new Sort("acctName"));
+        Set<AccountInfo> accountInfos = new LinkedHashSet<AccountInfo>();
+        for (AccountInfo acct : accounts) {
+            if (filter == null || acct.getOrgName().startsWith(filter)) {
                 accountInfos.add(acct);
             }
-		}
-		return accountInfos;
-	}
-
-	@Override
-	public Set<DuracloudUser> listAllUsers(String filter) {
-		List<DuracloudUser> usersList = getUserRepo().findAll(new Sort("username"));
-		Set<DuracloudUser> users = new LinkedHashSet<DuracloudUser>();
-        for(DuracloudUser user: usersList){
-            if(filter == null || (user.getUsername().startsWith(filter)
-                    || user.getFirstName().startsWith(filter)
-                    || user.getLastName().startsWith(filter)
-                    || user.getEmail().startsWith(filter))
-            ){
-                users.add(user);
-            }
-		}
-		return users;
+        }
+        return accountInfos;
     }
 
+    @Override
+    public Set<DuracloudUser> listAllUsers(String filter) {
+        List<DuracloudUser> usersList = getUserRepo().findAll(new Sort("username"));
+        Set<DuracloudUser> users = new LinkedHashSet<DuracloudUser>();
+        for (DuracloudUser user : usersList) {
+            if (filter == null ||
+                (user.getUsername().startsWith(filter)
+                 || user.getFirstName().startsWith(filter)
+                 || user.getLastName().startsWith(filter)
+                 || user.getEmail().startsWith(filter))) {
+                users.add(user);
+            }
+        }
+        return users;
+    }
 
     private DuracloudUserRepo getUserRepo() {
         return repoMgr.getUserRepo();

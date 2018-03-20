@@ -7,23 +7,19 @@
  */
 package org.duracloud.account.app.integration;
 
+import com.thoughtworks.selenium.DefaultSelenium;
+import com.thoughtworks.selenium.Selenium;
+import junit.framework.Assert;
 import org.duracloud.account.app.AMATestConfig;
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.thoughtworks.selenium.DefaultSelenium;
-import com.thoughtworks.selenium.Selenium;
-
-import junit.framework.Assert;
-
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
- *
  */
 public abstract class AbstractIntegrationTest {
-
 
     protected static Logger log =
         LoggerFactory.getLogger(AbstractIntegrationTest.class);
@@ -56,15 +52,14 @@ public abstract class AbstractIntegrationTest {
         sc = createSeleniumClient(url);
         log.info("started selenium client on " + url);
     }
-    
-    protected String createAppUrl() throws Exception{
-        return  "http://localhost:" + getPort() + getAppRoot() + "/";
+
+    protected String createAppUrl() throws Exception {
+        return "http://localhost:" + getPort() + getAppRoot() + "/";
     }
-    
 
     /**
-	 * 
-	 */
+     *
+     */
     protected void logout() {
         sc.close();
         try {
@@ -79,9 +74,6 @@ public abstract class AbstractIntegrationTest {
         logout();
         LoginHelper.login(sc, username, password);
     }
-
-
-
 
     @After
     public void after() {
@@ -99,7 +91,7 @@ public abstract class AbstractIntegrationTest {
     }
 
     protected Selenium createSeleniumClient(String url) {
-        Selenium s =  new DefaultSelenium("localhost", 4444, "*pifirefox", url);
+        Selenium s = new DefaultSelenium("localhost", 4444, "*pifirefox", url);
         s.start("addCustomRequestHeader=true");
         s.setTimeout(SeleniumHelper.DEFAULT_PAGE_LOAD_WAIT_IN_MS);
         return s;
@@ -108,7 +100,6 @@ public abstract class AbstractIntegrationTest {
     protected void openUserProfilePage() {
         UserHelper.openUserProfile(sc);
     }
-    
 
     protected void openAccountHome(String accountId) {
         open(formatAccountURL(accountId, null));
@@ -120,29 +111,29 @@ public abstract class AbstractIntegrationTest {
 
     protected String formatAccountURL(String accountId, String suffix) {
         return getAppRoot()
-            + "/accounts/byid/" + accountId + (suffix != null ? suffix : "");
+               + "/accounts/byid/" + accountId + (suffix != null ? suffix : "");
     }
 
     protected void openAccountDetails(String accountId) {
         open(formatAccountURL(accountId, "/details/"));
     }
 
-    protected void openHome(){
+    protected void openHome() {
         UrlHelper.open(sc, SeleniumHelper.getAppRoot());
     }
 
-    protected void open(String location){
+    protected void open(String location) {
         UrlHelper.open(sc, location);
     }
 
     protected void waitForPage() {
         SeleniumHelper.waitForPage(sc);
     }
-    
+
     protected void clickAndWait(String locator) {
         SeleniumHelper.clickAndWait(sc, locator);
     }
-    
+
     protected String createNewUser() {
         return UserHelper.createAndConfirm(sc);
     }
@@ -156,12 +147,12 @@ public abstract class AbstractIntegrationTest {
 
         try {
             newSc = createSeleniumClient(createAppUrl());
-            deleteUser(newSc,username);
+            deleteUser(newSc, username);
         } catch (Exception e) {
             log.error("failed to delete " + username + ": " + e.getMessage(), e);
             e.printStackTrace();
-        }finally{
-            if(newSc != null){
+        } finally {
+            if (newSc != null) {
                 newSc.close();
             }
         }
@@ -174,7 +165,7 @@ public abstract class AbstractIntegrationTest {
     protected void openUserProfile() {
         UserHelper.openUserProfile(sc);
     }
-    
+
     protected void confirmGlobalErrorsPresent() {
         Assert.assertTrue(isElementPresent("css=.global-errors"));
     }

@@ -35,7 +35,7 @@ import org.springframework.security.core.Authentication;
  * AccessDecisionVoter security checks based on the AccountService annotations.
  *
  * @author Andrew Woods
- *         Date: 4/7/11
+ * Date: 4/7/11
  */
 public class AccountServiceSecuredImpl implements AccountService {
 
@@ -134,13 +134,12 @@ public class AccountServiceSecuredImpl implements AccountService {
         throwIfAccessDenied(storageProviderId);
         accountService.removeStorageProvider(storageProviderId);
     }
-    
+
     @Override
     public void changePrimaryStorageProvider(Long storageProviderId) {
         throwIfAccessDenied(storageProviderId);
         accountService.changePrimaryStorageProvider(storageProviderId);
     }
-
 
     @Override
     public Set<DuracloudUser> getUsers() {

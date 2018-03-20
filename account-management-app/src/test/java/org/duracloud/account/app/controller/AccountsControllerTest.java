@@ -22,10 +22,8 @@ import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
 
 /**
- * 
  * @author Daniel Bernstein
- *         Date: Mar 1, 2012
- *
+ * Date: Mar 1, 2012
  */
 public class AccountsControllerTest extends AmaControllerTestBase {
     private AccountsController accountsController;
@@ -38,8 +36,8 @@ public class AccountsControllerTest extends AmaControllerTestBase {
         accountsController = new AccountsController();
         rootAccountManagerService = createMock(RootAccountManagerService.class);
         accountsController.setRootAccountManagerService(rootAccountManagerService);
-        accountsController.setAccountManagerService(accountManagerService);        
-        
+        accountsController.setAccountManagerService(accountManagerService);
+
         setupGenericAccountAndUserServiceMocks(TEST_ACCOUNT_ID);
     }
 
@@ -57,7 +55,7 @@ public class AccountsControllerTest extends AmaControllerTestBase {
         AccountInfo info = createMock(AccountInfo.class);
         EasyMock.expect(info.getStatus()).andReturn(AccountStatus.PENDING);
         EasyMock.expect(rootAccountManagerService.getAccount(TEST_ACCOUNT_ID)).andReturn(info);
-        
+
         StorageProviderAccount spa = new StorageProviderAccount();
         spa.setId(0L);
         spa.setProviderType(StorageProviderType.AMAZON_S3);
@@ -68,7 +66,7 @@ public class AccountsControllerTest extends AmaControllerTestBase {
                 .andReturn(spa);
 
         EasyMock.expect(rootAccountManagerService.getSecondaryStorageProviders(TEST_ACCOUNT_ID))
-            .andReturn(new ArrayList<StorageProviderAccount>());
+                .andReturn(new ArrayList<StorageProviderAccount>());
         replayMocks();
         this.accountsController.getSetupAccount(TEST_ACCOUNT_ID, new ExtendedModelMap());
     }
@@ -79,11 +77,11 @@ public class AccountsControllerTest extends AmaControllerTestBase {
         EasyMock.expect(info.getStatus()).andReturn(AccountStatus.PENDING);
         EasyMock.expect(rootAccountManagerService.getAccount(TEST_ACCOUNT_ID)).andReturn(info);
         EasyMock.expect(info.getAcctName()).andReturn("test");
-        
+
         rootAccountManagerService.setupStorageProvider(EasyMock.anyLong(),
                                                        EasyMock.isA(String.class),
                                                        EasyMock.isA(String.class),
-                                                       EasyMock.isA(new HashMap<String,String>().getClass()),
+                                                       EasyMock.isA(new HashMap<String, String>().getClass()),
                                                        EasyMock.anyInt());
         EasyMock.expectLastCall().anyTimes();
 
@@ -98,14 +96,13 @@ public class AccountsControllerTest extends AmaControllerTestBase {
         setupNoBindingResultErrors();
         addFlashAttribute();
         replayMocks();
-        
-        this.accountsController.setupAccount(TEST_ACCOUNT_ID,
-                                                setupForm,
-                                                result,
-                                                model,
-                                                redirectAttributes);
-    }
 
+        this.accountsController.setupAccount(TEST_ACCOUNT_ID,
+                                             setupForm,
+                                             result,
+                                             model,
+                                             redirectAttributes);
+    }
 
     @Test
     public void testActivate() throws Exception {

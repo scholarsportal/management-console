@@ -9,7 +9,6 @@ package org.duracloud.account.app.controller;
 
 import java.io.Serializable;
 import java.util.List;
-
 import javax.validation.constraints.NotNull;
 
 import org.duracloud.account.util.StorageProviderTypeUtil;
@@ -18,22 +17,20 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-
 /**
- * 
- * @author Daniel Bernstein 
- *         Date: Mar 5, 2012
+ * @author Daniel Bernstein
+ * Date: Mar 5, 2012
  */
 @SuppressWarnings("serial")
 @Component("fullAccountForm")
 @Scope(value = WebApplicationContext.SCOPE_REQUEST)
-public class FullAccountForm  implements Serializable{
-    
+public class FullAccountForm implements Serializable {
+
     private List<StorageProviderType> storageProviders;
-    
-    @NotNull(message="A primary storage provider must be specified")
+
+    @NotNull(message = "A primary storage provider must be specified")
     private StorageProviderType primaryStorageProvider = null;
-    
+
     public StorageProviderType getPrimaryStorageProvider() {
         return primaryStorageProvider;
     }
@@ -50,8 +47,7 @@ public class FullAccountForm  implements Serializable{
         return storageProviders;
     }
 
-    public void
-        setStorageProviders(List<StorageProviderType> storageProviders) {
+    public void setStorageProviders(List<StorageProviderType> storageProviders) {
         this.storageProviders = storageProviders;
     }
 

@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <flow xmlns="http://www.springframework.org/schema/webflow"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.springframework.org/schema/webflow
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow
         http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
-  <view-state id="enterAccountInfo" 
-              view="/create-account/account-info" 
-              model="newAccountForm" >
+  <view-state id="enterAccountInfo"
+              view="/create-account/account-info"
+              model="newAccountForm">
     <on-entry>
       <set name="flowScope.newAccountForm" value="newAccountForm"/>
       <set name="flowScope.mcDomain" value="amaEndpoint.domain"/>
 
     </on-entry>
-    
-    <transition on="next" to="configureStorageProviders"/> 
+
+    <transition on="next" to="configureStorageProviders"/>
     <transition on="cancel" to="end" validate="false"/>
   </view-state>
- 
+
   <view-state id="configureStorageProviders" view="/create-account/storage-providers"
-    model="fullAccountForm">
+              model="fullAccountForm">
     <on-entry>
       <set name="flowScope.fullAccountForm" value="fullAccountForm"/>
     </on-entry>
@@ -34,5 +34,5 @@
   <end-state id="end">
     <output name="message" value="flowScope.message"/>
   </end-state>
-  
+
 </flow>

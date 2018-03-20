@@ -11,10 +11,9 @@ import org.duracloud.account.db.model.DuracloudMill;
 import org.springframework.security.access.annotation.Secured;
 
 /**
- *  Duracloud Mill Configuration Management
+ * Duracloud Mill Configuration Management
  *
  * @author: Daniel Bernstein
- * 
  */
 public interface DuracloudMillConfigService {
 
@@ -22,11 +21,11 @@ public interface DuracloudMillConfigService {
     public DuracloudMill get();
 
     @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
-    public void set(String dbHost, 
-                    Integer dbPort, 
+    public void set(String dbHost,
+                    Integer dbPort,
                     String dbName,
-                    String dbUsername, 
-                    String dbPassword, 
+                    String dbUsername,
+                    String dbPassword,
                     String auditQueue,
                     String auditLogId);
 

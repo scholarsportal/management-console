@@ -7,7 +7,10 @@
  */
 package org.duracloud.account.monitor.duplication;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -28,7 +31,7 @@ import org.junit.Test;
 
 /**
  * @author Bill Branan
- *         Date: 4/19/13
+ * Date: 4/19/13
  */
 public class DuplicationMonitorTest {
 
@@ -51,12 +54,12 @@ public class DuplicationMonitorTest {
     }
 
     private void replayMocks() {
-        EasyMock.replay(storeManager, store,spaceStats,spaceStatsList);
+        EasyMock.replay(storeManager, store, spaceStats, spaceStatsList);
     }
 
     @After
     public void teardown() {
-        EasyMock.verify(storeManager, store,spaceStats,spaceStatsList);
+        EasyMock.verify(storeManager, store, spaceStats, spaceStatsList);
     }
 
     @Test
@@ -127,8 +130,8 @@ public class DuplicationMonitorTest {
         EasyMock.expect(store.getStoreId())
                 .andReturn(storeId);
 
-        setupSpaceStats(space1,1);
-        setupSpaceStats(space2,2);
+        setupSpaceStats(space1, 1);
+        setupSpaceStats(space2, 2);
 
         replayMocks();
 
@@ -153,9 +156,8 @@ public class DuplicationMonitorTest {
                 .andReturn(storeType);
         EasyMock.expect(store.getStoreId())
                 .andReturn(storeId);
-        
+
         setupSpaceStats(space1, 1);
-        
 
         replayMocks();
 
@@ -166,7 +168,7 @@ public class DuplicationMonitorTest {
 
     private void setupSpaceStats(String spaceId, long count) throws Exception {
         EasyMock.expect(store.getSpaceStats(EasyMock.eq(spaceId),
-                EasyMock.isA(Date.class), EasyMock.isA(Date.class)))
+                                            EasyMock.isA(Date.class), EasyMock.isA(Date.class)))
                 .andReturn(spaceStatsList);
 
         EasyMock.expect(spaceStatsList.size()).andReturn(1);

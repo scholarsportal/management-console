@@ -11,9 +11,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
- * 
  */
 public class TestNewUser extends AbstractIntegrationTest {
 
@@ -32,6 +30,7 @@ public class TestNewUser extends AbstractIntegrationTest {
         Assert.assertTrue(sc.isTextPresent("Success"));
         deleteUserWithSeparateBrowser(username);
     }
+
     @Test
     public void testNullValuesCheck() {
         String[] userFormParams = UserHelper.createDefaultUserFormParams();
@@ -48,15 +47,14 @@ public class TestNewUser extends AbstractIntegrationTest {
     @Test
     public void testPasswordNoMatch() {
         String[] userFormParams =
-            UserHelper.createDefaultUserFormParams("t"
-                                                       + System.currentTimeMillis(),
+            UserHelper.createDefaultUserFormParams("t" + System.currentTimeMillis(),
                                                    "password",
                                                    "password-nomatch");
         createUser(userFormParams);
         confirmNewUserFormIsLoaded();
         confirmGlobalErrorsPresent();
     }
-    
+
     private void createUser(String[] userFormParams) {
         UserHelper.createUser(sc,
                               userFormParams[0],
@@ -68,8 +66,5 @@ public class TestNewUser extends AbstractIntegrationTest {
                               userFormParams[6],
                               userFormParams[7]);
     }
-
-
-
 
 }

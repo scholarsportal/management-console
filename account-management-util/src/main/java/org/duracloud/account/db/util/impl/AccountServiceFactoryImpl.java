@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
  * This class creates security-wrapped instances of AccountService.
  *
  * @author Andrew Woods
- *         Date: 4/7/11
+ * Date: 4/7/11
  */
 @Component("accountServiceFactory")
 public class AccountServiceFactoryImpl implements AccountServiceFactory {
@@ -42,14 +42,14 @@ public class AccountServiceFactoryImpl implements AccountServiceFactory {
     private SecurityContextUtil securityContext;
     private AnnotationParser annotationParser;
     private AmaEndpoint amaEndpoint;
-    private AccountChangeNotifier accountChangeNotifier; 
-    
+    private AccountChangeNotifier accountChangeNotifier;
+
     @Autowired
     public AccountServiceFactoryImpl(DuracloudRepoMgr repoMgr,
                                      @Qualifier("acctVoter") AccessDecisionVoter voter,
                                      SecurityContextUtil securityContext,
                                      AnnotationParser annotationParser,
-                                     AmaEndpoint amaEndpoint, 
+                                     AmaEndpoint amaEndpoint,
                                      AccountChangeNotifier accountChangeNotifier) {
         this.repoMgr = repoMgr;
         this.voter = voter;
@@ -64,11 +64,11 @@ public class AccountServiceFactoryImpl implements AccountServiceFactory {
         throws AccountNotFoundException {
         AccountInfo acctInfo = repoMgr.getAccountRepo().findOne(acctId);
         return getAccount(acctInfo);
-}
+    }
 
     @Override
     public AccountService getAccount(AccountInfo acctInfo) {
-        AccountService acctService = new AccountServiceImpl(amaEndpoint, 
+        AccountService acctService = new AccountServiceImpl(amaEndpoint,
                                                             acctInfo,
                                                             repoMgr);
 

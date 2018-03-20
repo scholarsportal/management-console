@@ -12,8 +12,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * @author Daniel Bernstein
- *         Date: Feb 8, 2012
- * 
+ * Date: Feb 8, 2012
  */
 public class UsernameForm {
     @UsernameExists
