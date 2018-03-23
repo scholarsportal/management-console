@@ -11,7 +11,7 @@ import org.duracloud.common.error.DuraCloudRuntimeException;
 
 /**
  * @author Andrew Woods
- *         Date: 4/8/11
+ * Date: 4/8/11
  */
 public class AccessDeniedException extends DuraCloudRuntimeException {
 

@@ -17,7 +17,7 @@ import org.springframework.security.access.annotation.Secured;
 
 /**
  * @author Erik Paulsson
- *         Date: 7/17/13
+ * Date: 7/17/13
  */
 public interface AccountManagerService {
 
@@ -35,17 +35,15 @@ public interface AccountManagerService {
      * @param accountId
      * @return
      * @throws AccountNotFoundException
-     *
      */
     @Secured({"role:ROLE_USER, scope:SELF_ACCT"})
     public AccountService getAccount(Long accountId)
-            throws AccountNotFoundException;
+        throws AccountNotFoundException;
 
     /**
      * @param accountCreationInfo
      * @return AccountService
      * @throws SubdomainAlreadyExistsException
-     *
      */
     @Secured({"role:ROLE_USER, scope:ANY"})
     public AccountService createAccount(AccountCreationInfo accountCreationInfo) throws SubdomainAlreadyExistsException;
@@ -53,8 +51,8 @@ public interface AccountManagerService {
     /**
      * @param userId
      * @return Returns the set of accounts loaded with the user's set of rights.
-     *         If there are no accounts associated with the specified user, an
-     *         empty set is returned.
+     * If there are no accounts associated with the specified user, an
+     * empty set is returned.
      */
     @Secured({"role:ROLE_USER, scope:SELF_ID"})
     public Set<AccountInfo> findAccountsByUserId(Long userId);

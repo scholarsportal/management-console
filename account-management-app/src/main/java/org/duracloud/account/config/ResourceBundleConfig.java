@@ -14,13 +14,11 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 
 @Configuration
 public class ResourceBundleConfig {
-    
-    @Bean 
-    public MessageSource messageSource(){
+
+    @Bean
+    public MessageSource messageSource() {
         ResourceBundleMessageSource m = new ResourceBundleMessageSource();
-        m.setBasenames("global",
-                       "root",
-                       "user");
+        m.setBasenames("global", "root", "user");
         return m;
     }
 }

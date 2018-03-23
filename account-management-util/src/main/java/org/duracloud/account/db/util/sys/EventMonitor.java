@@ -11,7 +11,7 @@ import org.duracloud.account.db.model.util.AccountCreationInfo;
 
 /**
  * @author Andrew Woods
- *         Date: 3/21/11
+ * Date: 3/21/11
  */
 public interface EventMonitor {
 

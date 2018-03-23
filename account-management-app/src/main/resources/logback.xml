@@ -2,7 +2,7 @@
 
 <configuration debug="true" scan="true">
   <jmxConfigurator/>
-  <property name="LOG_FILENAME" value="${duracloud.home}/logs/duracloud-acctmgtapp.log" />
+  <property name="LOG_FILENAME" value="${duracloud.home}/logs/duracloud-acctmgtapp.log"/>
 
   <appender name="DURACLOUD" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
@@ -25,10 +25,10 @@
     </encoder>
   </appender>
   <!--<logger name="org.springframework.data" level="TRACE">-->
-    <!--<appender-ref ref="DURACLOUD"/>-->
+  <!--<appender-ref ref="DURACLOUD"/>-->
   <!--</logger>-->
   <!--<logger name="org.springframework.orm.jpa" level="TRACE">-->
-    <!--<appender-ref ref="DURACLOUD"/>-->
+  <!--<appender-ref ref="DURACLOUD"/>-->
   <!--</logger>-->
   <logger name="org.duracloud" level="${log.level}">
     <appender-ref ref="DURACLOUD"/>

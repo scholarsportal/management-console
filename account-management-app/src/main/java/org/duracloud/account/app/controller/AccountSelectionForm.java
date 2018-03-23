@@ -7,14 +7,12 @@
  */
 package org.duracloud.account.app.controller;
 
-
 /**
- * 
- * @author Daniel Bernstein 
- *         Date: Mar 8, 2012
+ * @author Daniel Bernstein
+ * Date: Mar 8, 2012
  */
 public class AccountSelectionForm {
-    
+
     private Long[] accountIds;
 
     public Long[] getAccountIds() {

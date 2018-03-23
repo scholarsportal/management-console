@@ -7,6 +7,12 @@
  */
 package org.duracloud.account.security.vote;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.aopalliance.intercept.MethodInvocation;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
@@ -29,11 +35,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.*;
-
 /**
  * @author Andrew Woods
- *         Date: 4/6/11
+ * Date: 4/6/11
  */
 public class UserAccessDecisionVoterTest {
 
@@ -259,7 +263,6 @@ public class UserAccessDecisionVoterTest {
         doTest(expectedDecision);
     }
 
-
     @Test
     public void testScopeSelf() throws DBNotFoundException {
         Role userRole = accessRole;
@@ -302,7 +305,6 @@ public class UserAccessDecisionVoterTest {
 
         doTest(expectedDecision);
     }
-
 
     @Test
     public void testScopeSelfName() throws DBNotFoundException {
@@ -364,22 +366,22 @@ public class UserAccessDecisionVoterTest {
             // This is the case when the calling user has rights on the acct.
             EasyMock.expect(rightsRepo.findByAccountIdAndUserId(argAcctId,
                                                                 rights.getUser().getId()))
-                .andReturn(rights)
-                .times(2);
+                    .andReturn(rights)
+                    .times(2);
             EasyMock.expect(rightsRepo.findByAccountIdAndUserId(argAcctId,
                                                                 otherRights.getUser().getId()))
-                .andReturn(otherRights);
+                    .andReturn(otherRights);
 
         } else {
             // This is the case when the calling user does NOT have rights on the acct.
             EasyMock.expect(rightsRepo.findByAccountIdAndUserId(argAcctId,
                                                                 rights.getUser().getId()))
-                .andReturn(null);
+                    .andReturn(null);
         }
 
         EasyMock.expect(mgr.getRightsRepo())
-            .andReturn(rightsRepo)
-            .atLeastOnce();
+                .andReturn(rightsRepo)
+                .atLeastOnce();
 
         EasyMock.replay(rightsRepo);
         return mgr;
@@ -410,7 +412,7 @@ public class UserAccessDecisionVoterTest {
         for (Role role : roles) {
             userRoles.add(new SimpleGrantedAuthority(role.name()));
         }
-        EasyMock.expect(auth.getAuthorities()).andReturn((Collection)userRoles);
+        EasyMock.expect(auth.getAuthorities()).andReturn((Collection) userRoles);
 
         return auth;
     }
@@ -433,7 +435,7 @@ public class UserAccessDecisionVoterTest {
 
         DuracloudUserServiceImpl serviceImpl = new DuracloudUserServiceImpl(null,
                                                                             null,
-                                                                            null, 
+                                                                            null,
                                                                             null);
 
         EasyMock.expect(inv.getThis()).andReturn(serviceImpl).times(2);

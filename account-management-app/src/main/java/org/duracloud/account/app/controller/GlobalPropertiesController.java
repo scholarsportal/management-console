@@ -25,10 +25,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 /**
- * 
- * @author Daniel Bernstein 
- *         Date: 01/05/2015
- * 
+ * @author Daniel Bernstein
+ * Date: 01/05/2015
  */
 @Controller
 @RequestMapping(GlobalPropertiesController.BASE_MAPPING)
@@ -42,11 +40,11 @@ public class GlobalPropertiesController {
     public static final String BASE_MAPPING = "/root/globalproperties";
 
     public void setGlobalPropertiesConfigService(
-            GlobalPropertiesConfigService globalPropertiesConfigService) {
+        GlobalPropertiesConfigService globalPropertiesConfigService) {
         this.globalPropertiesConfigService = globalPropertiesConfigService;
     }
+
     /**
-     * 
      * @return
      */
     @RequestMapping("")
@@ -59,7 +57,7 @@ public class GlobalPropertiesController {
     public GlobalPropertiesForm form() {
         GlobalPropertiesForm form = new GlobalPropertiesForm();
         GlobalProperties entity = this.globalPropertiesConfigService.get();
-        if(entity == null){
+        if (entity == null) {
             return new GlobalPropertiesForm();
         } else {
             form.setInstanceNotificationTopicArn(entity.getInstanceNotificationTopicArn());
@@ -77,20 +75,19 @@ public class GlobalPropertiesController {
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     @Transactional
-    public ModelAndView update(
-            @ModelAttribute(GLOBAL_PROPERTIES_ATTRIBUTE) @Valid GlobalPropertiesForm form,
-            BindingResult bindingResult, Model model,
-            RedirectAttributes redirectAttributes) {
+    public ModelAndView update(@ModelAttribute(GLOBAL_PROPERTIES_ATTRIBUTE) @Valid GlobalPropertiesForm form,
+                               BindingResult bindingResult,
+                               Model model,
+                               RedirectAttributes redirectAttributes) {
         boolean hasErrors = bindingResult.hasErrors();
         if (hasErrors) {
             return new ModelAndView(BASE_MAPPING + "/edit");
         }
-        
-        this.globalPropertiesConfigService.set(
-                form.getInstanceNotificationTopicArn(),
-                form.getCloudFrontAccountId(),
-                form.getCloudFrontKeyId(), 
-                form.getCloudFrontKeyPath());
+
+        this.globalPropertiesConfigService.set(form.getInstanceNotificationTopicArn(),
+                                               form.getCloudFrontAccountId(),
+                                               form.getCloudFrontKeyId(),
+                                               form.getCloudFrontKeyPath());
 
         UserFeedbackUtil.addSuccessFlash("Successfully updated!", redirectAttributes);
         return new ModelAndView(new RedirectView(BASE_MAPPING, true));

@@ -8,7 +8,6 @@
 package org.duracloud.account.flow.createaccount;
 
 import junit.framework.Assert;
-
 import org.duracloud.account.app.controller.AmaTestBase;
 import org.duracloud.account.app.controller.FullAccountForm;
 import org.duracloud.account.app.controller.NewAccountForm;
@@ -23,15 +22,16 @@ import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
 /**
  * @author Daniel Bernstein
- *         Date: Mar 5, 2012
+ * Date: Mar 5, 2012
  */
-public class CreateAccountActionTest extends AmaTestBase{
+public class CreateAccountActionTest extends AmaTestBase {
     private CreateAccountAction action = null;
     private MessageHelper messageHelper;
     private RequestContext requestContext;
-    
+
     @Before
     public void before() throws Exception {
         super.before();
@@ -42,8 +42,8 @@ public class CreateAccountActionTest extends AmaTestBase{
         //setup message helper
         this.messageHelper = createMock(MessageHelper.class);
         this.messageHelper.createMessageSuccess(EasyMock.anyObject(MessageSource.class),
-                                             EasyMock.isA(String.class),
-                                             (Object[]) EasyMock.isA(Object.class));
+                                                EasyMock.isA(String.class),
+                                                (Object[]) EasyMock.isA(Object.class));
         EasyMock.expectLastCall().andReturn(EasyMock.createMock(Message.class));
         this.action.setMessageHelper(this.messageHelper);
     }
@@ -53,7 +53,7 @@ public class CreateAccountActionTest extends AmaTestBase{
         LocalAttributeMap map = new LocalAttributeMap();
         NewAccountForm newAccountForm = new NewAccountForm();
         map.put("newAccountForm", newAccountForm);
-        if(fullAccountForm != null){
+        if (fullAccountForm != null) {
             map.put("fullAccountForm", fullAccountForm);
         }
 
@@ -64,8 +64,6 @@ public class CreateAccountActionTest extends AmaTestBase{
                 .andReturn(externalContext);
     }
 
-
-    
     @Test
     public void testDoCreate() throws Exception {
 
@@ -74,10 +72,9 @@ public class CreateAccountActionTest extends AmaTestBase{
         //setup requestcontext
         setupRequestContext(fullAccountForm);
 
-        
         EasyMock.expect(this.accountManagerService.createAccount(EasyMock.isA(AccountCreationInfo.class)))
                 .andReturn(accountService);
-        
+
         replayMocks();
         assertSuccess(this.action.doExecute(requestContext));
     }

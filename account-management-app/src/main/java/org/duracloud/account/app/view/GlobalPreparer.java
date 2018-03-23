@@ -14,16 +14,17 @@ import org.springframework.stereotype.Component;
 
 /**
  * This preparer provides useful variables to jspx
+ *
  * @author Daniel Bernstein
- *         Date: Feb 17, 2012
+ * Date: Feb 17, 2012
  */
 @Component("globalPreparer")
-public class GlobalPreparer implements ViewPreparer{
+public class GlobalPreparer implements ViewPreparer {
 
     @Override
     public void execute(TilesRequestContext tilesContext,
                         AttributeContext attributeContext) {
-        
+
     }
 
 }

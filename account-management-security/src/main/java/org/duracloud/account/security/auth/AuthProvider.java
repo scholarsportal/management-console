@@ -26,7 +26,7 @@ import org.springframework.security.web.util.matcher.IpAddressMatcher;
  * valid IP ranges. If a user has no defined valid IP ranges, any IP is accepted.
  *
  * @author Bill Branan
- *         Date: 5/20/2015
+ * Date: 5/20/2015
  */
 public class AuthProvider extends DaoAuthenticationProvider {
 
@@ -44,18 +44,18 @@ public class AuthProvider extends DaoAuthenticationProvider {
         throws AuthenticationException {
         super.additionalAuthenticationChecks(userDetails, authentication);
 
-        DuracloudUser dcUser = (DuracloudUser)userDetails;
+        DuracloudUser dcUser = (DuracloudUser) userDetails;
         String userIpLimits = dcUser.getAllowableIPAddressRange();
 
         // if user IP limits are set, check request IP
-        if(null != userIpLimits && !userIpLimits.equals("")) {
+        if (null != userIpLimits && !userIpLimits.equals("")) {
             WebAuthenticationDetails details =
-                (WebAuthenticationDetails)authentication.getDetails();
+                (WebAuthenticationDetails) authentication.getDetails();
             String requestIp = details.getRemoteAddress();
 
             String[] ipLimits = userIpLimits.split(";");
-            for(String ipLimit : ipLimits) {
-                if(ipInRange(requestIp, ipLimit)) {
+            for (String ipLimit : ipLimits) {
+                if (ipInRange(requestIp, ipLimit)) {
                     // User's IP is within this range, grant access
                     log.debug("Allowing authentication check to continue for user " +
                               dcUser.getUsername() + " because their IP " +
@@ -82,7 +82,7 @@ public class AuthProvider extends DaoAuthenticationProvider {
      * Determines if a given IP address is in the given IP range.
      *
      * @param ipAddress single IP address
-     * @param range IP address range using CIDR notation
+     * @param range     IP address range using CIDR notation
      * @return true if the address is in the range, false otherwise
      */
     protected boolean ipInRange(String ipAddress, String range) {

@@ -11,20 +11,19 @@ import org.duracloud.account.db.model.GlobalProperties;
 import org.springframework.security.access.annotation.Secured;
 
 /**
- *  Duracloud Mill Configuration Management
+ * Duracloud Mill Configuration Management
  *
  * @author: Daniel Bernstein
- * 
  */
 public interface GlobalPropertiesConfigService {
 
     @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
     public GlobalProperties get();
 
-    @Secured({ "role:ROLE_ADMIN, scope:SELF_ACCT" })
+    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
     public void set(String instanceNotificationTopicArn,
-            String cloudFrontAccountId, 
-            String cloudFrontKeyId,
-            String cloudFrontKeyPath);
+                    String cloudFrontAccountId,
+                    String cloudFrontKeyId,
+                    String cloudFrontKeyPath);
 
 }

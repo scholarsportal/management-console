@@ -7,6 +7,8 @@
  */
 package org.duracloud.account.app.controller;
 
+import java.util.Set;
+
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.Role;
 import org.duracloud.account.db.util.DuracloudUserService;
@@ -19,11 +21,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.Set;
-
 /**
  * Base class for all controllers.
- * 
+ *
  * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
  */
 
@@ -39,8 +39,6 @@ public abstract class AbstractController {
     public static final String BY_ID_MAPPING = "/byid/{id}";
     public static final String BY_ID_EDIT_MAPPING = BY_ID_MAPPING + EDIT_MAPPING;
     public static final String BY_ID_DELETE_MAPPING = BY_ID_MAPPING + "/delete";
-
-
 
     public void init() {
         log.info("initializing " + this.toString());
@@ -93,7 +91,6 @@ public abstract class AbstractController {
         return false;
     }
 
-
     @ExceptionHandler(Exception.class)
     public ModelAndView handleException(Exception e) {
         log.error(e.getMessage(), e);
@@ -111,22 +108,20 @@ public abstract class AbstractController {
     */
 
     protected static String formatUserUrl(String username) {
-        String url =  USERS_MAPPING + USER_MAPPING;
+        String url = USERS_MAPPING + USER_MAPPING;
         url = url.replaceAll("\\{username.*\\}", username);
         return url;
     }
 
     protected void setError(Exception e) {
-        setError(e,null);
+        setError(e, null);
     }
-    
+
     protected void setError(Exception e, RedirectAttributes redirectAttributes) {
         log.error(e.getMessage(), e);
         UserFeedbackUtil.addFailureFlash(e.getMessage(), redirectAttributes);
     }
-    
 
-    
     protected ModelAndView createRedirectMav(String url) {
         RedirectView view = new RedirectView(url, true);
         view.setExposeModelAttributes(false);

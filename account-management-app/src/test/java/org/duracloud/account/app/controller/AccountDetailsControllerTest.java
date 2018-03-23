@@ -7,21 +7,21 @@
  */
 package org.duracloud.account.app.controller;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.duracloud.account.db.model.StorageProviderAccount;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
- * 
  */
 public class AccountDetailsControllerTest extends AmaControllerTestBase {
     private AccountDetailsController controller;
+
     @Before
     public void before() throws Exception {
         super.before();
@@ -30,8 +30,7 @@ public class AccountDetailsControllerTest extends AmaControllerTestBase {
         controller.setAccountManagerService(this.accountManagerService);
         controller.setUserService(this.userService);
     }
-  
-    
+
     @Test
     public void testRemoveProvider() throws Exception {
         Set<StorageProviderAccount> spa = new HashSet<StorageProviderAccount>();
@@ -47,7 +46,7 @@ public class AccountDetailsControllerTest extends AmaControllerTestBase {
         replayMocks();
         this.controller.removeProvider(TEST_ACCOUNT_ID, StorageProviderType.RACKSPACE.toString(), redirectAttributes);
     }
-    
+
     @Test
     public void testChangePrimaryStorageProvider() throws Exception {
         Set<StorageProviderAccount> spa = new HashSet<StorageProviderAccount>();
@@ -64,4 +63,4 @@ public class AccountDetailsControllerTest extends AmaControllerTestBase {
         this.controller.makePrimary(TEST_ACCOUNT_ID, StorageProviderType.RACKSPACE.toString(), redirectAttributes);
     }
 
-  }
+}

@@ -13,7 +13,7 @@ import org.duracloud.notification.Emailer;
  * This interface defines the contract for retrieval of notification resources.
  *
  * @author Andrew Woods
- *         Date: 3/17/11
+ * Date: 3/17/11
  */
 public interface NotificationMgr {
 
@@ -26,6 +26,7 @@ public interface NotificationMgr {
 
     /**
      * Retrieves the configuration of the NotificationMgr
+     *
      * @return config
      */
     public NotificationMgrConfig getConfig();

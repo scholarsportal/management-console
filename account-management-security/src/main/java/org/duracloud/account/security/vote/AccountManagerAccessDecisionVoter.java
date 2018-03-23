@@ -11,7 +11,6 @@ import java.util.Collection;
 
 import org.aopalliance.intercept.MethodInvocation;
 import org.duracloud.account.db.model.DuracloudUser;
-import org.duracloud.account.db.model.Role;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.db.util.AccountManagerService;
 import org.duracloud.account.security.domain.SecuredRule;
@@ -25,7 +24,7 @@ import org.springframework.security.core.Authentication;
  * This class votes on calls to the AccountManagerService.
  *
  * @author Andrew Woods
- *         Date: 3/31/11
+ * Date: 3/31/11
  */
 public class AccountManagerAccessDecisionVoter extends BaseAccessDecisionVoter {
 
@@ -43,10 +42,13 @@ public class AccountManagerAccessDecisionVoter extends BaseAccessDecisionVoter {
 
     @Override
     protected int voteImpl(Authentication authentication,
-            MethodInvocation invocation,
-            Collection<ConfigAttribute> attributes, Object[] methodArgs,
-            DuracloudUser user, SecuredRule securedRule, String role,
-            SecuredRule.Scope scope) {
+                           MethodInvocation invocation,
+                           Collection<ConfigAttribute> attributes,
+                           Object[] methodArgs,
+                           DuracloudUser user,
+                           SecuredRule securedRule,
+                           String role,
+                           SecuredRule.Scope scope) {
         int decision = ACCESS_DENIED;
         Collection<String> userRoles = getUserRoles(authentication);
 
@@ -71,7 +73,6 @@ public class AccountManagerAccessDecisionVoter extends BaseAccessDecisionVoter {
 
         return castVote(decision, invocation);
     }
-
 
     private Long getIntArg(Object[] arguments) {
         if (arguments.length != 1) {

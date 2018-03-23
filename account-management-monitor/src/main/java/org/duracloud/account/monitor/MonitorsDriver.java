@@ -7,7 +7,7 @@
  */
 package org.duracloud.account.monitor;
 
-import static org.duracloud.account.monitor.MonitorsDriver.Monitor.*;
+import static org.duracloud.account.monitor.MonitorsDriver.Monitor.DUPLICATION;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * defined by the configuration credentials.
  *
  * @author Andrew Woods
- *         Date: 7/18/11
+ * Date: 7/18/11
  */
 public class MonitorsDriver {
 
@@ -61,7 +61,8 @@ public class MonitorsDriver {
     /**
      * This enum defines the types of monitors available through this driver.
      */
-    public enum Monitor {DUPLICATION;
+    public enum Monitor {
+        DUPLICATION;
 
         public Runnable getMonitorDriver(Properties props, GlobalPropertiesConfigService configService) {
             if (this.equals(DUPLICATION)) {
@@ -207,7 +208,6 @@ public class MonitorsDriver {
         MonitorsDriver driver = new MonitorsDriver(props);
         driver.monitor(target);
     }
-
 
     private static String usage(String msg) {
         StringBuilder sb = new StringBuilder();

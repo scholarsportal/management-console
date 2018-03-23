@@ -11,7 +11,7 @@ import java.util.Map;
 
 /**
  * @author Andrew Woods
- *         Date: 4/8/11
+ * Date: 4/8/11
  */
 public interface AnnotationParser {
 

@@ -7,6 +7,10 @@
  */
 package org.duracloud.account.security.vote;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.aopalliance.intercept.MethodInvocation;
 import org.duracloud.account.db.model.AccountRights;
 import org.duracloud.account.db.model.DuracloudUser;
@@ -28,13 +32,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * @author Andrew Woods
- *         Date: 4/1/11
+ * Date: 4/1/11
  */
 public class AccountManagerAccessDecisionVoterTest {
 
@@ -177,7 +177,7 @@ public class AccountManagerAccessDecisionVoterTest {
 
         EasyMock.expect(rightsRepo.findByAccountIdAndUserId(EasyMock.anyLong(),
                                                             EasyMock.anyLong()))
-            .andReturn(rights);
+                .andReturn(rights);
 
         EasyMock.expect(mgr.getRightsRepo()).andReturn(rightsRepo);
 
@@ -201,7 +201,7 @@ public class AccountManagerAccessDecisionVoterTest {
 
         Collection<GrantedAuthority> userRoles = new HashSet<GrantedAuthority>();
         userRoles.add(new SimpleGrantedAuthority(role.name()));
-        EasyMock.expect(auth.getAuthorities()).andReturn((Collection)userRoles);
+        EasyMock.expect(auth.getAuthorities()).andReturn((Collection) userRoles);
 
         return auth;
     }
@@ -215,7 +215,6 @@ public class AccountManagerAccessDecisionVoterTest {
 
         EasyMock.expect(inv.getArguments()).andReturn(new Object[0]);
 
-        
         AccountManagerServiceImpl serviceImpl = new AccountManagerServiceImpl(
             null,
             null,
@@ -224,7 +223,7 @@ public class AccountManagerAccessDecisionVoterTest {
         EasyMock.expect(inv.getThis()).andReturn(serviceImpl).times(2);
 
         if (null != id) {
-            EasyMock.expect(inv.getArguments()).andReturn(new Object[]{id});
+            EasyMock.expect(inv.getArguments()).andReturn(new Object[] {id});
         }
         return inv;
     }

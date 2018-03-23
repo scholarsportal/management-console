@@ -9,12 +9,13 @@ package org.duracloud.account.config;
 
 /**
  * @author Andrew Woods
- *         Date: 3/21/11
+ * Date: 3/21/11
  */
 public class AmaEndpoint {
     private McConfig config;
-    public AmaEndpoint(McConfig config){
-         this.config = config;
+
+    public AmaEndpoint(McConfig config) {
+        this.config = config;
     }
 
     public String getHost() {
@@ -28,12 +29,12 @@ public class AmaEndpoint {
     public String getDomain() {
         return config.getMcDomain();
     }
-    
-    public  String getPort() {
+
+    public String getPort() {
         return config.getMcPort();
     }
 
-    public  String getUrl() {
+    public String getUrl() {
         String proto = getPort().equals("443") ? "https" : "http";
         return proto + "://" + getHost() + ":" + getPort() + "/" + getCtxt();
     }

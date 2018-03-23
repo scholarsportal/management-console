@@ -7,6 +7,9 @@
  */
 package org.duracloud.account.app.controller;
 
+import java.util.Set;
+import javax.validation.Valid;
+
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.StorageProviderAccount;
@@ -29,13 +32,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
-import java.util.Set;
-
 /**
- * 
  * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
- * 
  */
 @Controller
 @Lazy
@@ -61,9 +59,9 @@ public class AccountDetailsController extends AbstractAccountController {
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/add", method = RequestMethod.POST)
     @Transactional
     public ModelAndView addProvider(@PathVariable Long accountId,
-                           @ModelAttribute("providerForm") @Valid ProviderForm providerForm,
-					   BindingResult result,
-					   Model model) throws AccountNotFoundException {
+                                    @ModelAttribute("providerForm") @Valid ProviderForm providerForm,
+                                    BindingResult result,
+                                    Model model) throws AccountNotFoundException {
         log.info("addProvider account {}", accountId);
 
         AccountService accountService =
@@ -73,12 +71,11 @@ public class AccountDetailsController extends AbstractAccountController {
         return createAccountRedirectModelAndView(accountId, ACCOUNT_DETAILS_PATH);
     }
 
-    
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/{providerType}/remove", method = RequestMethod.POST)
     @Transactional
     public View removeProvider(@PathVariable Long accountId,
-                                       @PathVariable String providerType,
-                                       RedirectAttributes redirectAttributes)
+                               @PathVariable String providerType,
+                               RedirectAttributes redirectAttributes)
         throws AccountNotFoundException {
         log.debug("attempting to remove provider {} from  account {}",
                   providerType,
@@ -107,10 +104,8 @@ public class AccountDetailsController extends AbstractAccountController {
         }
 
         if (!removed) {
-            String message =
-                "Unable to remove provider ("
-                    + providerType
-                    + ").  A provider of that type is not a secondary provider associated with this account.";
+            String message = "Unable to remove provider (" + providerType +
+                             ").  A provider of that type is not a secondary provider associated with this account.";
             log.info(message + " from account " + accountId);
             UserFeedbackUtil.addFlash(message,
                                       Severity.ERROR,
@@ -120,11 +115,12 @@ public class AccountDetailsController extends AbstractAccountController {
         return createAccountRedirectView(accountId, ACCOUNT_DETAILS_PATH);
     }
 
-    @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/{providerType}/make-primary", method = RequestMethod.POST)
+    @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/{providerType}/make-primary",
+                    method = RequestMethod.POST)
     @Transactional
     public View makePrimary(@PathVariable Long accountId,
-                                       @PathVariable String providerType,
-                                       RedirectAttributes redirectAttributes)
+                            @PathVariable String providerType,
+                            RedirectAttributes redirectAttributes)
         throws AccountNotFoundException {
         log.debug("attempting to changed primary provider {} from  account {}",
                   providerType,
@@ -138,7 +134,7 @@ public class AccountDetailsController extends AbstractAccountController {
         Set<StorageProviderAccount> ssps =
             accountService.getSecondaryStorageProviders();
         boolean changed = false;
-        for (StorageProviderAccount spa : ssps){
+        for (StorageProviderAccount spa : ssps) {
             if (spa.getProviderType().equals(spType)) {
                 accountService.changePrimaryStorageProvider(spa.getId());
                 String message =
@@ -153,10 +149,8 @@ public class AccountDetailsController extends AbstractAccountController {
         }
 
         if (!changed) {
-            String message =
-                "Unable to make provider ("
-                    + providerType
-                    + ") primary.  A provider of that type is not a secondary provider associated with this account.";
+            String message = "Unable to make provider (" + providerType + ") primary." +
+                             "  A provider of that type is not a secondary provider associated with this account.";
             log.info(message + " from account " + accountId);
             UserFeedbackUtil.addFlash(message,
                                       Severity.ERROR,

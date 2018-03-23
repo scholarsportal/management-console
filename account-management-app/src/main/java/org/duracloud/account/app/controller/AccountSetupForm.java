@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import javax.validation.Valid;
 import javax.validation.constraints.Digits;
 
@@ -27,23 +26,20 @@ public class AccountSetupForm {
     @Valid
     private List<StorageProviderSettings> secondaryStorageProviderSettingsList;
 
-
     public AccountSetupForm(StorageProviderAccount primary,
-            List<StorageProviderAccount> secondaryList) {
+                            List<StorageProviderAccount> secondaryList) {
         this();
 
         this.primaryStorageProviderSettings = createStorageProviderSettings(primary);
 
         for (StorageProviderAccount spa : secondaryList) {
-            this.secondaryStorageProviderSettingsList
-                    .add(createStorageProviderSettings(spa));
+            this.secondaryStorageProviderSettingsList.add(createStorageProviderSettings(spa));
         }
 
     }
 
-    private StorageProviderSettings createStorageProviderSettings(
-            StorageProviderAccount spAccount) {
-            return new StorageProviderSettings(spAccount);
+    private StorageProviderSettings createStorageProviderSettings(StorageProviderAccount spAccount) {
+        return new StorageProviderSettings(spAccount);
     }
 
     public AccountSetupForm() {
@@ -53,13 +49,11 @@ public class AccountSetupForm {
 
     }
 
-
     public StorageProviderSettings getPrimaryStorageProviderSettings() {
         return primaryStorageProviderSettings;
     }
 
-    public void setPrimaryStorageProviderSettings(
-            StorageProviderSettings primaryStorageProviderSettings) {
+    public void setPrimaryStorageProviderSettings(StorageProviderSettings primaryStorageProviderSettings) {
         this.primaryStorageProviderSettings = primaryStorageProviderSettings;
     }
 
@@ -67,29 +61,28 @@ public class AccountSetupForm {
         return secondaryStorageProviderSettingsList;
     }
 
-    public void setSecondaryStorageCredentailsList(
-            List<StorageProviderSettings> secondaryStorageProviderSettingsList) {
+    public void setSecondaryStorageCredentailsList(List<StorageProviderSettings> secondaryStorageProviderSettingsList) {
         this.secondaryStorageProviderSettingsList = secondaryStorageProviderSettingsList;
     }
 
     public static class StorageProviderSettings {
         private Long id;
+
         @NotBlank(message = "Username is required")
         private String username;
+
         @NotBlank(message = "Password is required")
         private String password;
-        
+
         @NotBlank(message = "Storage Limit is required")
-        @Digits(integer=3, fraction=0)
+        @Digits(integer = 3, fraction = 0)
         private String storageLimit = "1";
-        
+
         private StorageProviderType providerType;
 
         private Map<String, String> properties = new HashMap<>();
 
-
-        public StorageProviderSettings(
-                StorageProviderAccount storageProviderAccount) {
+        public StorageProviderSettings(StorageProviderAccount storageProviderAccount) {
             this.username = storageProviderAccount.getUsername();
             this.password = storageProviderAccount.getPassword();
             this.id = storageProviderAccount.getId();
@@ -102,10 +95,10 @@ public class AccountSetupForm {
             if ("TBD".equals(this.password)) {
                 this.password = null;
             }
-            
+
             this.properties = storageProviderAccount.getProperties();
-            this.storageLimit = storageProviderAccount.getStorageLimit()+"";
-            
+            this.storageLimit = storageProviderAccount.getStorageLimit() + "";
+
         }
 
         public StorageProviderSettings() {
@@ -146,7 +139,7 @@ public class AccountSetupForm {
         public Map<String, String> getProperties() {
             return this.properties;
         }
- 
+
         public void setProperties(Map<String, String> properties) {
             this.properties = properties;
         }

@@ -8,9 +8,6 @@
 package org.duracloud.account.app.controller;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.duracloud.account.annotation.UniqueSubdomainConstraint;
 import org.hibernate.validator.constraints.Length;
@@ -21,10 +18,9 @@ import org.springframework.web.context.WebApplicationContext;
 
 /**
  * @author Daniel Bernstein
- * 
  */
 @Component("newAccountForm")
-@Scope(value=WebApplicationContext.SCOPE_REQUEST)
+@Scope(value = WebApplicationContext.SCOPE_REQUEST)
 public class NewAccountForm implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -44,7 +40,7 @@ public class NewAccountForm implements Serializable {
     public String getSubdomain() {
         return subdomain;
     }
-    
+
     public void setSubdomain(String subdomain) {
         this.subdomain = subdomain;
     }

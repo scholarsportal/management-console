@@ -12,7 +12,7 @@ import org.duracloud.storage.domain.StorageProviderType;
 
 /**
  * @author Andrew Woods
- *         Date: 7/11/11
+ * Date: 7/11/11
  */
 public class UnsupportedStorageProviderException extends DuraCloudCheckedException {
 

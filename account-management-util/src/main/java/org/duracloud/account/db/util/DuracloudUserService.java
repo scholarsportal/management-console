@@ -10,7 +10,12 @@ package org.duracloud.account.db.util;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.Role;
 import org.duracloud.account.db.model.UserInvitation;
-import org.duracloud.account.db.util.error.*;
+import org.duracloud.account.db.util.error.DBNotFoundException;
+import org.duracloud.account.db.util.error.InvalidPasswordException;
+import org.duracloud.account.db.util.error.InvalidRedemptionCodeException;
+import org.duracloud.account.db.util.error.InvalidUsernameException;
+import org.duracloud.account.db.util.error.UnsentEmailException;
+import org.duracloud.account.db.util.error.UserAlreadyExistsException;
 import org.springframework.security.access.annotation.Secured;
 
 /**
@@ -22,7 +27,7 @@ import org.springframework.security.access.annotation.Secured;
 public interface DuracloudUserService {
 
     /**
-     * This method throws an exception is the username is non-unique or 
+     * This method throws an exception is the username is non-unique or
      * it is not a valid username.
      *
      * @param username sought
@@ -30,22 +35,21 @@ public interface DuracloudUserService {
      */
     @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
     public void checkUsername(String username)
-        throws InvalidUsernameException,
-            UserAlreadyExistsException;
+        throws InvalidUsernameException, UserAlreadyExistsException;
 
     /**
      * This method creates and persists a new user.
      *
-     * @param username  of new user
-     * @param password  of new user
-     * @param firstName of new user
-     * @param lastName  of new user
-     * @param email     of new user
+     * @param username         of new user
+     * @param password         of new user
+     * @param firstName        of new user
+     * @param lastName         of new user
+     * @param email            of new user
      * @param securityQuestion of new user
-     * @param securityAnswer of new user
+     * @param securityAnswer   of new user
      * @return DuracloudUser
      * @throws UserAlreadyExistsException
-     * @throws InvalidUsernameException 
+     * @throws InvalidUsernameException
      */
     @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
     public DuracloudUser createNewUser(String username,
@@ -56,7 +60,7 @@ public interface DuracloudUserService {
                                        String securityQuestion,
                                        String securityAnswer)
         throws UserAlreadyExistsException,
-            InvalidUsernameException;
+        InvalidUsernameException;
 
     /**
      * This method sets the roles of a user in an account.
@@ -69,7 +73,6 @@ public interface DuracloudUserService {
     @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT_PEER_UPDATE"})
     public boolean setUserRights(Long acctId, Long userId, Role... roles);
 
-    
     /**
      * This method sets the roles of a user in an account.
      * <p/>
@@ -80,8 +83,8 @@ public interface DuracloudUserService {
      */
     @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
     public boolean addUserToAccount(Long acctId, Long userId)
-            throws DBNotFoundException;
-    
+        throws DBNotFoundException;
+
     /**
      * This method removes all rights to an account for a given user.
      *
@@ -108,7 +111,6 @@ public interface DuracloudUserService {
                                String newPassword)
         throws DBNotFoundException, InvalidPasswordException;
 
-
     /**
      * @param userId
      * @param oldPassword
@@ -123,15 +125,14 @@ public interface DuracloudUserService {
                                        String newPassword)
         throws DBNotFoundException, InvalidPasswordException;
 
-    
     /**
      * This method generates a random password, replaces the existing password
      * with the randomly generated one, and sends an email to the address on
      * file for the given username.
      *
-     * @param username of user who forgot their password
+     * @param username         of user who forgot their password
      * @param securityQuestion of user who forgot their password
-     * @param securityAnswer of user who forgot their password
+     * @param securityAnswer   of user who forgot their password
      * @throws InvalidPasswordException
      * @throws UnsentEmailException
      */
@@ -143,13 +144,14 @@ public interface DuracloudUserService {
 
     /**
      * Returns a user password change invitation
+     *
      * @param redemptionCode
      * @return
      */
     @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
     UserInvitation retrievePassordChangeInvitation(String redemptionCode)
-            throws  DBNotFoundException;
-    
+        throws DBNotFoundException;
+
     /**
      * This method loads a DuracloudUser from the persistence layer and
      * populate its rights info.
@@ -159,15 +161,15 @@ public interface DuracloudUserService {
      */
     @Secured({"role:ROLE_USER, scope:SELF_NAME"})
     public DuracloudUser loadDuracloudUserByUsername(String username)
-            throws DBNotFoundException;
+        throws DBNotFoundException;
 
     @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
     public DuracloudUser loadDuracloudUserByUsernameInternal(String username)
-            throws DBNotFoundException;
+        throws DBNotFoundException;
 
-    @Secured({ "role:ROLE_USER, scope:ANY" })
+    @Secured({"role:ROLE_USER, scope:ANY"})
     public DuracloudUser loadDuracloudUserByIdInternal(Long userId)
-            throws DBNotFoundException;
+        throws DBNotFoundException;
 
     /**
      * This method redeems an invitation to add this user to a DuraCloud
@@ -183,7 +185,6 @@ public interface DuracloudUserService {
     public Long redeemAccountInvitation(Long userId, String redemptionCode)
         throws InvalidRedemptionCodeException;
 
-    
     @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
     public void redeemPasswordChangeRequest(Long userId, String redemptionCode)
         throws InvalidRedemptionCodeException;
@@ -191,13 +192,13 @@ public interface DuracloudUserService {
     /**
      * This method persists the arg user details.
      *
-     * @param userId    of user
-     * @param firstName of user
-     * @param lastName  of user
-     * @param email     of user
-     * @param securityQuestion of user
-     * @param securityAnswer of user
-     * @param allowableIPAddressRange 
+     * @param userId                  of user
+     * @param firstName               of user
+     * @param lastName                of user
+     * @param email                   of user
+     * @param securityQuestion        of user
+     * @param securityAnswer          of user
+     * @param allowableIPAddressRange
      */
     @Secured({"role:ROLE_USER, scope:SELF_ID"})
     public void storeUserDetails(Long userId,
@@ -205,8 +206,8 @@ public interface DuracloudUserService {
                                  String lastName,
                                  String email,
                                  String securityQuestion,
-                                 String securityAnswer, 
+                                 String securityAnswer,
                                  String allowableIPAddressRange)
-            throws DBNotFoundException;
+        throws DBNotFoundException;
 
 }

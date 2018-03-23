@@ -16,6 +16,7 @@ import org.duracloud.account.db.model.InstanceType;
 public class AccountInstanceForm {
     private String version;
     private InstanceType instanceType = InstanceType.MEDIUM;
+
     public String getVersion() {
         return version;
     }
@@ -31,5 +32,5 @@ public class AccountInstanceForm {
     public void setInstanceType(InstanceType instanceType) {
         this.instanceType = instanceType;
     }
-    
+
 }

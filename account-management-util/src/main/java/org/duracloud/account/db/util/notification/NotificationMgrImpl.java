@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Andrew Woods
- *         Date: 3/17/11
+ * Date: 3/17/11
  */
 public class NotificationMgrImpl implements NotificationMgr {
 

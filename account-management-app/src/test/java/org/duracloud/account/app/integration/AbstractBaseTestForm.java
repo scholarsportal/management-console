@@ -10,29 +10,28 @@ package org.duracloud.account.app.integration;
 import java.util.List;
 import java.util.Map;
 
+import com.thoughtworks.selenium.Selenium;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.thoughtworks.selenium.Selenium;
-
 /**
  * @author Daniel Bernstein
- *         Date: Feb 13, 2012
- * 
+ * Date: Feb 13, 2012
  */
 public abstract class AbstractBaseTestForm<T extends FormBot>
     extends AbstractIntegrationTest {
     private Class<T> clazz = null;
     private T fb = null;
-    AbstractBaseTestForm(Class<T> clazz){
+
+    AbstractBaseTestForm(Class<T> clazz) {
         this.clazz = clazz;
     }
-    
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.duracloud.account.app.integration.AbstractIntegrationTest#before()
      */
@@ -48,7 +47,7 @@ public abstract class AbstractBaseTestForm<T extends FormBot>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.duracloud.account.app.integration.AbstractIntegrationTest#after()
      */
@@ -71,7 +70,7 @@ public abstract class AbstractBaseTestForm<T extends FormBot>
         Assert.assertTrue(fb.isSubmitSuccess());
         fb.delete();
     }
-    
+
     @Test
     public void testCancel() {
         fb.open();
@@ -80,21 +79,19 @@ public abstract class AbstractBaseTestForm<T extends FormBot>
         Assert.assertTrue(fb.isCancelSuccess());
     }
 
-    public T createFormBot(){
+    public T createFormBot() {
         try {
-            T formBot =  clazz.getConstructor(Selenium.class).newInstance(sc);
+            T formBot = clazz.getConstructor(Selenium.class).newInstance(sc);
             return formBot;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-
-
     @Test
     public void testValidation() {
-        List<Map<String,String>> invalidData = fb.createInvalidTestFieldData();
-        for (Map<String,String> map : invalidData) {
+        List<Map<String, String>> invalidData = fb.createInvalidTestFieldData();
+        for (Map<String, String> map : invalidData) {
             fb = createFormBot(map);
             fb.open();
             fb.fill();
@@ -105,7 +102,7 @@ public abstract class AbstractBaseTestForm<T extends FormBot>
 
     private T createFormBot(Map<String, String> map) {
         T bot = createFormBot();
-        bot.setTestFieldData(map);     
+        bot.setTestFieldData(map);
         return bot;
     }
 }

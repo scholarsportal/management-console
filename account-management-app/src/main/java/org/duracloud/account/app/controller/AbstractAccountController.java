@@ -7,8 +7,17 @@
  */
 package org.duracloud.account.app.controller;
 
-import org.duracloud.account.db.model.*;
-import org.duracloud.account.db.util.*;
+import java.text.MessageFormat;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.StorageProviderAccount;
+import org.duracloud.account.db.util.AccountManagerService;
+import org.duracloud.account.db.util.AccountService;
+import org.duracloud.account.db.util.DuracloudUserService;
 import org.duracloud.account.db.util.error.AccountNotFoundException;
 import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.duracloud.account.util.StorageProviderTypeUtil;
@@ -24,14 +33,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.text.MessageFormat;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 /**
  * The default view for this application
- * 
+ *
  * @contributor dbernstein
  */
 @Lazy
@@ -40,7 +44,7 @@ public abstract class AbstractAccountController extends AbstractController {
     public static final String ACCOUNTS_PATH = "/accounts";
     public static final String ACCOUNT_PATH = "/byid/{accountId}";
     public static final String EDIT_PATH = "/edit";
-    public static final String STATEMENT_PATH =  ACCOUNT_PATH + "/statement";
+    public static final String STATEMENT_PATH = ACCOUNT_PATH + "/statement";
     public static final String ACCOUNT_INFO_KEY = "accountInfo";
     public static final String DC_VERSIONS_KEY = "dcVersions";
     public static final String ACTION_STATUS = "actionStatus";
@@ -70,7 +74,7 @@ public abstract class AbstractAccountController extends AbstractController {
         this.userService = userService;
     }
 
-    protected void addAccountInfoToModel(AccountInfo info, Model model){
+    protected void addAccountInfoToModel(AccountInfo info, Model model) {
         model.addAttribute(ACCOUNT_INFO_KEY, info);
     }
 
@@ -91,7 +95,6 @@ public abstract class AbstractAccountController extends AbstractController {
         return loadAccountInfo(accountService, model);
     }
 
-    
     protected AccountInfo loadAccountInfo(AccountService accountService,
                                           Model model) {
         AccountInfo accountInfo = accountService.retrieveAccountInfo();
@@ -104,34 +107,27 @@ public abstract class AbstractAccountController extends AbstractController {
      * @param suffix
      * @return
      */
-    protected ModelAndView createAccountRedirectModelAndView(Long accountId,
-                                                             String suffix) {
-       
+    protected ModelAndView createAccountRedirectModelAndView(Long accountId, String suffix) {
         return new ModelAndView(createAccountRedirectView(accountId, suffix));
     }
-    
+
     /**
-     * 
      * @param accountId
      * @param suffix
      * @return
      */
-    protected View createAccountRedirectView(Long accountId,
-                                           String suffix) {
-        String url =
-            MessageFormat.format("{0}{1}{2}",
-                                 ACCOUNTS_PATH,
-                                 ACCOUNT_PATH.replace("{accountId}", String.valueOf(accountId)),
-                                 suffix);
+    protected View createAccountRedirectView(Long accountId, String suffix) {
+        String url = MessageFormat.format("{0}{1}{2}", ACCOUNTS_PATH,
+                                          ACCOUNT_PATH.replace("{accountId}", String.valueOf(accountId)),
+                                          suffix);
 
         RedirectView redirectView = new RedirectView(url, true);
         redirectView.setExposeModelAttributes(false);
-        
+
         return redirectView;
     }
 
-
-	protected void loadBillingInfo(Long accountId, Model model) {
+    protected void loadBillingInfo(Long accountId, Model model) {
         //TODO LoadBillingInfo
         //model.addAttribute("billingInfo", new CreditCardPaymentInfo());
     }
@@ -154,13 +150,13 @@ public abstract class AbstractAccountController extends AbstractController {
         List<StorageProviderType> availableProviderTypes = StorageProviderTypeUtil.getAvailableSecondaryTypes();
 
         Set<StorageProviderType> usedTypes = new HashSet<StorageProviderType>();
-        for(StorageProviderAccount secondaryAcct : secondarySPs) {
+        for (StorageProviderAccount secondaryAcct : secondarySPs) {
             usedTypes.add(secondaryAcct.getProviderType());
         }
-        
+
         availableProviderTypes.removeAll(usedTypes);
 
-        if(availableProviderTypes.size() > 0) {
+        if (availableProviderTypes.size() > 0) {
             providerForm.setStorageProviders(availableProviderTypes);
         } else {
             providerForm.setStorageProviders(null);
@@ -168,7 +164,6 @@ public abstract class AbstractAccountController extends AbstractController {
 
         model.addAttribute("providerForm", providerForm);
     }
-
 
     protected void addUserToModel(Model model) throws DBNotFoundException {
         model.addAttribute(UserController.USER_KEY, getUser());

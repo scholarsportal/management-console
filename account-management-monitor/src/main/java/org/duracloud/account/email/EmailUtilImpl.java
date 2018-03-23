@@ -7,14 +7,14 @@
  */
 package org.duracloud.account.email;
 
+import java.util.List;
+
 import org.duracloud.notification.AmazonNotificationFactory;
 import org.duracloud.notification.Emailer;
 
-import java.util.List;
-
 /**
  * @author Andrew Woods
- *         Date: 7/6/11
+ * Date: 7/6/11
  */
 public class EmailUtilImpl implements EmailUtil {
 
@@ -23,7 +23,7 @@ public class EmailUtilImpl implements EmailUtil {
 
     public EmailUtilImpl(Emailer emailer, List<String> recipients) {
         this.emailer = emailer;
-        this.recipients = recipients.toArray(new String[]{});
+        this.recipients = recipients.toArray(new String[] {});
     }
 
     public EmailUtilImpl(String accessKey,

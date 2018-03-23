@@ -16,18 +16,17 @@ import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
-
 /**
  * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
- * 
  */
 public class AccountControllerTest extends AmaControllerTestBase {
     private AccountController accountController;
     private Model model;
+
     @Before
     public void before() throws Exception {
         super.before();
-        
+
         setupGenericAccountAndUserServiceMocks(TEST_ACCOUNT_ID);
         accountController = new AccountController();
         accountController.setAccountManagerService(this.accountManagerService);
@@ -35,10 +34,10 @@ public class AccountControllerTest extends AmaControllerTestBase {
         accountController.setAuthenticationManager(authenticationManager);
         model = new ExtendedModelMap();
     }
-    
+
     /**
      * Test method for org.duracloud.account.app.controller.AccountController
-     * 
+     *
      * @throws AccountNotFoundException
      */
     @Test
@@ -68,7 +67,6 @@ public class AccountControllerTest extends AmaControllerTestBase {
         accountController.deactivate(TEST_ACCOUNT_ID, model);
     }
 
-
     @Test
     public void testGetStatement()
         throws AccountNotFoundException {
@@ -76,7 +74,5 @@ public class AccountControllerTest extends AmaControllerTestBase {
         accountController.getStatement(TEST_ACCOUNT_ID, model);
         Assert.assertTrue(model.containsAttribute(AccountController.ACCOUNT_INFO_KEY));
     }
-
-
 
 }

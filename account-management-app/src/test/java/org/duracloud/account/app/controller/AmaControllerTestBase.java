@@ -19,17 +19,17 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
- * 
  */
 public class AmaControllerTestBase extends AmaTestBase {
 
     protected static final Long TEST_INSTANCE_ID = 1L;
-    
+
     protected NotificationMgr notificationMgr;
     protected Emailer emailer;
     protected BindingResult result;
     protected RedirectAttributes redirectAttributes;
     protected Model model;
+
     @Before
     public void before() throws Exception {
         super.before();

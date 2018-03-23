@@ -18,7 +18,6 @@ import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.duracloud.account.db.util.error.UnsentEmailException;
 import org.springframework.security.access.annotation.Secured;
 
-
 /**
  * An interface for the account management application administrator.
  *
@@ -40,7 +39,6 @@ public interface RootAccountManagerService {
      */
     @Secured({"role:ROLE_ROOT, scope:ANY"})
     public Set<DuracloudUser> listAllUsers(String filter);
-
 
     /**
      * Delete a user from the system
@@ -88,11 +86,12 @@ public interface RootAccountManagerService {
      * @param id
      * @param username
      * @param password
-     * @param storageLimit 
+     * @param storageLimit
      * @parma properties
      */
     @Secured({"role:ROLE_ROOT, scope:ANY"})
-    public void setupStorageProvider(Long id, String username, String password, Map<String,String> properties, int storageLimit);
+    public void setupStorageProvider(Long id, String username, String password, Map<String, String> properties,
+                                     int storageLimit);
 
     /**
      * Reset a user's password

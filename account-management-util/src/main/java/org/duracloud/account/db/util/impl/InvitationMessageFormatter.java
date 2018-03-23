@@ -9,17 +9,17 @@ package org.duracloud.account.db.util.impl;
 
 import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.model.UserInvitation;
+
 /**
- * 
  * @author Daniel Bernstein
- *
  */
 public class InvitationMessageFormatter {
 
     private UserInvitation invitation;
     private AmaEndpoint endpoint;
+
     public InvitationMessageFormatter(UserInvitation invitation,
-            AmaEndpoint amaEndpoint) {
+                                      AmaEndpoint amaEndpoint) {
         this.invitation = invitation;
         this.endpoint = amaEndpoint;
     }
@@ -33,7 +33,7 @@ public class InvitationMessageFormatter {
 
         sb.append("You have been invited to join the DuraCloud account which is managed by ");
         sb.append(this.invitation.getAccountOrg());
-        if(this.invitation.getAccountDep() != null && !this.invitation.getAccountDep().equals("")) {
+        if (this.invitation.getAccountDep() != null && !this.invitation.getAccountDep().equals("")) {
             sb.append(", ");
             sb.append(this.invitation.getAccountDep());
         }

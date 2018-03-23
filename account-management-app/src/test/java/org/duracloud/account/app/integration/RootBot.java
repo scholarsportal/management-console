@@ -7,55 +7,53 @@
  */
 package org.duracloud.account.app.integration;
 
+import com.thoughtworks.selenium.Selenium;
+import com.thoughtworks.selenium.SeleniumException;
+import junit.framework.Assert;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.thoughtworks.selenium.Selenium;
-import com.thoughtworks.selenium.SeleniumException;
-
-import junit.framework.Assert;
-
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
- *
  */
 public class RootBot extends AdminBot {
     private Logger log = LoggerFactory.getLogger(RootBot.class);
+
     public RootBot(Selenium sc, RootUserCredential rootUserCredential) {
         super(sc,
               rootUserCredential.getUsername(),
               rootUserCredential.getPassword());
     }
 
-    public RootBot(Selenium sc){
+    public RootBot(Selenium sc) {
         this(sc, new RootUserCredential());
     }
-    
-    public void deleteAllTestUsers(){
+
+    public void deleteAllTestUsers() {
         //make sure root is logged in.
         login();
 
         //open root manage page
         openRootUserList();
 
-        while(true){
-            try{
+        while (true) {
+            try {
                 String username = sc.getAttribute("css=[data-username^='t13']@data-username");
-                if(StringUtils.isBlank(username)){
+                if (StringUtils.isBlank(username)) {
                     return;
                 }
-                
+
                 clickDelete(username);
-                
-            }catch(SeleniumException x){
+
+            } catch (SeleniumException x) {
                 x.printStackTrace();
                 return;
             }
         }
     }
-    
-    public void deleteUser(String username){
+
+    public void deleteUser(String username) {
         log.info("starting deletion user " + username);
         logout();
         log.info("logged out");
@@ -78,14 +76,14 @@ public class RootBot extends AdminBot {
     private void clickDelete(String username) {
         String deleteUserSelector =
             "css=#users [data-username='" + username + "'] button.delete";
-        
+
         //verify that the element in question is present
         Assert.assertTrue(sc.isElementPresent(deleteUserSelector));
         sc.click(deleteUserSelector);
         Assert.assertTrue(sc.isConfirmationPresent());
         log.info("confirmation=" + sc.getConfirmation());
         SeleniumHelper.waitForPage(sc);
-        
+
         //verify that it's gone
         Assert.assertFalse(sc.isElementPresent(deleteUserSelector));
     }

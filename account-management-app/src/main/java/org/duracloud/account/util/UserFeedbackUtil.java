@@ -12,16 +12,17 @@ import org.springframework.binding.message.Severity;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
- * 
  * @author Daniel Bernstein
- *         Date: Feb 20, 2012
- *
+ * Date: Feb 20, 2012
  */
 public class UserFeedbackUtil {
     public static final String FEEDBACK_KEY = "message";
 
-    public static Message
-        create(Severity severity, String text) {
+    private UserFeedbackUtil() {
+        // Ensures no instances are made of this class, as there are only static members.
+    }
+
+    public static Message create(Severity severity, String text) {
         return new Message(null, text, severity);
     }
 
@@ -48,7 +49,7 @@ public class UserFeedbackUtil {
     }
 
     public static Message createSuccess(String text) {
-       return new Message(null, text, Severity.INFO);
+        return new Message(null, text, Severity.INFO);
     }
 
     public static void addFlash(Message message, RedirectAttributes redirectAttributes) {

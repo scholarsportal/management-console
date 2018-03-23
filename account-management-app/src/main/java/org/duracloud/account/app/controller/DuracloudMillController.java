@@ -25,10 +25,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 /**
- * 
- * @author Daniel Bernstein 
- *         Date: 05/07/2015
- * 
+ * @author Daniel Bernstein
+ * Date: 05/07/2015
  */
 @Controller
 @RequestMapping(DuracloudMillController.BASE_MAPPING)
@@ -39,12 +37,11 @@ public class DuracloudMillController {
 
     public static final String BASE_MAPPING = "/root/duracloudmill";
 
-    public void setDuracloudMillConfigService(
-            DuracloudMillConfigService duracloudMillConfigService) {
+    public void setDuracloudMillConfigService(DuracloudMillConfigService duracloudMillConfigService) {
         this.duracloudMillConfigService = duracloudMillConfigService;
     }
+
     /**
-     * 
      * @return
      */
     @RequestMapping("")
@@ -57,8 +54,8 @@ public class DuracloudMillController {
     public DuracloudMillForm form() {
         DuracloudMillForm form = new DuracloudMillForm();
         DuracloudMill entity = this.duracloudMillConfigService.get();
-        
-        if(entity == null){
+
+        if (entity == null) {
             return new DuracloudMillForm();
         } else {
             form.setDbHost(entity.getDbHost());
@@ -79,21 +76,20 @@ public class DuracloudMillController {
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     @Transactional
-    public ModelAndView update(
-            @ModelAttribute("duracloudMill") @Valid DuracloudMillForm form,
-            BindingResult bindingResult, Model model,
-            RedirectAttributes redirectAttributes) {
+    public ModelAndView update(@ModelAttribute("duracloudMill") @Valid DuracloudMillForm form,
+                               BindingResult bindingResult, Model model,
+                               RedirectAttributes redirectAttributes) {
         boolean hasErrors = bindingResult.hasErrors();
         if (hasErrors) {
             return new ModelAndView(BASE_MAPPING + "/edit");
         }
-        
-        this.duracloudMillConfigService.set(form.getDbHost(), 
+
+        this.duracloudMillConfigService.set(form.getDbHost(),
                                             form.getDbPort(),
-                                            form.getDbName(), 
-                                            form.getDbUsername(), 
+                                            form.getDbName(),
+                                            form.getDbUsername(),
                                             form.getDbPassword(),
-                                            form.getAuditQueue(), 
+                                            form.getAuditQueue(),
                                             form.getAuditLogSpaceId());
         UserFeedbackUtil.addSuccessFlash("Successfully updated!", redirectAttributes);
         return new ModelAndView(new RedirectView(BASE_MAPPING, true));

@@ -7,6 +7,9 @@
  */
 package org.duracloud.account.annotation;
 
+import javax.validation.ConstraintValidatorContext;
+import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
+
 import org.duracloud.account.db.util.DuracloudUserService;
 import org.duracloud.account.db.util.error.InvalidUsernameException;
 import org.duracloud.account.db.util.error.ReservedPrefixException;
@@ -16,12 +19,8 @@ import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.validation.ConstraintValidatorContext;
-import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
-
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
- * 
  */
 
 public class UsernameValidatorTest {

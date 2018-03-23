@@ -8,11 +8,16 @@
 package org.duracloud.account.app.integration;
 
 public class RootUserCredential {
-    public static String getUsername(){
+
+    protected RootUserCredential() {
+        // Ensures no instances are made of this class, as there are only static members.
+    }
+
+    public static String getUsername() {
         return "rpw";
     }
-    
-    public static String getPassword(){
+
+    public static String getPassword() {
         return "password";
     }
 }

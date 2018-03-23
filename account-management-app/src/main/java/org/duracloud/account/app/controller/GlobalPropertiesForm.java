@@ -10,9 +10,7 @@ package org.duracloud.account.app.controller;
 import org.hibernate.validator.constraints.NotBlank;
 
 /**
- * 
  * @author Daniel Bernstein
- *
  */
 public class GlobalPropertiesForm {
     @NotBlank
@@ -26,17 +24,15 @@ public class GlobalPropertiesForm {
 
     @NotBlank(message = "You must specify a CloudFront Key Path")
     private String cloudFrontKeyPath;
-    
-    
+
     public String getInstanceNotificationTopicArn() {
         return instanceNotificationTopicArn;
     }
 
-    public void setInstanceNotificationTopicArn(
-            String instanceNotificationTopicArn) {
+    public void setInstanceNotificationTopicArn(String instanceNotificationTopicArn) {
         this.instanceNotificationTopicArn = instanceNotificationTopicArn;
-    }       
-    
+    }
+
     public String getCloudFrontAccountId() {
         return cloudFrontAccountId;
     }
@@ -59,6 +55,6 @@ public class GlobalPropertiesForm {
 
     public void setCloudFrontKeyPath(String cloudFrontKeyPath) {
         this.cloudFrontKeyPath = cloudFrontKeyPath;
-    }   
-    
+    }
+
 }

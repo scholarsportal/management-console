@@ -7,7 +7,9 @@
  */
 package org.duracloud.account.db.util.impl;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -24,21 +26,20 @@ import org.easymock.EasyMockSupport;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 /**
- * 
  * @author Daniel Bernstein
- *
  */
 @RunWith(EasyMockRunner.class)
-public class AccountServiceImplTest extends EasyMockSupport{
+public class AccountServiceImplTest extends EasyMockSupport {
 
     @After
-    public void tearDown(){
+    public void tearDown() {
         verifyAll();
     }
 
     @Test
-    public void testChangePrimaryStorageProvider () {
+    public void testChangePrimaryStorageProvider() {
         DuracloudRepoMgr repoMgr = createMock(DuracloudRepoMgr.class);
         AmaEndpoint amaEndpoint = createMock(AmaEndpoint.class);
         AccountInfo acct = createMock(AccountInfo.class);
@@ -46,11 +47,12 @@ public class AccountServiceImplTest extends EasyMockSupport{
         expect(repoMgr.getAccountRepo()).andReturn(accountRepo);
         expect(accountRepo.save(acct)).andReturn(acct);
         Long storageProviderId = 1l;
-        StorageProviderAccount primary = createStorageProviderAccount(3l, StorageProviderType.AMAZON_S3);
-        StorageProviderAccount secondary = createStorageProviderAccount(
-                storageProviderId,  StorageProviderType.DPN);
+        StorageProviderAccount primary =
+            createStorageProviderAccount(3l, StorageProviderType.AMAZON_S3);
+        StorageProviderAccount secondary =
+            createStorageProviderAccount(storageProviderId, StorageProviderType.DPN);
         Set<StorageProviderAccount> secondaryaccounts = new HashSet<>();
-        secondaryaccounts.add( secondary);
+        secondaryaccounts.add(secondary);
 
         Set<StorageProviderAccount> result = new HashSet<>();
         result.add(primary);
@@ -60,17 +62,17 @@ public class AccountServiceImplTest extends EasyMockSupport{
         acct.setPrimaryStorageProviderAccount(secondary);
         acct.setSecondaryStorageProviderAccounts(eq(result));
         expectLastCall();
-        
+
         expect(acct.getSubdomain()).andReturn("test");
-        
+
         replayAll();
         AccountService service = new AccountServiceImpl(amaEndpoint, acct, repoMgr);
 
         service.changePrimaryStorageProvider(storageProviderId);
     }
 
-    private StorageProviderAccount createStorageProviderAccount(
-            Long storageProviderId, StorageProviderType providerType) {
+    private StorageProviderAccount createStorageProviderAccount(Long storageProviderId,
+                                                                StorageProviderType providerType) {
         StorageProviderAccount account = new StorageProviderAccount();
         account.setId(storageProviderId);
         account.setProviderType(providerType);

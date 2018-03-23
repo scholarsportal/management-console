@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * @author Daniel Bernstein
- *         Date: Nov 11, 2011
+ * Date: Nov 11, 2011
  */
 @Component("duracloudGroupService")
 public class DuracloudGroupServiceImpl implements DuracloudGroupService {
@@ -37,7 +37,7 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
         LoggerFactory.getLogger(DuracloudGroupServiceImpl.class);
 
     private DuracloudRepoMgr repoMgr;
-    
+
     private AccountChangeNotifier accountChangeNotifier;
 
     @Autowired
@@ -48,7 +48,7 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
 
     @Override
     public Set<DuracloudGroup> getGroups(Long acctId) {
-        List<DuracloudGroup > listGroups = repoMgr.getGroupRepo().findByAccountId(acctId);
+        List<DuracloudGroup> listGroups = repoMgr.getGroupRepo().findByAccountId(acctId);
         Set<DuracloudGroup> groups = new HashSet<DuracloudGroup>();
         groups.addAll(listGroups);
         return Collections.unmodifiableSet(groups);
@@ -78,7 +78,7 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
         group = repoMgr.getGroupRepo().save(group);
         return group;
     }
-    
+
     /**
      * This method is 'protected' for testing purposes only.
      */
@@ -128,7 +128,7 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
         try {
             AccountInfo account = this.repoMgr.getAccountRepo().getOne(acctId);
             this.accountChangeNotifier.userStoreChanged(account.getSubdomain());
-        }catch(Exception ex){
+        } catch (Exception ex) {
             log.error("failed to notify of change to account " + acctId, ex);
         }
     }
