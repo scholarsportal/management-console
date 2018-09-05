@@ -1,58 +1,60 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <!DOCTYPE tiles-definitions PUBLIC
-       "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
-       "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+  "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+  "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
 
-<tiles-definitions >
-  
+<tiles-definitions>
+
   <!-- templates -->
-  <definition name="app-base" template="/WEB-INF/jspx/layout/base.jspx" >
-    <put-attribute name="title" value="title" />
-    <put-attribute name="header-extensions" value=""  />
-    <put-attribute name="body" value="body" />
+  <definition name="app-base" template="/WEB-INF/jspx/layout/base.jspx">
+    <put-attribute name="title" value="title"/>
+    <put-attribute name="header-extensions" value=""/>
+    <put-attribute name="body" value="body"/>
   </definition>
 
   <definition name="user-base" template="/WEB-INF/jspx/layout/user-base.jspx">
-    <put-attribute name="mainTab" value="home" />
-    <put-attribute name="content" value="content" />
+    <put-attribute name="mainTab" value="home"/>
+    <put-attribute name="content" value="content"/>
   </definition>
 
   <definition name="groups-base" template="/WEB-INF/jspx/layout/groups-base.jspx">
-    <put-attribute name="content" value="detail" />
+    <put-attribute name="content" value="detail"/>
   </definition>
 
   <!-- global views -->
-  <definition name="access-denied" template="/WEB-INF/jspx/access-denied.jspx" />
-  <definition name="login" template="/WEB-INF/jspx/login.jspx" />
-  <definition name="home" template="/WEB-INF/jspx/login.jspx" />
+  <definition name="access-denied" template="/WEB-INF/jspx/access-denied.jspx"/>
+  <definition name="login" template="/WEB-INF/jspx/login.jspx"/>
+  <definition name="home" template="/WEB-INF/jspx/login.jspx"/>
 
   <!-- user views -->
-  <definition name="user-new" template="/WEB-INF/jspx/users/user-new.jspx" />
-  <definition name="user-new-success" template="/WEB-INF/jspx/users/user-new-success.jspx" />
+  <definition name="user-new" template="/WEB-INF/jspx/users/user-new.jspx"/>
+  <definition name="user-new-success" template="/WEB-INF/jspx/users/user-new-success.jspx"/>
 
-  <definition name="forgot-password" template="/WEB-INF/jspx/users/forgot-password.jspx" />
-  <definition name="forgot-password-success" template="/WEB-INF/jspx/users/forgot-password-success.jspx" />
-  <definition name="anonymous-change-password" template="/WEB-INF/jspx/users/anonymous-change-password.jspx" />
-  <definition name="anonymous-change-password-success" template="/WEB-INF/jspx/users/anonymous-change-password-success.jspx" />
-  <definition name="anonymous-change-password-failure" template="/WEB-INF/jspx/users/anonymous-change-password-failure.jspx" />
-  
-  <definition name="user-edit" template="/WEB-INF/jspx/users/user/user-edit.jspx" />
-  <definition name="user-change-password" template="/WEB-INF/jspx/users/user/change-password.jspx" />
+  <definition name="forgot-password" template="/WEB-INF/jspx/users/forgot-password.jspx"/>
+  <definition name="forgot-password-success" template="/WEB-INF/jspx/users/forgot-password-success.jspx"/>
+  <definition name="anonymous-change-password" template="/WEB-INF/jspx/users/anonymous-change-password.jspx"/>
+  <definition name="anonymous-change-password-success"
+              template="/WEB-INF/jspx/users/anonymous-change-password-success.jspx"/>
+  <definition name="anonymous-change-password-failure"
+              template="/WEB-INF/jspx/users/anonymous-change-password-failure.jspx"/>
 
-  <definition name="user-accounts" template="/WEB-INF/jspx/users/user/user-accounts.jspx" />
+  <definition name="user-edit" template="/WEB-INF/jspx/users/user/user-edit.jspx"/>
+  <definition name="user-change-password" template="/WEB-INF/jspx/users/user/change-password.jspx"/>
+
+  <definition name="user-accounts" template="/WEB-INF/jspx/users/user/user-accounts.jspx"/>
 
   <!-- account views -->
-  <definition name="account-new" template="/WEB-INF/jspx/accounts/account-new.jspx" />
- 
-  <definition name="account-details" template="/WEB-INF/jspx/accounts/account/account-details.jspx" />
-  <definition name="account-info-edit" template="/WEB-INF/jspx/accounts/account/account-info-edit.jspx" />
-  <definition name="account-providers" template="/WEB-INF/jspx/accounts/account/account-providers.jspx" />
-  <definition name="account-users" template="/WEB-INF/jspx/accounts/account/account-users.jspx" />
-  <definition name="account-users-invite" template="/WEB-INF/jspx/accounts/account/account-users-invite.jspx" />
-  <definition name="account-groups" template="/WEB-INF/jspx/accounts/account/account-groups.jspx" />
-  <definition name="account-group" template="/WEB-INF/jspx/accounts/account/account-group.jspx" />
-  <definition name="account-group-edit" template="/WEB-INF/jspx/accounts/account/account-group-edit.jspx" />
+  <definition name="account-new" template="/WEB-INF/jspx/accounts/account-new.jspx"/>
 
-  <definition name="exception" template="/WEB-INF/jspx/exception.jspx" />
+  <definition name="account-details" template="/WEB-INF/jspx/accounts/account/account-details.jspx"/>
+  <definition name="account-info-edit" template="/WEB-INF/jspx/accounts/account/account-info-edit.jspx"/>
+  <definition name="account-providers" template="/WEB-INF/jspx/accounts/account/account-providers.jspx"/>
+  <definition name="account-users" template="/WEB-INF/jspx/accounts/account/account-users.jspx"/>
+  <definition name="account-users-invite" template="/WEB-INF/jspx/accounts/account/account-users-invite.jspx"/>
+  <definition name="account-groups" template="/WEB-INF/jspx/accounts/account/account-groups.jspx"/>
+  <definition name="account-group" template="/WEB-INF/jspx/accounts/account/account-group.jspx"/>
+  <definition name="account-group-edit" template="/WEB-INF/jspx/accounts/account/account-group-edit.jspx"/>
+
+  <definition name="exception" template="/WEB-INF/jspx/exception.jspx"/>
 
 </tiles-definitions>

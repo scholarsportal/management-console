@@ -2,14 +2,10 @@
   xmlns="http://www.springframework.org/schema/security"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:beans="http://www.springframework.org/schema/beans"
-  xmlns:mvc="http://www.springframework.org/schema/mvc"
-  xsi:schemaLocation="
-           http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
-           http://www.springframework.org/schema/security
-           http://www.springframework.org/schema/security/spring-security-4.0.xsd
-           http://www.springframework.org/schema/mvc
-           http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+    http://www.springframework.org/schema/security
+    http://www.springframework.org/schema/security/spring-security-4.0.xsd">
 
   <!--Security Filters for Anonymous endpoints-->
   <http pattern="/users/forgot-password"
@@ -24,7 +20,7 @@
         auto-config="false"
         use-expressions="true"
         create-session="stateless">
-    <intercept-url pattern="**" access="permitAll"  />
+    <intercept-url pattern="**" access="permitAll"/>
 
     <http-basic/>
   </http>
@@ -38,42 +34,37 @@
   </http>
 
 
-
   <!--Security Filters for Browser endpoints-->
-  <http pattern="/**"
-        auto-config="false"
-        use-expressions="true"
-       >
-    
-    <intercept-url pattern="/root/**" access="hasRole('ROLE_ROOT')" />
-    <intercept-url pattern="/accounts/new" access="hasRole('ROLE_USER')" />
-    <intercept-url pattern="/accounts/byid/**" access="hasRole('ROLE_USER')" />
-    <intercept-url pattern="/users/byid/**" access="hasRole('ROLE_USER')" />
-    <intercept-url pattern="/users/profile" access="hasRole('ROLE_USER')"  />
-    <form-login login-page="/login" 
+  <http pattern="/**" auto-config="false" use-expressions="true">
+    <intercept-url pattern="/root/**" access="hasRole('ROLE_ROOT')"/>
+    <intercept-url pattern="/accounts/new" access="hasRole('ROLE_USER')"/>
+    <intercept-url pattern="/accounts/byid/**" access="hasRole('ROLE_USER')"/>
+    <intercept-url pattern="/users/byid/**" access="hasRole('ROLE_USER')"/>
+    <intercept-url pattern="/users/profile" access="hasRole('ROLE_USER')"/>
+    <form-login login-page="/login"
                 always-use-default-target="false"
                 default-target-url="/users/profile"
-                authentication-failure-url="/login?error=true" />
-    <http-basic />
+                authentication-failure-url="/login?error=true"/>
+    <http-basic/>
     <logout logout-url="/logout" invalidate-session="true" delete-cookies="JSESSIONID"/>
   </http>
 
 
   <!-- AuthN Manager -->
-  <authentication-manager alias="authenticationManager" >
-    <authentication-provider ref="authProvider" />
+  <authentication-manager alias="authenticationManager">
+    <authentication-provider ref="authProvider"/>
   </authentication-manager>
 
   <beans:bean id="authProvider" class="org.duracloud.account.security.auth.AuthProvider">
-    <beans:constructor-arg ref="duracloudUserService" />
+    <beans:constructor-arg ref="duracloudUserService"/>
     <beans:constructor-arg ref="passwordEncoder"/>
   </beans:bean>
-  
+
   <beans:bean id="securityContextUtil" class="org.duracloud.account.db.util.security.SecurityContextUtil"/>
 
   <beans:bean id="passwordEncoder"
-    class="org.springframework.security.authentication.encoding.ShaPasswordEncoder" >
-   <beans:constructor-arg value="256"/>
+              class="org.springframework.security.authentication.encoding.ShaPasswordEncoder">
+    <beans:constructor-arg value="256"/>
   </beans:bean>
 
   <beans:bean id="rootAcctMgrVoter" class="org.duracloud.account.security.vote.RootAccountManagerAccessDecisionVoter">
@@ -92,7 +83,7 @@
     <beans:constructor-arg ref="repoMgr"/>
   </beans:bean>
 
-  <beans:bean id="methodAccessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased" >
+  <beans:bean id="methodAccessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
     <beans:constructor-arg>
       <beans:list>
         <beans:ref bean="rootAcctMgrVoter"/>
@@ -102,9 +93,9 @@
     </beans:constructor-arg>
     <beans:property name="allowIfAllAbstainDecisions" value="true"/>
   </beans:bean>
-  
+
   <global-method-security
     access-decision-manager-ref="methodAccessDecisionManager"
-    secured-annotations="enabled" />
-  
+    secured-annotations="enabled"/>
+
 </beans:beans>

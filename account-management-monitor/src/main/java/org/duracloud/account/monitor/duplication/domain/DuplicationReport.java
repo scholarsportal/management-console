@@ -17,7 +17,7 @@ import java.util.Map;
  * set of DuraCloud accounts.
  *
  * @author Bill Branan
- *         Date: 4/16/13
+ * Date: 4/16/13
  */
 public class DuplicationReport {
 
@@ -30,8 +30,8 @@ public class DuplicationReport {
     /**
      * This method adds details for the duplication status at a given host.
      *
-     * @param host  host of account
-     * @param info  duplication information
+     * @param host host of account
+     * @param info duplication information
      */
     public void addDupInfo(String host, DuplicationInfo info) {
         dupInfos.put(host, info);
@@ -83,7 +83,7 @@ public class DuplicationReport {
         sb.append("Duplication Issues:\n");
         sb.append("-------------------\n");
 
-        for(DuplicationInfo dupInfo : getDupIssues()) {
+        for (DuplicationInfo dupInfo : getDupIssues()) {
             sb.append(dupInfo.toString()).append("\n");
         }
         return sb.toString();

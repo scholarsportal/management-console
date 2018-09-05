@@ -7,6 +7,15 @@
  */
 package org.duracloud.account.app.controller;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import javax.validation.Valid;
+
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.Role;
@@ -33,12 +42,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
-import java.text.MessageFormat;
-import java.util.*;
-
 /**
- * 
  * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
  */
 @Controller
@@ -69,24 +73,22 @@ public class AccountUsersController extends AbstractAccountController {
     @Autowired
     private NotificationMgr notificationMgr;
 
-    
     @ModelAttribute(INVITATION_FORM_KEY)
-    public InvitationForm invitationForm(){
+    public InvitationForm invitationForm() {
         return new InvitationForm();
     }
 
     @ModelAttribute(USERNAME_FORM_KEY)
-    public UsernameForm usernameForm(){
+    public UsernameForm usernameForm() {
         return new UsernameForm();
     }
-    
+
     @ModelAttribute(EDIT_ACCOUNT_USERS_FORM_KEY)
-    public AccountUserEditForm accountUserEditForm(){
+    public AccountUserEditForm accountUserEditForm() {
         return new AccountUserEditForm();
     }
 
     /**
-     * 
      * @param accountId
      * @param model
      * @return
@@ -100,13 +102,12 @@ public class AccountUsersController extends AbstractAccountController {
     }
 
     @Transactional
-    @RequestMapping(value = ACCOUNT_USERS_MAPPING+"/adduser", method = RequestMethod.POST)
-    public ModelAndView
-        addUser(@PathVariable Long accountId,
-                @ModelAttribute(USERNAME_FORM_KEY) @Valid UsernameForm usernameForm,
-                BindingResult result,
-                Model model,
-                RedirectAttributes redirectAttributes) throws Exception {
+    @RequestMapping(value = ACCOUNT_USERS_MAPPING + "/adduser", method = RequestMethod.POST)
+    public ModelAndView addUser(@PathVariable Long accountId,
+                                @ModelAttribute(USERNAME_FORM_KEY) @Valid UsernameForm usernameForm,
+                                BindingResult result,
+                                Model model,
+                                RedirectAttributes redirectAttributes) throws Exception {
         String username = usernameForm.getUsername();
         log.debug("entering addUser: adding {} to account {}",
                   username,
@@ -117,21 +118,15 @@ public class AccountUsersController extends AbstractAccountController {
             return new ModelAndView(ACCOUNT_USERS_VIEW_ID, model.asMap());
         }
 
-        
-        DuracloudUser user =  userService.loadDuracloudUserByUsernameInternal(username);
-        if(userService.addUserToAccount(accountId, user.getId())){
-            log.info("added user {} to account {}",
-                     new Object[] { username, accountId });
+        DuracloudUser user = userService.loadDuracloudUserByUsernameInternal(username);
+        if (userService.addUserToAccount(accountId, user.getId())) {
+            log.info("added user {} to account {}", new Object[] {username, accountId});
 
-            String message =  MessageFormat.format("Successfully added {0} to account.",
-                                                  username);
+            String message = MessageFormat.format("Successfully added {0} to account.", username);
             setSuccessFeedback(message, redirectAttributes);
-
         }
 
-        
-        return createAccountRedirectModelAndView(accountId,
-                                                 ACCOUNT_USERS_PATH);
+        return createAccountRedirectModelAndView(accountId, ACCOUNT_USERS_PATH);
     }
 
     protected String get(AccountService accountService, Model model)
@@ -142,11 +137,11 @@ public class AccountUsersController extends AbstractAccountController {
 
     @Transactional
     @RequestMapping(value = ACCOUNT_USERS_MAPPING, method = RequestMethod.POST)
-    public ModelAndView sendInvitations(
-        @PathVariable Long accountId,
-        @ModelAttribute(INVITATION_FORM_KEY) @Valid InvitationForm invitationForm,
-        BindingResult result, Model model,
-        RedirectAttributes redirectAttributes) throws Exception {
+    public ModelAndView sendInvitations(@PathVariable Long accountId,
+                                        @ModelAttribute(INVITATION_FORM_KEY) @Valid InvitationForm invitationForm,
+                                        BindingResult result,
+                                        Model model,
+                                        RedirectAttributes redirectAttributes) throws Exception {
         log.info("sending invitations from account {}", accountId);
         boolean hasErrors = result.hasErrors();
         AccountService service = getAccountService(accountId);
@@ -165,9 +160,8 @@ public class AccountUsersController extends AbstractAccountController {
                         service.inviteUser(emailAddress,
                                            adminUsername,
                                            notificationMgr.getEmailer());
-                    String template =
-                        "Successfully created user invitation on "
-                            + "account {0} for {1} expiring on {2}";
+                    String template = "Successfully created user invitation on "
+                                      + "account {0} for {1} expiring on {2}";
                     String message =
                         MessageFormat.format(template,
                                              ui.getAccount().getId(),
@@ -180,11 +174,9 @@ public class AccountUsersController extends AbstractAccountController {
             }
 
             if (!failedEmailAddresses.isEmpty()) {
-                String template =
-                    "Unable to send an email to the following recipients, "
-                        + "but the user has been added: {0}";
-                String message =
-                    MessageFormat.format(template, failedEmailAddresses);
+                String template = "Unable to send an email to the following recipients, "
+                                  + "but the user has been added: {0}";
+                String message = MessageFormat.format(template, failedEmailAddresses);
 
                 result.addError(new ObjectError("emailAddresses", message));
                 hasErrors = true;
@@ -196,35 +188,35 @@ public class AccountUsersController extends AbstractAccountController {
             get(service, model);
             return new ModelAndView(ACCOUNT_USERS_VIEW_ID);
         }
-        
+
         setSuccessFeedback("Successfully sent invitations.", redirectAttributes);
         return createAccountRedirectModelAndView(accountId, ACCOUNT_USERS_PATH);
     }
 
     @Transactional
     @RequestMapping(value = USERS_INVITATIONS_DELETE_MAPPING, method = RequestMethod.POST)
-    public ModelAndView deleteUserInvitation(
-        @PathVariable Long accountId, @PathVariable Long invitationId, Model model)
+    public ModelAndView deleteUserInvitation(@PathVariable Long accountId,
+                                             @PathVariable Long invitationId,
+                                             Model model)
         throws Exception {
-        log.info("remove invitation {} from account {}",
-            invitationId,
-            accountId);
+        log.info("remove invitation {} from account {}", invitationId, accountId);
         AccountService service = getAccountService(accountId);
         service.deleteUserInvitation(invitationId);
 
         return createAccountRedirectModelAndView(accountId, ACCOUNT_USERS_PATH);
     }
-    
+
     @Transactional
     @RequestMapping(value = USERS_DELETE_MAPPING, method = RequestMethod.POST)
-    public ModelAndView deleteUserFromAccount(
-        @PathVariable Long accountId, @PathVariable Long userId, Model model)
+    public ModelAndView deleteUserFromAccount(@PathVariable Long accountId,
+                                              @PathVariable Long userId,
+                                              Model model)
         throws Exception {
         log.info("delete user {} from account {}", userId, accountId);
         userService.revokeUserRights(accountId, userId);
         DuracloudUser user = getUser();
 
-        if(user.getId() == userId){
+        if (user.getId() == userId) {
             View redirect = UserController.formatUserRedirect(user.getUsername());
             return new ModelAndView(redirect);
         }
@@ -232,24 +224,25 @@ public class AccountUsersController extends AbstractAccountController {
     }
 
     @RequestMapping(value = USERS_EDIT_MAPPING, method = RequestMethod.GET)
-    public String getEditUserForm(@PathVariable Long accountId, @PathVariable Long userId, Model model)
+    public String getEditUserForm(@PathVariable Long accountId,
+                                  @PathVariable Long userId,
+                                  Model model)
         throws Exception {
         log.info("getEditUserForm user {} account {}", userId, accountId);
         AccountService accountService = getAccountService(accountId);
         Set<DuracloudUser> users = accountService.getUsers();
 
         for (DuracloudUser u : users) {
-            if(u.getId() == userId) {
-                AccountUser au =
-                    new AccountUser(u.getId(),
-                        u.getUsername(),
-                        u.getFirstName(),
-                        u.getLastName(),
-                        u.getEmail(),
-                        InvitationStatus.ACTIVE,
-                        u.getRoleByAcct(accountId),
-                        u.getAllowableIPAddressRange(),
-                        false);
+            if (u.getId() == userId) {
+                AccountUser au = new AccountUser(u.getId(),
+                                                 u.getUsername(),
+                                                 u.getFirstName(),
+                                                 u.getLastName(),
+                                                 u.getEmail(),
+                                                 InvitationStatus.ACTIVE,
+                                                 u.getRoleByAcct(accountId),
+                                                 u.getAllowableIPAddressRange(),
+                                                 false);
                 //TODO set current role for select box - based on hierarchy?
                 //editForm.setRole();
                 model.addAttribute("user", au);
@@ -257,19 +250,18 @@ public class AccountUsersController extends AbstractAccountController {
             }
         }
 
-        loadAccountInfo(accountId, model);        
+        loadAccountInfo(accountId, model);
         return ACCOUNT_USERS_EDIT_ID;
     }
-    
+
     @Transactional
     @RequestMapping(value = USERS_EDIT_MAPPING, method = RequestMethod.POST)
-    public ModelAndView
-        editUser(@PathVariable Long accountId,
-                 @PathVariable Long userId,
-                 @ModelAttribute(EDIT_ACCOUNT_USERS_FORM_KEY) AccountUserEditForm accountUserEditForm,
-                 BindingResult result,
-                 Model model,
-                 RedirectAttributes redirectAttributes) throws Exception {
+    public ModelAndView editUser(@PathVariable Long accountId,
+                                 @PathVariable Long userId,
+                                 @ModelAttribute(EDIT_ACCOUNT_USERS_FORM_KEY) AccountUserEditForm accountUserEditForm,
+                                 BindingResult result,
+                                 Model model,
+                                 RedirectAttributes redirectAttributes) throws Exception {
         log.debug("editUser account {}", accountId);
 
         boolean hasErrors = result.hasErrors();
@@ -278,7 +270,7 @@ public class AccountUsersController extends AbstractAccountController {
             log.info("New role: {}", role);
             try {
                 setUserRights(userService, accountId, userId, role);
-                setSuccessFeedback("Successfully changed user role.", redirectAttributes);                
+                setSuccessFeedback("Successfully changed user role.", redirectAttributes);
             } catch (AccessDeniedException e) {
                 result.addError(new ObjectError("role",
                                                 "You are unauthorized to set the role for this user"));
@@ -313,8 +305,7 @@ public class AccountUsersController extends AbstractAccountController {
         AccountInfo accountInfo = accountService.retrieveAccountInfo();
         model.addAttribute(ACCOUNT_INFO_KEY, accountInfo);
         Set<DuracloudUser> users = accountService.getUsers();
-        Set<UserInvitation> pendingUserInvitations =
-            accountService.getPendingInvitations();
+        Set<UserInvitation> pendingUserInvitations = accountService.getPendingInvitations();
         DuracloudUser caller = getUser();
         DuracloudAccount duracloudAccount = new DuracloudAccount();
         duracloudAccount.setAccountInfo(accountInfo);
@@ -322,11 +313,11 @@ public class AccountUsersController extends AbstractAccountController {
         model.addAttribute("account", duracloudAccount);
 
         List<AccountUser> accountUsers =
-            buildUserList(accountInfo.getId(), users,caller);
+            buildUserList(accountInfo.getId(), users, caller);
         Collections.sort(accountUsers);
         addInvitationsToModel(pendingUserInvitations, accountService, model);
         model.addAttribute(USERS_KEY, accountUsers);
-        
+
     }
 
     /**
@@ -356,17 +347,17 @@ public class AccountUsersController extends AbstractAccountController {
             Role role = u.getRoleByAcct(accountId);
             AccountUser au =
                 new AccountUser(u.getId(),
-                    u.getUsername(),
-                    u.getFirstName(),
-                    u.getLastName(),
-                    u.getEmail(),
-                    InvitationStatus.ACTIVE,
-                    role,
-                    u.getAllowableIPAddressRange(),
-                    caller.isRoot() 
-                        || caller.isOwnerForAcct(accountId) 
-                        || (caller.isAdminForAcct(accountId) 
-                                && (role.equals(Role.ROLE_USER) 
+                                u.getUsername(),
+                                u.getFirstName(),
+                                u.getLastName(),
+                                u.getEmail(),
+                                InvitationStatus.ACTIVE,
+                                role,
+                                u.getAllowableIPAddressRange(),
+                                caller.isRoot()
+                                || caller.isOwnerForAcct(accountId)
+                                || (caller.isAdminForAcct(accountId)
+                                    && (role.equals(Role.ROLE_USER)
                                         || role.equals(Role.ROLE_ADMIN)))
                 );
             list.add(au);
@@ -378,9 +369,8 @@ public class AccountUsersController extends AbstractAccountController {
     /**
      * This class is a read only representation of a user from the perspective
      * of an account admin/owner.
-     * 
+     *
      * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
-     * 
      */
     public class AccountUser implements Comparable<AccountUser> {
 

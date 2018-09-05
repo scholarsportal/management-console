@@ -7,9 +7,9 @@
  */
 package org.duracloud.account.app.controller;
 
-import org.duracloud.storage.domain.StorageProviderType;
-
 import java.util.List;
+
+import org.duracloud.storage.domain.StorageProviderType;
 
 public class ProviderForm {
     private String provider;

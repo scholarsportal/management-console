@@ -9,9 +9,10 @@ package org.duracloud.account.db.util;
 
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.util.error.AccountNotFoundException;
+
 /**
  * @author Andrew Woods
- *         Date: 4/7/11
+ * Date: 4/7/11
  */
 public interface AccountServiceFactory {
 

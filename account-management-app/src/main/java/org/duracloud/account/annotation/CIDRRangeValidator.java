@@ -15,40 +15,39 @@ import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
- * 
  */
 
 public class CIDRRangeValidator
     implements ConstraintValidator<CIDRRangeConstraint, String> {
     private CIDRRangeConstraint constraintAnnotation;
-    
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.validation.ConstraintValidator#isValid(java.lang.Object,
      * javax.validation.ConstraintValidatorContext)
      */
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         //may contain multiple values, semicolon separated.
-        if(!StringUtils.isBlank(value)){
+        if (!StringUtils.isBlank(value)) {
             String[] values = value.split(";");
-            for(String val : values){
-                try{
+            for (String val : values) {
+                try {
                     new IpAddressMatcher(val);
-                }catch(IllegalArgumentException ex){
+                } catch (IllegalArgumentException ex) {
                     return false;
                 }
             }
             return true;
-        }else{
+        } else {
             return true;
         }
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * javax.validation.ConstraintValidator#initialize(java.lang.annotation.
      * Annotation)

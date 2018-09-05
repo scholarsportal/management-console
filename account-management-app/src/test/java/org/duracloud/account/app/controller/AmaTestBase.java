@@ -7,7 +7,18 @@
  */
 package org.duracloud.account.app.controller;
 
-import org.duracloud.account.db.model.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.AccountRights;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.Role;
+import org.duracloud.account.db.model.StorageProviderAccount;
 import org.duracloud.account.db.util.AccountManagerService;
 import org.duracloud.account.db.util.AccountService;
 import org.duracloud.account.db.util.DuracloudUserService;
@@ -23,14 +34,12 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 
-import java.util.*;
-
 public class AmaTestBase {
 
     protected static final String TEST_USERNAME = "testuser";
     protected static final Long TEST_ACCOUNT_ID = 1L;
     protected static final Long TEST_USER_ID = 0L;
-    
+
     protected IdUtil idUtil;
     protected AuthenticationManager authenticationManager;
     protected AccountManagerService accountManagerService;
@@ -45,12 +54,11 @@ public class AmaTestBase {
         idUtil = createMock(IdUtil.class);
         accountManagerService = createMock(AccountManagerService.class);
         accountService = createMock(AccountService.class);
-        userService = createMock(DuracloudUserService.class);        
+        userService = createMock(DuracloudUserService.class);
         intializeAuthManager();
     }
 
-    
-     @After
+    @After
     public void tearDown() throws Exception {
         verifyMocks();
     }
@@ -61,7 +69,6 @@ public class AmaTestBase {
         }
     }
 
-    
     protected <T> T createMock(Class<T> clazz) {
         T mock = EasyMock.createMock(clazz.getSimpleName(), clazz);
         mocks.add(mock);
@@ -73,14 +80,14 @@ public class AmaTestBase {
             EasyMock.replay(o);
         }
     }
-    
+
     protected void intializeAuthManager() {
         Authentication auth = createMock(Authentication.class);
 
         EasyMock.expect(auth.getName()).andReturn(TEST_USERNAME).anyTimes();
         authenticationManager =
             createMock(AuthenticationManager.class);
-        
+
         SecurityContext ctx = new SecurityContextImpl();
         ctx.setAuthentication(auth);
         EasyMock.expect(auth.getPrincipal()).andReturn(createUser()).anyTimes();
@@ -95,7 +102,7 @@ public class AmaTestBase {
      * @return
      */
     protected AccountInfo createAccountInfo(Long id) {
-        if(id == null) {
+        if (id == null) {
             id = TEST_ACCOUNT_ID;
         }
         AccountInfo accountInfo = new AccountInfo();
@@ -115,7 +122,7 @@ public class AmaTestBase {
     protected DuracloudUser createUser() {
         return createUser(TEST_USERNAME);
     }
-    
+
     protected DuracloudUser createUser(String username) {
         DuracloudUser user = new DuracloudUser();
         user.setId(TEST_USER_ID);
@@ -139,13 +146,11 @@ public class AmaTestBase {
         return user;
     }
 
-
     protected void setupGenericAccountAndUserServiceMocks(Long accountId)
         throws AccountNotFoundException, DBNotFoundException {
         EasyMock.expect(accountService.getAccountId())
                 .andReturn(accountId)
                 .anyTimes();
-
 
         Collection<DuracloudUser> users = new LinkedList<DuracloudUser>();
         users.add(createUser());
@@ -160,7 +165,6 @@ public class AmaTestBase {
         EasyMock.expect(accountService.retrieveAccountInfo())
                 .andReturn(createAccountInfo())
                 .anyTimes();
-        
 
         DuracloudUser user = createUser();
 
@@ -173,7 +177,6 @@ public class AmaTestBase {
                 .anyTimes();
 
     }
-    
 
     protected Set<DuracloudUser> createUserSet() {
         Set<DuracloudUser> s = new HashSet<DuracloudUser>();
@@ -181,6 +184,5 @@ public class AmaTestBase {
         return s;
     }
 
-    
 }
 

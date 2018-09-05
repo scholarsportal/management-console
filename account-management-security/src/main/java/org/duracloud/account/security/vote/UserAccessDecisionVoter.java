@@ -7,6 +7,10 @@
  */
 package org.duracloud.account.security.vote;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.aopalliance.intercept.MethodInvocation;
 import org.duracloud.account.db.model.AccountRights;
 import org.duracloud.account.db.model.DuracloudUser;
@@ -20,15 +24,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * This class votes on calls to the DuracloudUserService.
  *
  * @author Andrew Woods
- *         Date: 4/6/11
+ * Date: 4/6/11
  */
 public class UserAccessDecisionVoter extends BaseAccessDecisionVoter {
 
@@ -51,11 +51,14 @@ public class UserAccessDecisionVoter extends BaseAccessDecisionVoter {
 
     @Override
     protected int voteImpl(Authentication authentication,
-            MethodInvocation invocation,
-            Collection<ConfigAttribute> attributes, Object[] methodArgs,
-            DuracloudUser user, SecuredRule securedRule, String role,
-            SecuredRule.Scope scope) {
-        
+                           MethodInvocation invocation,
+                           Collection<ConfigAttribute> attributes,
+                           Object[] methodArgs,
+                           DuracloudUser user,
+                           SecuredRule securedRule,
+                           String role,
+                           SecuredRule.Scope scope) {
+
         int decision = ACCESS_DENIED;
 
         Collection<String> userRoles = getUserRoles(authentication);
@@ -125,20 +128,18 @@ public class UserAccessDecisionVoter extends BaseAccessDecisionVoter {
         return castVote(decision, invocation);
     }
 
-
-
     private int voteUserHasRoleOnAcctToManageOther(Long userId,
                                                    Long acctId,
                                                    Long otherUserId) {
         log.trace("Voting if user {} has roles on acct {} to manage {}.",
-                  new Object[]{userId, acctId, otherUserId});
+                  new Object[] {userId, acctId, otherUserId});
 
         AccountRights rights = getUserRightsForAcct(userId, acctId);
         AccountRights other = getUserRightsForAcct(otherUserId, acctId);
 
         if (null == rights || null == other) {
             log.warn("No rights found for users {}, {} on acct {}",
-                     new Object[]{userId, otherUserId, acctId});
+                     new Object[] {userId, otherUserId, acctId});
             return ACCESS_DENIED;
         }
 
@@ -151,8 +152,8 @@ public class UserAccessDecisionVoter extends BaseAccessDecisionVoter {
                                           Long otherUserId,
                                           Set<Role> otherRoles) {
         return hasVote(voteMyUserId(user, otherUserId)) &&
-            accountIsEmpty(acctId) &&
-            isOwner(otherRoles) ? ACCESS_GRANTED : ACCESS_DENIED;
+               accountIsEmpty(acctId) &&
+               isOwner(otherRoles) ? ACCESS_GRANTED : ACCESS_DENIED;
     }
 
     private boolean accountIsEmpty(Long acctId) {
@@ -203,7 +204,7 @@ public class UserAccessDecisionVoter extends BaseAccessDecisionVoter {
     }
 
     private String getUsernameArg(Object[] arguments) {
-           if (arguments.length <= USER_NAME_INDEX) {
+        if (arguments.length <= USER_NAME_INDEX) {
             log.error("Illegal number of args: " + arguments.length);
         }
         return (String) arguments[USER_NAME_INDEX];

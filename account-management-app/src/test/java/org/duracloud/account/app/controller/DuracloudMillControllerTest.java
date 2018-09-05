@@ -7,8 +7,11 @@
  */
 package org.duracloud.account.app.controller;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.isA;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.duracloud.account.db.model.DuracloudMill;
 import org.duracloud.account.db.util.DuracloudMillConfigService;
@@ -23,10 +26,9 @@ import org.springframework.binding.message.Message;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 /**
- * 
  * @author Daniel Bernstein
- *
  */
 @RunWith(EasyMockRunner.class)
 public class DuracloudMillControllerTest extends EasyMockSupport {
@@ -105,12 +107,12 @@ public class DuracloudMillControllerTest extends EasyMockSupport {
         expect(form.getAuditQueue()).andReturn(auditQueue);
         expect(form.getAuditLogSpaceId()).andReturn(auditLogSpaceId);
         this.service.set(dbHost, dbPort, dbName, dbUsername, dbPassword,
-                auditQueue, auditLogSpaceId);
+                         auditQueue, auditLogSpaceId);
         expectLastCall();
 
         expect(
-                redirectAttributes.addFlashAttribute(isA(String.class),
-                        isA(Message.class))).andReturn(redirectAttributes);
+            redirectAttributes.addFlashAttribute(isA(String.class),
+                                                 isA(Message.class))).andReturn(redirectAttributes);
         expectLastCall();
         replayAll();
         this.controller.update(form, result, model, redirectAttributes);

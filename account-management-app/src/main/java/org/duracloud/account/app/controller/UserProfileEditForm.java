@@ -14,28 +14,26 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
- *
  */
 public class UserProfileEditForm {
-    @NotBlank(message="First name is required")
+    @NotBlank(message = "First name is required")
     private String firstName;
 
-    @NotBlank(message="Last name is required")
+    @NotBlank(message = "Last name is required")
     private String lastName;
 
     @NotEmpty(message = "Email must be specified.")
-    @Email(message="Email is invalid")
+    @Email(message = "Email is invalid")
     private String email;
 
-    
     @CIDRRangeConstraint
     private String allowableIPAddressRange;
 
-	@NotBlank (message = "Security question is empty.")
-	private String securityQuestion;
+    @NotBlank(message = "Security question is empty.")
+    private String securityQuestion;
 
-	@NotBlank (message = "Security answer is empty.")
-	private String securityAnswer;
+    @NotBlank(message = "Security answer is empty.")
+    private String securityAnswer;
 
     public String getFirstName() {
         return firstName;

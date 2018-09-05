@@ -11,7 +11,7 @@ import org.duracloud.common.error.DuraCloudCheckedException;
 
 /**
  * @author Andrew Woods
- *         Date: Oct 8, 2010
+ * Date: Oct 8, 2010
  */
 public class DBNotFoundException extends DuraCloudCheckedException {
     public DBNotFoundException(String msg) {

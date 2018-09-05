@@ -1,60 +1,64 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <!DOCTYPE tiles-definitions PUBLIC
-       "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
-       "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+  "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+  "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
 <tiles-definitions>
   <definition name="app-base-2" template="/WEB-INF/jspx/layout/base2.jspx" preparer="globalPreparer">
-    <put-attribute name="title" value="title" />
-    <put-attribute name="header-extensions" />
-    <put-attribute name="body" value="body" />
+    <put-attribute name="title" value="title"/>
+    <put-attribute name="header-extensions"/>
+    <put-attribute name="body" value="body"/>
   </definition>
   <definition name="root-base" extends="app-base-2">
-    <put-attribute name="title" />
+    <put-attribute name="title"/>
     <put-attribute name="body">
       <definition template="/WEB-INF/jspx/layout/root-body.jspx" preparer="rootPreparer">
-        <put-attribute name="primaryTab" cascade="true" />
-        <put-attribute name="mainContent" cascade="true" />
+        <put-attribute name="primaryTab" cascade="true"/>
+        <put-attribute name="mainContent" cascade="true"/>
       </definition>
     </put-attribute>
   </definition>
   <!-- top level root views -->
-  <definition name="/root" template="/WEB-INF/jspx/root/index.jspx" />
- 
+  <definition name="/root" template="/WEB-INF/jspx/root/index.jspx"/>
+
   <!-- account views views -->
   <definition name="accounts-base" extends="root-base">
-    <put-attribute name="title" />
-    <put-attribute name="primaryTab" cascade="true" value="accounts" />
-    <put-attribute name="mainContent" cascade="true" />
+    <put-attribute name="title"/>
+    <put-attribute name="primaryTab" cascade="true" value="accounts"/>
+    <put-attribute name="mainContent" cascade="true"/>
   </definition>
-  <definition name="/root/accounts" template="/WEB-INF/jspx/root/accounts/index.jspx" />
-  <definition name="/root/accounts/setup" template="/WEB-INF/jspx/root/accounts/setup.jspx" />
+  <definition name="/root/accounts" template="/WEB-INF/jspx/root/accounts/index.jspx"/>
+  <definition name="/root/accounts/setup" template="/WEB-INF/jspx/root/accounts/setup.jspx"/>
 
   <!-- user views -->
   <definition name="users-base" extends="root-base">
-    <put-attribute name="title" />
-    <put-attribute name="primaryTab" cascade="true" value="users" />
-    <put-attribute name="mainContent" cascade="true" />
+    <put-attribute name="title"/>
+    <put-attribute name="primaryTab" cascade="true" value="users"/>
+    <put-attribute name="mainContent" cascade="true"/>
   </definition>
-  <definition name="/root/users" template="/WEB-INF/jspx/root/users/index.jspx" />
+  <definition name="/root/users" template="/WEB-INF/jspx/root/users/index.jspx"/>
 
- 
+
   <definition name="duracloudmill-base" extends="root-base">
-    <put-attribute name="title" />
-    <put-attribute name="primaryTab" cascade="true" value="duracloudmill" />
-    <put-attribute name="mainContent" cascade="true" />
+    <put-attribute name="title"/>
+    <put-attribute name="primaryTab" cascade="true" value="duracloudmill"/>
+    <put-attribute name="mainContent" cascade="true"/>
   </definition>
 
-  <definition name="/root/duracloudmill" template="/WEB-INF/jspx/root/duracloudmill/index.jspx" preparer="globalPreparer"/>
-  <definition name="/root/duracloudmill/edit" template="/WEB-INF/jspx/root/duracloudmill/edit.jspx" preparer="globalPreparer"/>
+  <definition name="/root/duracloudmill" template="/WEB-INF/jspx/root/duracloudmill/index.jspx"
+              preparer="globalPreparer"/>
+  <definition name="/root/duracloudmill/edit" template="/WEB-INF/jspx/root/duracloudmill/edit.jspx"
+              preparer="globalPreparer"/>
 
 
   <definition name="globalproperties-base" extends="root-base">
-    <put-attribute name="title" />
-    <put-attribute name="primaryTab" cascade="true" value="globalproperties" />
-    <put-attribute name="mainContent" cascade="true" />
+    <put-attribute name="title"/>
+    <put-attribute name="primaryTab" cascade="true" value="globalproperties"/>
+    <put-attribute name="mainContent" cascade="true"/>
   </definition>
 
-  <definition name="/root/globalproperties" template="/WEB-INF/jspx/root/globalproperties/index.jspx" preparer="globalPreparer"/>
-  <definition name="/root/globalproperties/edit" template="/WEB-INF/jspx/root/globalproperties/edit.jspx" preparer="globalPreparer"/>
+  <definition name="/root/globalproperties" template="/WEB-INF/jspx/root/globalproperties/index.jspx"
+              preparer="globalPreparer"/>
+  <definition name="/root/globalproperties/edit" template="/WEB-INF/jspx/root/globalproperties/edit.jspx"
+              preparer="globalPreparer"/>
 
 </tiles-definitions>

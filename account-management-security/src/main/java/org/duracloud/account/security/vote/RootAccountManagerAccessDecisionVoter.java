@@ -14,7 +14,7 @@ import org.duracloud.account.db.util.RootAccountManagerService;
  * This class votes on calls to the RootAccountManagerService.
  *
  * @author DanielBernstein
- *         Date: 1/23/2012
+ * Date: 1/23/2012
  */
 public class RootAccountManagerAccessDecisionVoter extends AccountManagerAccessDecisionVoter {
 

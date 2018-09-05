@@ -12,8 +12,8 @@ import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.duracloud.account.config.McConfig;
 import org.duracloud.account.config.AmaEndpoint;
+import org.duracloud.account.config.McConfig;
 import org.duracloud.account.db.model.util.AccountCreationInfo;
 import org.duracloud.account.db.util.notification.NotificationMgr;
 import org.duracloud.storage.domain.StorageProviderType;
@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This class monitors application events and notifies the system admin(s).
- * 
+ *
  * @author Andrew Woods Date: 3/21/11
  */
 public class SystemMonitorImpl extends EventMonitorBase {
@@ -33,8 +33,9 @@ public class SystemMonitorImpl extends EventMonitorBase {
 
     private AmaEndpoint amaEndpoint;
 
-    public SystemMonitorImpl(NotificationMgr notificationMgr, McConfig config,
-            AmaEndpoint amaEndpoint) {
+    public SystemMonitorImpl(NotificationMgr notificationMgr,
+                             McConfig config,
+                             AmaEndpoint amaEndpoint) {
         super(notificationMgr);
 
         String adminEmail = config.getNotificationAdminAddress();
@@ -48,8 +49,7 @@ public class SystemMonitorImpl extends EventMonitorBase {
 
     @Override
     protected String buildSubj(AccountCreationInfo acctInfo) {
-        return "Successful creation of DuraCloud account: "
-                + acctInfo.getSubdomain();
+        return "Successful creation of DuraCloud account: " + acctInfo.getSubdomain();
     }
 
     @Override
@@ -63,14 +63,11 @@ public class SystemMonitorImpl extends EventMonitorBase {
         printer.printf("You have registered under the subdomain:%n");
         printer.printf("    %1$s%n%n", acctInfo.getSubdomain());
 
-        Set<StorageProviderType> providers = acctInfo
-                .getSecondaryStorageProviderTypes();
+        Set<StorageProviderType> providers = acctInfo.getSecondaryStorageProviderTypes();
         if (null != providers && providers.size() > 0) {
             printer.printf("with the following storage providers: %n");
-            printer.printf("    %1s%n",
-                    acctInfo.getPrimaryStorageProviderType());
-            for (StorageProviderType provider : acctInfo
-                    .getSecondaryStorageProviderTypes()) {
+            printer.printf("    %1s%n", acctInfo.getPrimaryStorageProviderType());
+            for (StorageProviderType provider : acctInfo.getSecondaryStorageProviderTypes()) {
                 printer.printf("    %1s%n", provider);
             }
         }

@@ -11,22 +11,23 @@ import com.thoughtworks.selenium.Selenium;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
- *
  */
 public class UserBot extends BaseBot {
     private String username;
     private String password;
+
     public UserBot(Selenium sc, String username, String password) {
         super(sc);
         this.username = username;
         this.password = password;
     }
 
-    public void login(){
+    public void login() {
         LoginHelper.login(sc, username, password);
     }
+
     public void openProfilePage() {
-        UserHelper.openUserProfile(sc,username);
+        UserHelper.openUserProfile(sc, username);
 
     }
 }

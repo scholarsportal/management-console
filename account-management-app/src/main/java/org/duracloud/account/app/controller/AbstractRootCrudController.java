@@ -11,11 +11,10 @@ import org.duracloud.account.db.util.RootAccountManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * 
  * @author Daniel Bernstein
- *         Date: Feb 27, 2012
+ * Date: Feb 27, 2012
  */
-public abstract class AbstractRootCrudController<T> extends AbstractCrudController<T>{
+public abstract class AbstractRootCrudController<T> extends AbstractCrudController<T> {
 
     public AbstractRootCrudController(Class<T> clazz) {
         super(clazz);
@@ -28,8 +27,7 @@ public abstract class AbstractRootCrudController<T> extends AbstractCrudControll
         return rootAccountManagerService;
     }
 
-    protected void
-        setRootAccountManagerService(RootAccountManagerService rootAccountManagerService) {
+    protected void setRootAccountManagerService(RootAccountManagerService rootAccountManagerService) {
         this.rootAccountManagerService = rootAccountManagerService;
     }
 

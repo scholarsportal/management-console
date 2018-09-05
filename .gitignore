@@ -9,3 +9,4 @@
 */target
 *.externalToolBuilders
 *_IS_UNDEFINED*
+target/

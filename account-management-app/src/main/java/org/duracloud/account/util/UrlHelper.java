@@ -8,7 +8,12 @@
 package org.duracloud.account.util;
 
 public class UrlHelper {
-    public static String formatAccountId(Long accountId, String pattern){
+
+    private UrlHelper() {
+        // Ensures no instances are made of this class, as there are only static members.
+    }
+
+    public static String formatAccountId(Long accountId, String pattern) {
         return pattern.replace("{accountId}", String.valueOf(accountId));
     }
 

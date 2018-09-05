@@ -7,14 +7,14 @@
  */
 package org.duracloud.account.db.util.notification;
 
+import java.util.Date;
+
 import org.apache.commons.lang.StringUtils;
-import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.config.AmaEndpoint;
+import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.util.error.UnsentEmailException;
 import org.duracloud.notification.Emailer;
-
-import java.util.Date;
 
 /**
  * @author: Bill Branan
@@ -24,6 +24,7 @@ public class Notifier {
 
     private Emailer emailer;
     private AmaEndpoint amaEndpoint;
+
     public Notifier(Emailer emailer, AmaEndpoint amaEndpoint) {
         this.emailer = emailer;
         this.amaEndpoint = amaEndpoint;
@@ -40,13 +41,13 @@ public class Notifier {
     }
 
     public void sendNotificationPasswordReset(DuracloudUser user,
-                                               String redemptionCode, 
-                                               Date date) {
+                                              String redemptionCode,
+                                              Date date) {
         String subject = "DuraCloud Account Management: Password Reset";
         StringBuilder message = new StringBuilder();
         message.append("You have requested to reset your password.");
         message.append("Click on this following link to change your password:\n");
-        message.append(amaEndpoint.getUrl()+"/users/change-password/"+redemptionCode+"\n");
+        message.append(amaEndpoint.getUrl() + "/users/change-password/" + redemptionCode + "\n");
         message.append("This link is good for one password change only and will expire on " + date);
         message.append("\n\n");
         message.append("The DuraCloud team");
@@ -78,7 +79,7 @@ public class Notifier {
         message.append("The DuraCloud team");
         sendEmail(subject, message.toString(), adminEmail);
     }
-    
+
     public void sendNotificationUserAddedToAccount(DuracloudUser user, AccountInfo accountInfo) {
         String subject = "You are now a member of "
                          + accountInfo.getOrgName() + "'s DuraCloud Account.";
@@ -99,6 +100,7 @@ public class Notifier {
         sb.append(accountInfo.getAcctName());
         sb.append(" account at https://");
         sb.append(accountInfo.getSubdomain());
+        sb.append(".");
         sb.append(amaEndpoint.getDomain());
         sb.append(" with the following username: " + user.getUsername() + ".");
         sb.append("\n\n");

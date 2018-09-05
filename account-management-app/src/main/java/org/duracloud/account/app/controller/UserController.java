@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -54,7 +53,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * The default view for this application
- * 
+ *
  * @contributor dbernstein
  */
 @Controller
@@ -71,30 +70,35 @@ public class UserController extends AbstractController {
     public static final String USER_KEY = "user";
 
     public static final String NEW_USER_VIEW = "user-new";
-    
+
     public static final String FORGOT_PASSWORD_VIEW = "forgot-password";
 
     public static final String USER_HOME = "user-home";
-    
+
     public static final String FORGOT_PASSWORD_MAPPING = "/forgot-password";
 
     public static final String USER_ACCOUNTS = "user-accounts";
 
     public static final String USER_EDIT_MAPPING = USER_MAPPING + EDIT_MAPPING;
 
-    public static final String USER_ACCOUNTS_MAPPING = USER_MAPPING
-            + "/accounts";
+    public static final String USER_ACCOUNTS_MAPPING = USER_MAPPING + "/accounts";
 
     public static final String USER_EDIT_VIEW = "user-edit";
 
-    public static final String CHANGE_PASSWORD_MAPPING = USER_MAPPING
-            + "/change-password";
+    public static final String CHANGE_PASSWORD_MAPPING = USER_MAPPING + "/change-password";
+
     public static final String CHANGE_PASSWORD_VIEW = "user-change-password";
+
     public static final String USER_PROFILE_FORM_KEY = "userProfileEditForm";
+
     public static final String CHANGE_PASSWORD_FORM_KEY = "changePasswordForm";
+
     public static final String FORGOT_PASSWORD_FORM_KEY = "forgotPasswordForm";
+
     public static final String NEW_USER_FORM_KEY = "newUserForm";
+
     public static final String NEW_INSTANCE_FORM = "instanceForm";
+
     @Autowired
     private AccountManagerService accountManagerService;
 
@@ -103,10 +107,8 @@ public class UserController extends AbstractController {
 
     @Autowired
     private AmaEndpoint amaEndpoint;
-    
-    
+
     /**
-     * 
      * @param userService
      */
     public void setUserService(DuracloudUserService userService) {
@@ -122,7 +124,7 @@ public class UserController extends AbstractController {
         return this.userService;
     }
 
-    @RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.GET)
+    @RequestMapping(value = {NEW_MAPPING}, method = RequestMethod.GET)
     public ModelAndView getNewForm(HttpServletRequest request) {
         log.info("serving up NewUserForm");
         NewUserForm newUserForm = new NewUserForm();
@@ -130,7 +132,7 @@ public class UserController extends AbstractController {
         return new ModelAndView(NEW_USER_VIEW, NEW_USER_FORM_KEY, newUserForm);
     }
 
-    @RequestMapping(value = { FORGOT_PASSWORD_MAPPING }, method = RequestMethod.GET)
+    @RequestMapping(value = {FORGOT_PASSWORD_MAPPING}, method = RequestMethod.GET)
     public ModelAndView getForgotPasswordForm(HttpServletRequest request) {
         log.info("serving up ForgotPasswordForm");
         ForgotPasswordForm forgotPasswordForm = new ForgotPasswordForm();
@@ -140,15 +142,14 @@ public class UserController extends AbstractController {
     }
 
     @ModelAttribute("instanceTypes")
-    public InstanceType[] instanceTypes(){
+    public InstanceType[] instanceTypes() {
         return InstanceType.values();
     }
-    
-    @RequestMapping(value = { "/profile" }, method = RequestMethod.GET)
+
+    @RequestMapping(value = {"/profile"}, method = RequestMethod.GET)
     public ModelAndView profileRedirect() {
-        Authentication auth = SecurityContextHolder.getContext()
-            .getAuthentication();
-        if(auth.isAuthenticated() && auth instanceof AnonymousAuthenticationToken){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth.isAuthenticated() && auth instanceof AnonymousAuthenticationToken) {
             //this check is necessary because on logout the browser is getting directed here
             //I'm not sure why the request is getting through - everything seems properly configured
             //in security-config.xml
@@ -159,7 +160,7 @@ public class UserController extends AbstractController {
         return new ModelAndView(formatUserRedirect(username));
     }
 
-    @RequestMapping(value = { USER_MAPPING }, method = RequestMethod.GET)
+    @RequestMapping(value = {USER_MAPPING}, method = RequestMethod.GET)
     public ModelAndView getUser(@PathVariable String username,
                                 HttpServletRequest request)
         throws DBNotFoundException {
@@ -186,7 +187,7 @@ public class UserController extends AbstractController {
     }
 
     /**
-     * 
+     *
      */
     private void addRedemptionFailedMessage() {
         addErrorMessage("The redemption code you supplied is invalid. We are unable to add you to an account.");
@@ -205,7 +206,7 @@ public class UserController extends AbstractController {
         return redemptionCode;
     }
 
-    @RequestMapping(value = { USER_ACCOUNTS_MAPPING }, method = RequestMethod.GET)
+    @RequestMapping(value = {USER_ACCOUNTS_MAPPING}, method = RequestMethod.GET)
     public ModelAndView getUserAccounts(@PathVariable String username)
         throws DBNotFoundException {
         log.debug("getting user accounts for {}", username);
@@ -213,8 +214,8 @@ public class UserController extends AbstractController {
         prepareModel(username, mav);
         return mav;
     }
-    
-    @RequestMapping(value = { USER_EDIT_MAPPING }, method = RequestMethod.GET)
+
+    @RequestMapping(value = {USER_EDIT_MAPPING}, method = RequestMethod.GET)
     public String edit(@PathVariable String username, Model model) throws DBNotFoundException {
         log.debug("getting user accounts for {}", username);
         UserProfileEditForm form = new UserProfileEditForm();
@@ -234,11 +235,11 @@ public class UserController extends AbstractController {
     }
 
     @Transactional
-    @RequestMapping(value = { USER_EDIT_MAPPING }, method = RequestMethod.POST)
+    @RequestMapping(value = {USER_EDIT_MAPPING}, method = RequestMethod.POST)
     public ModelAndView update(@PathVariable String username,
-                         @ModelAttribute(USER_PROFILE_FORM_KEY) @Valid UserProfileEditForm form,
-                         BindingResult result,
-                         Model model) throws Exception {
+                               @ModelAttribute(USER_PROFILE_FORM_KEY) @Valid UserProfileEditForm form,
+                               BindingResult result,
+                               Model model) throws Exception {
 
         if (result.hasErrors()) {
             log.debug("profile form has errors for {}: returning...", username);
@@ -264,7 +265,7 @@ public class UserController extends AbstractController {
         return new ModelAndView(formatUserRedirect(username));
     }
 
-    @RequestMapping(value = { CHANGE_PASSWORD_MAPPING }, method = RequestMethod.GET)
+    @RequestMapping(value = {CHANGE_PASSWORD_MAPPING}, method = RequestMethod.GET)
     public String changePassword(@PathVariable String username, Model model) throws DBNotFoundException {
         log.debug("opening change password form  for {}", username);
         model.addAttribute(CHANGE_PASSWORD_FORM_KEY, new ChangePasswordForm());
@@ -275,11 +276,11 @@ public class UserController extends AbstractController {
     }
 
     @Transactional
-    @RequestMapping(value = { CHANGE_PASSWORD_MAPPING }, method = RequestMethod.POST)
+    @RequestMapping(value = {CHANGE_PASSWORD_MAPPING}, method = RequestMethod.POST)
     public ModelAndView changePassword(@PathVariable String username,
-                                 @ModelAttribute(CHANGE_PASSWORD_FORM_KEY) @Valid ChangePasswordForm form,
-                                 BindingResult result,
-                                 Model model) throws Exception {
+                                       @ModelAttribute(CHANGE_PASSWORD_FORM_KEY) @Valid ChangePasswordForm form,
+                                       BindingResult result,
+                                       Model model) throws Exception {
 
         DuracloudUser user = this.userService.loadDuracloudUserByUsername(username);
 
@@ -315,10 +316,9 @@ public class UserController extends AbstractController {
 
     }
 
-    @RequestMapping(value = { "/change-password/{redemptionCode}" }, method = RequestMethod.GET)
-    public String
-        anonymousPasswordChange(@PathVariable String redemptionCode,
-                                Model model) throws DBNotFoundException {
+    @RequestMapping(value = {"/change-password/{redemptionCode}"}, method = RequestMethod.GET)
+    public String anonymousPasswordChange(@PathVariable String redemptionCode,
+                                          Model model) throws DBNotFoundException {
         log.debug("opening change password form  for invitation {}",
                   redemptionCode);
         if (checkRedemptionCode(redemptionCode, model) == null) {
@@ -329,9 +329,9 @@ public class UserController extends AbstractController {
     }
 
     protected UserInvitation checkRedemptionCode(String redemptionCode, Model model) {
-        try{
+        try {
             return this.userService.retrievePassordChangeInvitation(redemptionCode);
-        }catch(DBNotFoundException ex){
+        } catch (DBNotFoundException ex) {
             model.addAttribute(UserFeedbackUtil.FEEDBACK_KEY,
                                UserFeedbackUtil.create(Severity.ERROR,
                                                        "This invitation is not valid."));
@@ -340,14 +340,15 @@ public class UserController extends AbstractController {
     }
 
     @Transactional
-    @RequestMapping(value = {  "/change-password/{redemptionCode}" }, method = RequestMethod.POST)
+    @RequestMapping(value = {"/change-password/{redemptionCode}"}, method = RequestMethod.POST)
     public String anonymousPasswordChange(@PathVariable String redemptionCode,
-                                          @ModelAttribute(CHANGE_PASSWORD_FORM_KEY) @Valid AnonymousChangePasswordForm form,
-                                 BindingResult result,
-                                 Model model) throws Exception {
+                                          @ModelAttribute(CHANGE_PASSWORD_FORM_KEY) @Valid
+                                              AnonymousChangePasswordForm form,
+                                          BindingResult result,
+                                          Model model) throws Exception {
 
         UserInvitation invitation = checkRedemptionCode(redemptionCode, model);
-        if(invitation == null){
+        if (invitation == null) {
             return ANONYMOUS_CHANGE_PASSWORD_FAILURE_VIEW;
         }
 
@@ -360,14 +361,14 @@ public class UserController extends AbstractController {
             Long id = user.getId();
             try {
                 this.userService.changePasswordInternal(id,
-                                                user.getPassword(),
-                                                true,
-                                                form.getPassword());
-                
+                                                        user.getPassword(),
+                                                        true,
+                                                        form.getPassword());
+
                 this.userService.redeemPasswordChangeRequest(user.getId(), redemptionCode);
                 model.addAttribute("adminUrl", amaEndpoint.getUrl());
                 return "anonymous-change-password-success";
-                
+
             } catch (InvalidPasswordException e) {
                 result.addError(new FieldError(CHANGE_PASSWORD_FORM_KEY,
                                                "oldPassword",
@@ -378,7 +379,7 @@ public class UserController extends AbstractController {
         return ANONYMOUS_CHANGE_PASSWORD_VIEW;
 
     }
-    
+
     /**
      * @param user
      * @param mav
@@ -413,9 +414,8 @@ public class UserController extends AbstractController {
         mav.addObject("mcDomain", amaEndpoint.getDomain());
     }
 
-
     private DuracloudAccount loadAccountInstances(AccountInfo accountInfo,
-            DuracloudUser user)  {
+                                                  DuracloudUser user) {
         DuracloudAccount duracloudAccount = new DuracloudAccount();
         duracloudAccount.setAccountInfo(accountInfo);
         duracloudAccount.setUserRole(user.getRoleByAcct(accountInfo.getId()));
@@ -430,7 +430,7 @@ public class UserController extends AbstractController {
      * @param mav
      */
     private void prepareModel(String username, ModelAndView mav) {
-        
+
         DuracloudUser user;
         try {
             user = this.userService.loadDuracloudUserByUsernameInternal(username);
@@ -441,11 +441,11 @@ public class UserController extends AbstractController {
     }
 
     @Transactional
-    @RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.POST)
+    @RequestMapping(value = {NEW_MAPPING}, method = RequestMethod.POST)
     public ModelAndView add(@ModelAttribute(NEW_USER_FORM_KEY) @Valid NewUserForm newUserForm,
-                      BindingResult result,
-                      Model model, 
-                      RedirectAttributes redirectAttributes) throws Exception {
+                            BindingResult result,
+                            Model model,
+                            RedirectAttributes redirectAttributes) throws Exception {
 
         String name = null == newUserForm ? "null" : newUserForm.getUsername();
         log.debug("Add new user: {}", name);
@@ -484,8 +484,6 @@ public class UserController extends AbstractController {
         return mav;
     }
 
-
-
     protected static RedirectView formatUserRedirect(String username) {
         String redirect = formatUserUrl(username);
         RedirectView view = new RedirectView(redirect, true);
@@ -494,7 +492,7 @@ public class UserController extends AbstractController {
     }
 
     @Transactional
-    @RequestMapping(value = { FORGOT_PASSWORD_MAPPING }, method = RequestMethod.POST)
+    @RequestMapping(value = {FORGOT_PASSWORD_MAPPING}, method = RequestMethod.POST)
     public String forgotPassword(@ModelAttribute(FORGOT_PASSWORD_FORM_KEY) @Valid ForgotPasswordForm forgotPasswordForm,
                                  BindingResult result,
                                  Model model,
@@ -517,7 +515,6 @@ public class UserController extends AbstractController {
                     return FORGOT_PASSWORD_VIEW;
                 }
 
-                
                 this.userService.forgotPassword(username,
                                                 forgotPasswordForm.getSecurityQuestion(),
                                                 forgotPasswordForm.getSecurityAnswer());
@@ -551,7 +548,7 @@ public class UserController extends AbstractController {
 
     }
 
-    @RequestMapping(value = { "/redeem/{redemptionCode}" }, method = RequestMethod.GET)
+    @RequestMapping(value = {"/redeem/{redemptionCode}"}, method = RequestMethod.GET)
     public ModelAndView redeemUser(HttpServletRequest request,
                                    @PathVariable String redemptionCode) throws DBNotFoundException {
         log.info("getting redeem invitation {}", redemptionCode);

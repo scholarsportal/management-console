@@ -11,7 +11,7 @@ package org.duracloud.account.config;
  * Configuration properties for the Management Console
  *
  * @author Bill Branan
- *         Date: 6/18/14
+ * Date: 6/18/14
  */
 public class McConfig {
 
@@ -19,7 +19,7 @@ public class McConfig {
     private String mcPort;
     private String mcContext;
     private String mcDomain;
-    
+
     private String notificationUser;
     private String notificationPass;
     private String notificationFromAddress;
@@ -74,7 +74,7 @@ public class McConfig {
     public String getMcDomain() {
         return mcDomain;
     }
-    
+
     public String getNotificationUser() {
         return notificationUser;
     }

@@ -7,17 +7,17 @@
  */
 package org.duracloud.account.monitor.duplication.util;
 
-import org.duracloud.account.monitor.duplication.DuplicationMonitor;
-import org.duracloud.common.error.DuraCloudRuntimeException;
-
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.duracloud.account.monitor.duplication.DuplicationMonitor;
+import org.duracloud.common.error.DuraCloudRuntimeException;
+
 /**
  * @author Bill Branan
- *         Date: 4/19/13
+ * Date: 4/19/13
  */
 public class DuplicationPropReader {
 
@@ -29,9 +29,9 @@ public class DuplicationPropReader {
     public Map<String, String> readDupProps(Properties props) {
         Map<String, String> dupHosts = new HashMap<>();
         Enumeration propNames = props.propertyNames();
-        while(propNames.hasMoreElements()) {
-            String propName = (String)propNames.nextElement();
-            if(propName.startsWith(PREFIX)) {
+        while (propNames.hasMoreElements()) {
+            String propName = (String) propNames.nextElement();
+            if (propName.startsWith(PREFIX)) {
                 String propValue = getProperty(props, propName);
                 if (propName.endsWith(HOST)) {
                     String spacesProp = propName.replace(HOST, SPACES);

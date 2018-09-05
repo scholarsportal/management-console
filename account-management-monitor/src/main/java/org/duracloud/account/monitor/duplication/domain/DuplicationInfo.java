@@ -18,7 +18,7 @@ import java.util.Set;
  * DuraCloud instance
  *
  * @author Bill Branan
- *         Date: 4/16/13
+ * Date: 4/16/13
  */
 public class DuplicationInfo {
 
@@ -50,7 +50,7 @@ public class DuplicationInfo {
     }
 
     private void checkStore(String storeId) {
-        if(!stores.containsKey(storeId)) {
+        if (!stores.containsKey(storeId)) {
             stores.put(storeId, new Store(storeId));
         }
     }
@@ -80,7 +80,7 @@ public class DuplicationInfo {
 
         } else {
             sb.append("ISSUES REPORTED:");
-            for(String issue: issues) {
+            for (String issue : issues) {
                 sb.append("\n");
                 sb.append(issue);
             }

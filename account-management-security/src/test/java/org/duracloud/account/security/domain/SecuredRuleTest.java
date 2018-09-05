@@ -13,7 +13,7 @@ import org.junit.Test;
 
 /**
  * @author Andrew Woods
- *         Date: 4/1/11
+ * Date: 4/1/11
  */
 public class SecuredRuleTest {
 

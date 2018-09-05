@@ -16,7 +16,6 @@ import org.duracloud.account.db.model.AccountRights;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.db.repo.DuracloudRightsRepo;
-import org.duracloud.account.db.repo.DuracloudUserRepo;
 
 /**
  * @author: Bill Branan Date: 2/17/12
@@ -31,9 +30,8 @@ public class UserFinderUtil {
 
     /**
      * Retrieves the users associated with the account
-     * 
+     *
      * @param account for which users should be gathered
-
      * @return the set of users associated with an account
      */
     public Set<DuracloudUser> getAccountUsers(AccountInfo account) {

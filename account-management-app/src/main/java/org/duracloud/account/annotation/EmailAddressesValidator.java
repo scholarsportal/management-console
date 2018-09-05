@@ -10,7 +10,6 @@ package org.duracloud.account.annotation;
 import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
@@ -20,7 +19,6 @@ import org.hibernate.validator.constraints.impl.EmailValidator;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
- * 
  */
 
 public class EmailAddressesValidator
@@ -30,7 +28,7 @@ public class EmailAddressesValidator
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.validation.ConstraintValidator#isValid(java.lang.Object,
      * javax.validation.ConstraintValidatorContext)
      */
@@ -47,19 +45,19 @@ public class EmailAddressesValidator
                 badAddresses.add(ea);
             }
         }
-        
-        if(badAddresses != null){
+
+        if (badAddresses != null) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(MessageFormat.format(constraintAnnotation.message(),
-                StringUtils.join(badAddresses, ", ")))
-                .addConstraintViolation();
+                                                                              StringUtils.join(badAddresses, ", ")))
+                   .addConstraintViolation();
         }
         return (badAddresses == null);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * javax.validation.ConstraintValidator#initialize(java.lang.annotation.
      * Annotation)

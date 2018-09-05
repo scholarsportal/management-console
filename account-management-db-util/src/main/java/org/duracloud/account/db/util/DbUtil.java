@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 import org.apache.commons.io.FileUtils;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
@@ -29,19 +31,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
-
 /**
  * Performs the work of the Account Management DB Util.
- * 
+ *
  * @author: Bill Branan Date: Dec 21, 2010
  */
 public class DbUtil {
 
     public enum COMMAND {
         GET, PUT, CLEAR
-    };
+    }
 
     private final Logger log = LoggerFactory.getLogger(DbUtil.class);
 
@@ -55,7 +54,7 @@ public class DbUtil {
 
     public void runCommand(COMMAND command) {
         System.out.println("Running DB Util with command " + command.name()
-                + "\n\t using work directory: " + workDir.getAbsolutePath());
+                           + "\n\t using work directory: " + workDir.getAbsolutePath());
 
         if (COMMAND.PUT.equals(command)) {
             doPut();
@@ -64,13 +63,12 @@ public class DbUtil {
         }
     }
 
-
     private void doPut() {
         // Defines the order to import the different entity types. This is
         // necessary because of defined and enforced JPA relationships.
-        String[] files = { "ServiceRepository", "StorageProviderAccount",
-                "ServerDetails", "AccountInfo", "DuracloudUser",
-                "DuracloudGroup", "UserInvitation", "AccountRights" };
+        String[] files = {"ServiceRepository", "StorageProviderAccount",
+                          "ServerDetails", "AccountInfo", "DuracloudUser",
+                          "DuracloudGroup", "UserInvitation", "AccountRights"};
 
         for (String fileName : files) {
             File inputFile = new File(workDir, fileName + ".xml");
@@ -87,7 +85,7 @@ public class DbUtil {
             return FileUtils.readFileToString(inFile, "UTF-8");
         } catch (IOException e) {
             throw new RuntimeException("Could not read from file " + inFile
-                    + " due to error " + e.getMessage());
+                                       + " due to error " + e.getMessage());
         }
     }
 
@@ -101,25 +99,23 @@ public class DbUtil {
                 // entities looked up and then set to save properly.
                 if (entity instanceof AccountInfo) {
                     AccountInfo sd = (AccountInfo) entity;
-                    sd.setPrimaryStorageProviderAccount(repoMgr
-                            .getStorageProviderAccountRepo().findOne(
-                                    sd.getPrimaryStorageProviderAccount()
-                                            .getId()));
+                    sd.setPrimaryStorageProviderAccount(
+                        repoMgr.getStorageProviderAccountRepo()
+                               .findOne(sd.getPrimaryStorageProviderAccount().getId()));
 
-                    Set<StorageProviderAccount> storageProviderAccounts = sd
-                            .getSecondaryStorageProviderAccounts();
+                    Set<StorageProviderAccount> storageProviderAccounts =
+                        sd.getSecondaryStorageProviderAccounts();
                     try {
                         if (storageProviderAccounts.size() > 0) {
                             Set<StorageProviderAccount> accounts = new HashSet<>();
                             for (StorageProviderAccount sp : storageProviderAccounts) {
-                                StorageProviderAccount account = repoMgr
-                                        .getStorageProviderAccountRepo()
-                                        .findOne(sp.getId());
+                                StorageProviderAccount account = repoMgr.getStorageProviderAccountRepo()
+                                                                        .findOne(sp.getId());
                                 accounts.add(account);
                             }
                             sd.setSecondaryStorageProviderAccounts(accounts);
                             log.warn("Set a secondary storage provider to ServerDetails with id "
-                                    + sd.getId());
+                                     + sd.getId());
                         }
                     } catch (LazyInitializationException e) {
                         // do nothing, there's no secondary storage providers
@@ -131,29 +127,25 @@ public class DbUtil {
                     repo.saveAndFlush(sd);
                 } else if (entity instanceof DuracloudGroup) {
                     DuracloudGroup dg = (DuracloudGroup) entity;
-                    dg.setAccount(repoMgr.getAccountRepo().findOne(
-                            dg.getAccount().getId()));
+                    dg.setAccount(repoMgr.getAccountRepo().findOne(dg.getAccount().getId()));
                     if (dg.getUsers().size() > 0) {
                         Set<DuracloudUser> users = new HashSet<>();
                         for (DuracloudUser user : dg.getUsers()) {
-                            users.add(repoMgr.getUserRepo().findOne(
-                                    user.getId()));
+                            users.add(repoMgr.getUserRepo().findOne(user.getId()));
                         }
                         dg.setUsers(users);
                     }
                     repo.saveAndFlush(dg);
                 } else if (entity instanceof AccountRights) {
                     AccountRights rights = (AccountRights) entity;
-                    rights.setAccount(repoMgr.getAccountRepo().findOne(
-                            rights.getAccount().getId()));
+                    rights.setAccount(repoMgr.getAccountRepo().findOne(rights.getAccount().getId()));
 
                     rights.setUser(repoMgr.getUserRepo().findOne(
-                            rights.getUser().getId()));
+                        rights.getUser().getId()));
                     repo.saveAndFlush(rights);
                 } else if (entity instanceof UserInvitation) {
                     UserInvitation ui = (UserInvitation) entity;
-                    ui.setAccount(repoMgr.getAccountRepo().findOne(
-                            ui.getAccount().getId()));
+                    ui.setAccount(repoMgr.getAccountRepo().findOne(ui.getAccount().getId()));
                     repo.saveAndFlush(ui);
                 } else {
                     repo.saveAndFlush(entity);
@@ -174,11 +166,11 @@ public class DbUtil {
             repo = repoMgr.getUserInvitationRepo();
         } else if (item instanceof StorageProviderAccount) {
             repo = repoMgr.getStorageProviderAccountRepo();
-        } else if(item instanceof DuracloudGroup) {
+        } else if (item instanceof DuracloudGroup) {
             repo = repoMgr.getGroupRepo();
         } else {
             throw new RuntimeException("Item is not a known type: "
-                    + item.getClass().getName());
+                                       + item.getClass().getName());
         }
         return repo;
     }
@@ -191,18 +183,14 @@ public class DbUtil {
         XStream xstream = new XStream(new DomDriver());
         xstream.setMode(XStream.NO_REFERENCES);
         xstream.alias(DuracloudUser.class.getSimpleName(), DuracloudUser.class);
-        xstream.alias(DuracloudGroup.class.getSimpleName(),
-                DuracloudGroup.class);
+        xstream.alias(DuracloudGroup.class.getSimpleName(), DuracloudGroup.class);
         xstream.alias(AccountInfo.class.getSimpleName(), AccountInfo.class);
         xstream.alias(AccountRights.class.getSimpleName(), AccountRights.class);
-        xstream.alias(UserInvitation.class.getSimpleName(),
-                UserInvitation.class);
-        xstream.alias(StorageProviderAccount.class.getSimpleName(),
-                      StorageProviderAccount.class);
+        xstream.alias(UserInvitation.class.getSimpleName(), UserInvitation.class);
+        xstream.alias(StorageProviderAccount.class.getSimpleName(), StorageProviderAccount.class);
         xstream.alias(Role.class.getSimpleName(), Role.class);
-        xstream.alias(StorageProviderType.class.getSimpleName(),
-                StorageProviderType.class);
-        
+        xstream.alias(StorageProviderType.class.getSimpleName(), StorageProviderType.class);
+
         return xstream;
     }
 

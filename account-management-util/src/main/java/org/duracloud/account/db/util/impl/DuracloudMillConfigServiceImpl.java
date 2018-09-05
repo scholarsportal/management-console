@@ -14,46 +14,46 @@ import org.duracloud.account.db.repo.DuracloudMillRepo;
 import org.duracloud.account.db.util.DuracloudMillConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 /**
  * A service for modifying Mill configuration settings.
- * @author Daniel Bernstein
  *
+ * @author Daniel Bernstein
  */
 @Component("duracloudMillConfigService")
-public class DuracloudMillConfigServiceImpl implements
-        DuracloudMillConfigService {
-    
+public class DuracloudMillConfigServiceImpl implements DuracloudMillConfigService {
+
     @Autowired
     private DuracloudMillRepo repo;
 
     public void setRepo(DuracloudMillRepo repo) {
         this.repo = repo;
     }
-    
+
     public DuracloudMillRepo getRepo() {
         return repo;
     }
-    
+
     @Override
     public DuracloudMill get() {
-            List<DuracloudMill> mill = repo.findAll();
-            DuracloudMill entity = null;
-            if (!mill.isEmpty()) {
-                entity = mill.get(0);
-            }
-            return entity;
+        List<DuracloudMill> mill = repo.findAll();
+        DuracloudMill entity = null;
+        if (!mill.isEmpty()) {
+            entity = mill.get(0);
+        }
+        return entity;
     }
 
     @Override
-    public void  set(String dbHost, 
-            Integer dbPort, 
-            String dbName,
-            String dbUsername, 
-            String dbPassword, 
-            String auditQueue,
-            String auditLogSpaceId) {
+    public void set(String dbHost,
+                    Integer dbPort,
+                    String dbName,
+                    String dbUsername,
+                    String dbPassword,
+                    String auditQueue,
+                    String auditLogSpaceId) {
         DuracloudMill dm = get();
-        if(null == dm) {
+        if (null == dm) {
             dm = new DuracloudMill();
         }
 
@@ -64,8 +64,8 @@ public class DuracloudMillConfigServiceImpl implements
         dm.setDbPassword(dbPassword);
         dm.setAuditQueue(auditQueue);
         dm.setAuditLogSpaceId(auditLogSpaceId);
-        
+
         repo.save(dm);
-        
+
     }
 }

@@ -7,18 +7,18 @@
  */
 package org.duracloud.account.email;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.duracloud.notification.Emailer;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author Andrew Woods
- *         Date: 7/6/11
+ * Date: 7/6/11
  */
 public class EmailUtilImplTest {
 
@@ -51,7 +51,7 @@ public class EmailUtilImplTest {
     public void testSendEmail() throws Exception {
         String subject = "subject";
         String body = "body";
-        String[] toAddresses = recipients.toArray(new String[]{});
+        String[] toAddresses = recipients.toArray(new String[] {});
         emailer.send(subject, body, toAddresses);
         EasyMock.expectLastCall();
 

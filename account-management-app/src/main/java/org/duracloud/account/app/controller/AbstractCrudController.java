@@ -21,22 +21,20 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
-
 /**
- * 
  * @author Daniel Bernstein
- *         Date: Feb 27, 2012
+ * Date: Feb 27, 2012
  */
-public abstract class AbstractCrudController<T> extends AbstractController{
+public abstract class AbstractCrudController<T> extends AbstractController {
 
     protected abstract String getBaseViewId();
 
     private Class<T> clazz;
-    
-    public AbstractCrudController(Class<T> clazz){
+
+    public AbstractCrudController(Class<T> clazz) {
         this.clazz = clazz;
     }
-    
+
     @ModelAttribute("form")
     public T form() {
         try {
@@ -46,7 +44,6 @@ public abstract class AbstractCrudController<T> extends AbstractController{
         }
     }
 
-    
     protected String getNewViewId() {
         return getBaseViewId() + "/new";
     }
@@ -54,37 +51,37 @@ public abstract class AbstractCrudController<T> extends AbstractController{
     protected String getEditViewId() {
         return getBaseViewId() + "/edit";
     }
-    
+
     @RequestMapping("")
     public abstract ModelAndView get();
-    
+
     @RequestMapping(NEW_MAPPING)
     public ModelAndView getNew() {
         return new ModelAndView(getNewViewId());
     }
-    
+
     @RequestMapping(value = NEW_MAPPING, method = RequestMethod.POST)
     @Transactional
     public ModelAndView create(@ModelAttribute("form") @Valid T form,
-                               BindingResult bindingResult, 
+                               BindingResult bindingResult,
                                Model model,
                                RedirectAttributes redirectAttributes) {
 
         boolean hasErrors = bindingResult.hasErrors();
 
-        if(hasErrors){
+        if (hasErrors) {
             return new ModelAndView(getNewViewId());
         }
-        
+
         create(form);
         log.info("created entity: {}", form);
         setSuccessFeedback(createSuccessMessage(),
-                        redirectAttributes);
+                           redirectAttributes);
 
         return new ModelAndView(new RedirectView(getBaseViewId(), true));
     }
-    
-    protected String createSuccessMessage(){
+
+    protected String createSuccessMessage() {
         return "Successfully created!";
     }
 
@@ -92,15 +89,15 @@ public abstract class AbstractCrudController<T> extends AbstractController{
 
     @RequestMapping(value = BY_ID_EDIT_MAPPING, method = RequestMethod.GET)
     @Transactional
-    public ModelAndView edit(@PathVariable Long id){
-        
+    public ModelAndView edit(@PathVariable Long id) {
+
         T form = getFormById(id);
         log.debug("retrieved form: id={} -> form=", id, form);
 
         return new ModelAndView(getEditViewId(), "form", form);
     }
-    
-    protected T getFormById(Long id){
+
+    protected T getFormById(Long id) {
         Object entity = getEntity(id);
         return loadForm(entity);
     }
@@ -111,20 +108,22 @@ public abstract class AbstractCrudController<T> extends AbstractController{
 
     @RequestMapping(value = BY_ID_EDIT_MAPPING, method = RequestMethod.POST)
     @Transactional
-    public ModelAndView
-        update(@PathVariable Long id, @ModelAttribute("form") @Valid T form,
-                          BindingResult bindingResult, Model model,RedirectAttributes redirectAttributes) {
+    public ModelAndView update(@PathVariable Long id,
+                               @ModelAttribute("form") @Valid T form,
+                               BindingResult bindingResult,
+                               Model model,
+                               RedirectAttributes redirectAttributes) {
         boolean hasErrors = bindingResult.hasErrors();
-        if(hasErrors){
+        if (hasErrors) {
             return new ModelAndView(getEditViewId());
         }
-        
+
         update(id, form);
 
         log.info("updated form: id={} -> form=", id, form);
 
         setSuccessFeedback(updateSuccessMessage(),
-                        redirectAttributes);
+                           redirectAttributes);
         return new ModelAndView(new RedirectView(getBaseViewId(), true));
     }
 
@@ -136,17 +135,16 @@ public abstract class AbstractCrudController<T> extends AbstractController{
 
     @RequestMapping(value = BY_ID_DELETE_MAPPING, method = RequestMethod.POST)
     @Transactional
-    public ModelAndView
-        delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        
+    public ModelAndView delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+
         delete(id);
         setSuccessFeedback(deleteSuccessMessage(),
-                        redirectAttributes);
+                           redirectAttributes);
         log.info("deleted object: id={}", id);
-        
+
         return new ModelAndView(new RedirectView(getBaseViewId(), true));
     }
-    
+
     protected String deleteSuccessMessage() {
         return "Successfully deleted!";
     }

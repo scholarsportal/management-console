@@ -13,9 +13,7 @@ import javax.validation.ConstraintValidatorContext;
 import org.apache.commons.beanutils.BeanUtils;
 
 /**
- * 
  * @author "Daniel Bernstein (dbernstein@durspace.org)"
- * 
  */
 public class FieldMatchValidator
     implements ConstraintValidator<FieldMatch, Object> {
@@ -31,20 +29,17 @@ public class FieldMatchValidator
         final Object value, final ConstraintValidatorContext context) {
         try {
 
-            final Object firstObj =
-                BeanUtils.getProperty(value, this.constraintAnnotation.first());
-            final Object secondObj =
-                BeanUtils.getProperty(value, this.constraintAnnotation.second());
+            final Object firstObj = BeanUtils.getProperty(value, this.constraintAnnotation.first());
+            final Object secondObj = BeanUtils.getProperty(value, this.constraintAnnotation.second());
 
             boolean doesNotMatch =
-                firstObj == null
-                    && secondObj == null || firstObj != null
-                    && firstObj.equals(secondObj);
+                firstObj == null && secondObj == null ||
+                firstObj != null && firstObj.equals(secondObj);
 
             if (!doesNotMatch) {
                 context.disableDefaultConstraintViolation();
                 context.buildConstraintViolationWithTemplate(this.constraintAnnotation.message())
-                .addNode(this.constraintAnnotation.second()).addConstraintViolation();
+                       .addNode(this.constraintAnnotation.second()).addConstraintViolation();
             }
             return doesNotMatch;
         } catch (final Exception ignore) {

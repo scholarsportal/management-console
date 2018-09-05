@@ -7,6 +7,15 @@
  */
 package org.duracloud.account.app.controller;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.duracloud.account.app.controller.GroupsForm.Action;
 import org.duracloud.account.db.model.DuracloudGroup;
 import org.duracloud.account.db.model.DuracloudUser;
@@ -17,15 +26,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.BindingResult;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.*;
-
 /**
- * 
- * @author Daniel Bernstein 
- *   Date: Nov 12, 2011
- * 
+ * @author Daniel Bernstein
+ * Date: Nov 12, 2011
  */
 public class AccountGroupsControllerTest extends AmaControllerTestBase {
 
@@ -76,7 +79,6 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
                 .times(times);
     }
 
-
     @Test
     public void testGetGroupsAddGroup() throws Exception {
         Long groupId = 3L;
@@ -86,14 +88,14 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
         EasyMock.expect(groupService.createGroup(
             DuracloudGroup.PREFIX + groupName, accountId)).andReturn(group);
 
-        result =  EasyMock.createMock("BindingResult", BindingResult.class);
+        result = EasyMock.createMock("BindingResult", BindingResult.class);
         EasyMock.expect(result.hasFieldErrors()).andReturn(false);
 
         replayMocks();
         GroupsForm form = new GroupsForm();
         form.setAction(Action.ADD);
         form.setGroupName(groupName);
-        
+
         String view = this.accountGroupsController.modifyGroups(accountId,
                                                                 model,
                                                                 form,
@@ -113,7 +115,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
         replayMocks();
         GroupsForm form = new GroupsForm();
         form.setAction(Action.REMOVE);
-        form.setGroupNames(new String[] { DuracloudGroup.PREFIX + TEST_GROUP_NAME });
+        form.setGroupNames(new String[] {DuracloudGroup.PREFIX + TEST_GROUP_NAME});
 
         String view = this.accountGroupsController.modifyGroups(accountId,
                                                                 model,
@@ -132,7 +134,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
         replayMocks();
         String view =
             this.accountGroupsController.getGroup(accountId,
-                                                  DuracloudGroup.PREFIX+TEST_GROUP_NAME,
+                                                  DuracloudGroup.PREFIX + TEST_GROUP_NAME,
                                                   model);
         Assert.assertEquals(AccountGroupsController.GROUP_VIEW_ID, view);
         Assert.assertNotNull(getModelAttribute(AccountGroupsController.GROUP_KEY));
@@ -164,7 +166,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
         replayMocks();
         String view =
             this.accountGroupsController.editGroup(accountId,
-                                                   DuracloudGroup.PREFIX+TEST_GROUP_NAME,
+                                                   DuracloudGroup.PREFIX + TEST_GROUP_NAME,
                                                    request,
                                                    model);
         Assert.assertEquals(AccountGroupsController.GROUP_EDIT_VIEW_ID, view);
@@ -209,7 +211,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
 
         String view =
             this.accountGroupsController.editGroup(accountId,
-                                                   DuracloudGroup.PREFIX+TEST_GROUP_NAME,
+                                                   DuracloudGroup.PREFIX + TEST_GROUP_NAME,
                                                    form,
                                                    request,
                                                    model);
@@ -230,7 +232,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
         EasyMock.expect(request.getSession()).andReturn(session).anyTimes();
 
         List<DuracloudUser> groupUsers =
-            new LinkedList<DuracloudUser>(Arrays.asList(new DuracloudUser[] { createUser() }));
+            new LinkedList<DuracloudUser>(Arrays.asList(new DuracloudUser[] {createUser()}));
 
         EasyMock.expect(session.getAttribute(AccountGroupsController.GROUP_USERS_KEY))
                 .andReturn(groupUsers)
@@ -252,10 +254,10 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
 
         GroupForm form = new GroupForm();
         form.setAction(GroupForm.Action.REMOVE);
-        form.setGroupUsernames(new String[] { testUsername });
+        form.setGroupUsernames(new String[] {testUsername});
         String view =
             this.accountGroupsController.editGroup(accountId,
-                                                   DuracloudGroup.PREFIX+TEST_GROUP_NAME,
+                                                   DuracloudGroup.PREFIX + TEST_GROUP_NAME,
                                                    form,
                                                    request,
                                                    model);
@@ -268,10 +270,10 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
 
         form = new GroupForm();
         form.setAction(GroupForm.Action.ADD);
-        form.setAvailableUsernames(new String[] { testUsername });
+        form.setAvailableUsernames(new String[] {testUsername});
 
         this.accountGroupsController.editGroup(accountId,
-                                               DuracloudGroup.PREFIX+TEST_GROUP_NAME,
+                                               DuracloudGroup.PREFIX + TEST_GROUP_NAME,
                                                form,
                                                request,
                                                model);

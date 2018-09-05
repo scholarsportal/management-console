@@ -7,8 +7,11 @@
  */
 package org.duracloud.account.db.util.impl;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,13 +27,12 @@ import org.easymock.TestSubject;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 /**
- * 
  * @author Daniel Bernstein
- *
  */
 @RunWith(EasyMockRunner.class)
-public class DuracloudMillConfigServiceImplTest extends EasyMockSupport{
+public class DuracloudMillConfigServiceImplTest extends EasyMockSupport {
 
     private static final String host = "host";
     private static final Integer port = 100;
@@ -42,15 +44,15 @@ public class DuracloudMillConfigServiceImplTest extends EasyMockSupport{
 
     @Mock
     private DuracloudMillRepo repo;
-    
+
     @TestSubject
     private DuracloudMillConfigServiceImpl subject = new DuracloudMillConfigServiceImpl();
-    
+
     @Test
     public void testGetNoPreviousSettings() {
         expect(repo.findAll()).andReturn(new ArrayList<DuracloudMill>());
         replayAll();
-        
+
         DuracloudMill mill = subject.get();
         assertTrue(mill == null);
     }
@@ -59,7 +61,7 @@ public class DuracloudMillConfigServiceImplTest extends EasyMockSupport{
     public void testGetPreviouslySavedSettings() {
         expect(repo.findAll()).andReturn(Arrays.asList(new DuracloudMill()));
         replayAll();
-        
+
         DuracloudMill mill = subject.get();
         assertNotNull(mill);
     }
@@ -87,7 +89,7 @@ public class DuracloudMillConfigServiceImplTest extends EasyMockSupport{
         DuracloudMill entity = createMock(DuracloudMill.class);
         expect(repo.findAll()).andReturn(Arrays.asList(entity));
         expect(repo.save(entity)).andReturn(entity);
-        
+
         entity.setDbHost(host);
         expectLastCall();
         entity.setDbPort(port);
@@ -109,9 +111,8 @@ public class DuracloudMillConfigServiceImplTest extends EasyMockSupport{
     }
 
     @After
-    public void tearDown(){
+    public void tearDown() {
         verifyAll();
     }
-
 
 }

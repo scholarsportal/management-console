@@ -11,7 +11,7 @@ import org.duracloud.common.error.DuraCloudCheckedException;
 
 /**
  * @author Andrew Woods
- *         Date: 7/17/11
+ * Date: 7/17/11
  */
 public class UnexpectedResponseException extends DuraCloudCheckedException {
 

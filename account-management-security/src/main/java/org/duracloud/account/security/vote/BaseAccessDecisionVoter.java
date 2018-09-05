@@ -7,6 +7,10 @@
  */
 package org.duracloud.account.security.vote;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.aopalliance.intercept.MethodInvocation;
 import org.duracloud.account.db.model.AccountRights;
 import org.duracloud.account.db.model.DuracloudUser;
@@ -22,13 +26,9 @@ import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * @author Andrew Woods
- *         Date: 4/5/11
+ * Date: 4/5/11
  */
 public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter<MethodInvocation> {
 
@@ -97,7 +97,7 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter<Met
                                            String role,
                                            Long acctId) {
         log.trace("Does user {} have role {} on acct {}?",
-                  new Object[]{user.getId(), role, acctId});
+                  new Object[] {user.getId(), role, acctId});
 
         AccountRights rights = getUserRightsForAcct(user.getId(), acctId);
         if (null == rights) {
@@ -122,14 +122,14 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter<Met
                                                            Long otherUserId,
                                                            Set<Role> otherRoles) {
         log.trace("Voting if user {} has roles on acct {} to manage {}.",
-                  new Object[]{userId, acctId, otherUserId});
+                  new Object[] {userId, acctId, otherUserId});
 
         AccountRights rights = getUserRightsForAcct(userId, acctId);
         AccountRights other = getUserRightsForAcct(otherUserId, acctId);
 
         if (null == rights || null == other) {
             log.warn("No rights found for users {}, {} on acct {}",
-                     new Object[]{userId, otherUserId, acctId});
+                     new Object[] {userId, otherUserId, acctId});
             return ACCESS_DENIED;
         }
 
@@ -140,13 +140,10 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter<Met
                                                                       otherRoles));
 
         log.trace("Are {} sufficient to update both {} and {}?",
-                  new Object[]{rights.getRoles(),
-                               other.getRoles(),
-                               otherRoles});
+                  new Object[] {rights.getRoles(), other.getRoles(), otherRoles});
 
         return existing && updates ? ACCESS_GRANTED : ACCESS_DENIED;
     }
-
 
     protected int voteRolesAreSufficientToUpdateOther(Set<Role> roles,
                                                       Set<Role> other) {
@@ -162,9 +159,7 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter<Met
         }
 
         boolean userHasRole = roles.contains(otherHighestRole);
-        log.trace("Roles {} has permission to manage other {}",
-                  roles,
-                  otherHighestRole);
+        log.trace("Roles {} has permission to manage other {}", roles, otherHighestRole);
 
         return userHasRole ? ACCESS_GRANTED : ACCESS_DENIED;
     }
@@ -204,7 +199,7 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter<Met
         if (principal instanceof String) {
             log.trace("Unknown user {}", principal);
             DuracloudUser user = new DuracloudUser();
-            user.setUsername((String)principal);
+            user.setUsername((String) principal);
             return user;
         } else {
             return (DuracloudUser) principal;
@@ -220,13 +215,15 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter<Met
                 return "ACCESS_ABSTAIN";
             case ACCESS_GRANTED:
                 return "ACCESS_GRANTED";
+            default:
+                return s;
         }
-        return s;
     }
-    
+
     @Override
-    public final int vote(Authentication authentication, MethodInvocation invocation,
-            Collection<ConfigAttribute> attributes) {
+    public final int vote(Authentication authentication,
+                          MethodInvocation invocation,
+                          Collection<ConfigAttribute> attributes) {
 
         if (!supportsTarget(invocation)) {
             return castVote(ACCESS_ABSTAIN, invocation);
@@ -237,8 +234,8 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter<Met
 
         // Collect user making the call.
         DuracloudUser user = getCurrentUser(authentication);
-        
-        if(user.isRootUser()){
+
+        if (user.isRootUser()) {
             return ACCESS_GRANTED;
         }
 
@@ -246,21 +243,21 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter<Met
         SecuredRule securedRule = getRule(attributes);
         String role = securedRule.getRole().name();
         SecuredRule.Scope scope = securedRule.getScope();
-        return voteImpl(authentication, invocation, attributes, methodArgs,  user, securedRule, role, scope);
+        return voteImpl(authentication, invocation, attributes, methodArgs, user, securedRule, role, scope);
     }
-    
+
     protected int castVote(int decision, MethodInvocation invocation) {
         String methodName = invocation.getMethod().getName();
         String className = invocation.getThis().getClass().getSimpleName();
-        log.trace("{}.{}() = {}", new Object[]{className, methodName, asString(
+        log.trace("{}.{}() = {}", new Object[] {className, methodName, asString(
             decision)});
         return decision;
     }
-    
+
     protected abstract int voteImpl(Authentication authentication,
-            MethodInvocation invocation,
-            Collection<ConfigAttribute> attributes, Object[] methodArgs,
-            DuracloudUser user, SecuredRule securedRule, String role,
-            SecuredRule.Scope scope);
+                                    MethodInvocation invocation,
+                                    Collection<ConfigAttribute> attributes, Object[] methodArgs,
+                                    DuracloudUser user, SecuredRule securedRule, String role,
+                                    SecuredRule.Scope scope);
 
 }

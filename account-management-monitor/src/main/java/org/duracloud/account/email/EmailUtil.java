@@ -12,7 +12,7 @@ package org.duracloud.account.email;
  * emails.
  *
  * @author Andrew Woods
- *         Date: 7/6/11
+ * Date: 7/6/11
  */
 public interface EmailUtil {
 

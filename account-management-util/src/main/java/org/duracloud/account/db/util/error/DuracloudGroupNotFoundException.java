@@ -10,10 +10,8 @@ package org.duracloud.account.db.util.error;
 import org.duracloud.common.error.DuraCloudCheckedException;
 
 /**
- * 
- * @author Daniel Bernstein 
- *         Date: Nov 11, 2011
- *
+ * @author Daniel Bernstein
+ * Date: Nov 11, 2011
  */
 public class DuracloudGroupNotFoundException extends DuraCloudCheckedException {
     private static final long serialVersionUID = 1L;
@@ -22,8 +20,7 @@ public class DuracloudGroupNotFoundException extends DuraCloudCheckedException {
         super(message);
     }
 
-    public DuracloudGroupNotFoundException(String message,
-                                              Throwable throwable) {
+    public DuracloudGroupNotFoundException(String message, Throwable throwable) {
         super(message, throwable);
     }
 }

@@ -11,7 +11,7 @@ import org.duracloud.common.error.DuraCloudRuntimeException;
 
 /**
  * @author Andrew Woods
- *         Date: 4/5/12
+ * Date: 4/5/12
  */
 public class DurabossUpdateException extends DuraCloudRuntimeException {
 
@@ -20,8 +20,7 @@ public class DurabossUpdateException extends DuraCloudRuntimeException {
     }
 
     public DurabossUpdateException(String msg, Throwable e) {
-        super("Unable to update DuraBoss : " + msg + " due to: " +
-                  e.getMessage());
+        super("Unable to update DuraBoss : " + msg + " due to: " + e.getMessage());
     }
 
 }

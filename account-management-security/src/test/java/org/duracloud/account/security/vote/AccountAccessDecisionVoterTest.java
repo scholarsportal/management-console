@@ -7,6 +7,11 @@
  */
 package org.duracloud.account.security.vote;
 
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+
 import org.aopalliance.intercept.MethodInvocation;
 import org.duracloud.account.db.model.AccountRights;
 import org.duracloud.account.db.model.DuracloudUser;
@@ -28,14 +33,9 @@ import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.core.Authentication;
 
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-
 /**
  * @author Andrew Woods
- *         Date: 4/9/11
+ * Date: 4/9/11
  */
 public class AccountAccessDecisionVoterTest {
 
@@ -106,15 +106,14 @@ public class AccountAccessDecisionVoterTest {
 
     private DuracloudRepoMgr createRepoMgr(AccountRights rights)
         throws DBNotFoundException {
-        DuracloudRepoMgr mgr = EasyMock.createMock("DuracloudRepoMgr",
-                                                   DuracloudRepoMgr.class);
-        DuracloudRightsRepo rightsRepo = EasyMock.createMock(
-            "DuracloudRightsRepo",
-            DuracloudRightsRepo.class);
+        DuracloudRepoMgr mgr =
+            EasyMock.createMock("DuracloudRepoMgr", DuracloudRepoMgr.class);
+        DuracloudRightsRepo rightsRepo =
+            EasyMock.createMock("DuracloudRightsRepo", DuracloudRightsRepo.class);
 
         EasyMock.expect(rightsRepo.findByAccountIdAndUserId(EasyMock.anyLong(),
                                                             EasyMock.anyLong()))
-            .andReturn(rights);
+                .andReturn(rights);
 
         EasyMock.expect(mgr.getRightsRepo()).andReturn(rightsRepo);
 
@@ -145,8 +144,8 @@ public class AccountAccessDecisionVoterTest {
 
         EasyMock.expect(inv.getArguments()).andReturn(new Object[0]);
         // set up acctService
-        AccountService acctService = EasyMock.createMock("AccountService",
-                                                         AccountService.class);
+        AccountService acctService =
+            EasyMock.createMock("AccountService", AccountService.class);
         EasyMock.expect(acctService.getAccountId()).andReturn(id);
 
         EasyMock.replay(acctService);
@@ -157,9 +156,7 @@ public class AccountAccessDecisionVoterTest {
 
         Map<String, Object[]> methodMap = EasyMock.createMock("Map", Map.class);
         EasyMock.expect(methodMap.get(EasyMock.isA(String.class)))
-            .andReturn(new Object[]{securityConfig.iterator()
-                                        .next()
-                                        .getAttribute()});
+                .andReturn(new Object[] {securityConfig.iterator().next().getAttribute()});
         EasyMock.replay(methodMap);
 
         AnnotationParser annotationParser = EasyMock.createMock(
@@ -169,12 +166,12 @@ public class AccountAccessDecisionVoterTest {
         EasyMock.replay(annotationParser);
 
         // set up recursive voter
-        AccessDecisionVoter<MethodInvocation> subVoter = EasyMock.createMock("AccessDecisionVoter",
-                                                        AccessDecisionVoter.class);
+        AccessDecisionVoter<MethodInvocation> subVoter =
+            EasyMock.createMock("AccessDecisionVoter", AccessDecisionVoter.class);
         EasyMock.expect(subVoter.vote(EasyMock.<Authentication>anyObject(),
-                                   EasyMock.<MethodInvocation>anyObject(),
-                                   EasyMock.<Collection<ConfigAttribute>>anyObject()))
-            .andReturn(AccessDecisionVoter.ACCESS_GRANTED);
+                                      EasyMock.<MethodInvocation>anyObject(),
+                                      EasyMock.<Collection<ConfigAttribute>>anyObject()))
+                .andReturn(AccessDecisionVoter.ACCESS_GRANTED);
         EasyMock.replay(subVoter);
         AccountServiceSecuredImpl serviceImpl = new AccountServiceSecuredImpl(
             acctService,

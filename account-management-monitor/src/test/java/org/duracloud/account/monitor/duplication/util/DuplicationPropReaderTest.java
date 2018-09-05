@@ -7,20 +7,18 @@
  */
 package org.duracloud.account.monitor.duplication.util;
 
-import org.duracloud.account.monitor.duplication.DuplicationMonitor;
-import org.duracloud.account.monitor.duplication.DuplicationMonitorDriver;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.StringReader;
 import java.util.Map;
 import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.junit.Test;
 
 /**
  * @author Bill Branan
- *         Date: 4/19/13
+ * Date: 4/19/13
  */
 public class DuplicationPropReaderTest {
 

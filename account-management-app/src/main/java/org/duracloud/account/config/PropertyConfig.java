@@ -15,19 +15,27 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+
 /**
- * This configuration class ensures that the mc-config.properties are loaded before any downstream component 
+ * This configuration class ensures that the mc-config.properties are loaded before any downstream component
  * and/or configs read properties from the environment.
- * @author Daniel Bernstein
  *
+ * @author Daniel Bernstein
  */
 @Configuration
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @PropertySource("${mc.config.file}") //this references the system property.
+/*
+ * Checkstyle suppression is necessary to allow static method and public
+ * constructor, see: https://jira.duraspace.org/browse/DURACLOUD-1190
+ */
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class PropertyConfig {
+
     @Bean
-    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() throws IOException{
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() throws IOException {
         PropertySourcesPlaceholderConfigurer p = new PropertySourcesPlaceholderConfigurer();
         return p;
     }
+
 }

@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
- * 
  */
 
 public class AccountManagerServiceImpl implements AccountManagerService {
@@ -89,7 +88,7 @@ public class AccountManagerServiceImpl implements AccountManagerService {
                                                .save(primaryStorageProviderAccount);
 
         Set<StorageProviderAccount> secondaryStorageProviderAccounts = new HashSet<>();
-        for(StorageProviderType storageType :
+        for (StorageProviderType storageType :
             accountCreationInfo.getSecondaryStorageProviderTypes()) {
             StorageProviderAccount storageProviderAccount = new StorageProviderAccount();
             storageProviderAccount.setProviderType(storageType);
@@ -119,11 +118,11 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 
     @Override
     public Set<AccountInfo> findAccountsByUserId(Long userId) {
-        
+
         DuracloudUser user = repoMgr.getUserRepo().getOne(userId);
-        if(user.isRoot()){
+        if (user.isRoot()) {
             return new HashSet<>(repoMgr.getAccountRepo().findAll());
-        }else{
+        } else {
             List<AccountRights> userRights = repoMgr.getRightsRepo().findByUserId(userId);
             Set<AccountInfo> userAccounts = new HashSet<>();
             for (AccountRights rights : userRights) {

@@ -7,16 +7,16 @@
  */
 package org.duracloud.account.security.domain;
 
-import org.duracloud.account.db.model.Role;
-
 import java.util.StringTokenizer;
+
+import org.duracloud.account.db.model.Role;
 
 /**
  * This class defines a bean used to constrain the access rules over secured
  * method calls.
  *
  * @author Andrew Woods
- *         Date: 4/1/11
+ * Date: 4/1/11
  */
 public class SecuredRule {
 

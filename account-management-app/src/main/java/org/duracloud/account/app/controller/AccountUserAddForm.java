@@ -14,7 +14,7 @@ public class AccountUserAddForm {
 
     private int userId;
 
-    @NotBlank(message="Role is required")
+    @NotBlank(message = "Role is required")
     private String role;
 
     public String getRole() {

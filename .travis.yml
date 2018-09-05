@@ -9,5 +9,62 @@ notifications:
     on_failure: always
   slack: duraspace:vOBySuKUwM95j2kfbwh0SNxq
 install:
-  - mvn install -DskipTests -DskipDeploy
-
+  - mvn install -DskipTests -DskipDeploy --batch-mode
+script:
+  - mvn test -DskipIntTests
+sudo: true
+deploy:
+  - provider: s3
+    access_key_id: $ARTIFACTS_KEY
+    secret_access_key: $ARTIFACTS_SECRET
+    bucket: $ARTIFACTS_BUCKET
+    region: $ARTIFACTS_REGION
+    skip_cleanup: true
+    local_dir: $TRAVIS_BUILD_DIR/target
+    upload-dir: management-console/master
+    on:
+      branch: master
+  - provider: s3
+    access_key_id: $ARTIFACTS_KEY
+    secret_access_key: $ARTIFACTS_SECRET
+    bucket: $ARTIFACTS_BUCKET
+    region: $ARTIFACTS_REGION
+    skip_cleanup: true
+    local_dir: $TRAVIS_BUILD_DIR/target
+    upload-dir: management-console/tagged-releases/$TRAVIS_TAG
+    on:
+      tags: true
+  - provider: s3
+    access_key_id: $ARTIFACTS_KEY
+    secret_access_key: $ARTIFACTS_SECRET
+    bucket: $ARTIFACTS_BUCKET
+    region: $ARTIFACTS_REGION
+    skip_cleanup: true
+    local_dir: $TRAVIS_BUILD_DIR/target
+    upload-dir: management-console/develop
+    on:
+      branch: develop
+  - provider: releases
+    api_key:
+      secure: hNuckzskswfCkY5tXzY9uxFyp9M7ZAfAdo0ys5rtJa2vmT2zRymj3mAAfxO6WBchrEnEyd2amMUBYny2lItz3PuOQiYs8caxAjWFlxIsJhMRVIlLlrZpkYs7PMu9CD//Q8AdhhRFITIZj+i/iH50FeOXRy7Lhs/CuwyAMVIDkxU=
+    skip_cleanup: true
+    file-glob: true
+    file:
+      - "target/ama*.war"
+      - "target/sha512sum.txt.asc"
+    on:
+      tags: true
+env:
+  global:
+    - secure:  "Y8naNuhbw1yx24AwhAwIh5xuP+GIp+sVYfz5F2NAscpIEN5Jx/NtSFzzR2uA6zIj8h3ZicUgYgzflv3pECUlcnMLn1YaPj2JMTCiAtVoyq9VlKI9xBiSR75kGDIBU1GDTTuuZTJAVY4AxBX29hhQpJRdVRJ8pT54N7SX5dxvG9NF5zy+3Bd0Hh984gi1t+BpkUd6/2kQYsz4jA2dQ6ZACa3xEvTshSz89fPtIRJPs5gm6W4YAfdT1cE7MM6ywWuYN2DP00LjPAMCCPkx5MMXLYPVR8+NUaUuEP6is7BisvnoHjAuUVmDZgvEGsB0uXpbTuRkuCdQOw1cUUa6ylhC2T3O2cbQhiP5BWQyRbmk8hIC7ykLas7wYD39PelqxMo/EeYfMXa+EQDqGBYDmSuOKwDTiKQ200nROILW/fk9YrEOR++VFVETIdvEPl12yEJhN9JBfFoMRiOqQuymzUhe52Wzgz/4dV09vYwSUMchRO9J5FLOxc/WPVk6M5mcT0qjw8ldeMOZT3x8pHMeMzuAYT63poQ0MmSnH/kj20oLZbVXRWQmn8ajD79b6Utqutxe32qsS0iWukToLLPAWTJlgXm9QP4PxHC9pEhEtPXChjD4RLGDYayEH0CBNffUc9bc36Dh42XHwu+XeYHvMPU0JCUeseew0L5+4fMSgzQDVJI="
+    - # ^^ SONATYPE_USERNAME
+    - secure: "UyfGpl5veNz2G8J/FBJaL39eJaWGJSLLgEVaJbYckHnQbcGRE2dqTpY5NI4dNzgNV1KD118TQbPySeAI7EwkDOcNNodRdkjDyg0l/72hn1GlJduGYSKXEhGjj8rPFyYmQzroa/1cElmhXM89lQjTBMWFSA6U2iYi/UAk91jmCYmxlmoayWLCcDxgGRDocs+HMutqceL9eauCdanIzMXVvnWf01C0B0KSr+ucnsQnx2NFUir99wBd7O+Hzle6QpUSM2kOjAqDLXoQcwqLR5UJfS6wfPsgbA5CZ+S7PYBHKHE5Tcv4Nl9v0/tiYmTy4hvNqxds1VagYuuqKMoRlmfwEr6Ua58YrUKOq9Xd8WuzvFiHOhmsJbjvZt5/6ETE0/+nJkpu+xns0rYHWFQPyDuaDrgeBpyPM7hHow7oX+7U6g0t+qkcNoN8LDOhQlE0zRg6LrWDuSRS4vg4ON04Dt0mafVhV6sQmB81cpDIJEJk0BdcU39sb9yBC6H8ldWoa+35wNHK4dbFTGK/9yGyyTgOoV86RbILmxVBqdwAWEqSgulXtGoKDKXJiiinxrcVg3fak1r4SQDR6IMxfVCxvdZTm5R5T9c4RNDV7yUedv+jD7LBlPI7u/osX+AaGj6GjRFDFriMm3gJWi3qT3nFEuYonIrDF6PQ0W4LRj4RZqs7u+w="
+    - # ^^ SONATYPE_PASSWORD
+    - secure: "ccGy/hNx7dq+DACPCTzUsogTaCAVTajnehTBa04PZNTfx+3OuRCV/g5f16zS7IfOvsxziZzjDuZTGfXWb4WqHMDGnnI/r14Z2XH/3070mNdV/9kLv353vtZTErTbn7kuykGu/xeXuxLKCjQlcVGgTAneZXWcqjJK/ze3FGltR5zU04Ue6FD3g8/+pjZvkWRd0J0zSndB/bkysRWNi7Ons9TMgItHIhJNT9y1MWnjlbRSHe1mQ6vlyTOaLaDgt47JHI7vP1/axNu66Xaim0foVLst+G8a8QQM7XLIJoIvsdSIlx16Rn1Cg6ouTas5MJ/kLv63LYjhrwnnHAn0MN6g2wX/ukzw2zhKf77Vy5w8a2l60j+baxTfIX6j1KGqh2NBnA7sXpaPHIuxz3FATpZqLpetKwxuCf/8FOjI2K5NND8QccU0BYEGmWy4try6vCKJNDkd4iWDkFJxo+LTydGuctpeqGWLW9ohoqm1BzrDN/cC8vz7QXjNGrIgL0l+K0fQcfhRh7DSqL64xqx8aOtGRsuv+3sm0jRxoCHrQ1hmEC7M1zeM8ERbuqIXb4itiLWCPAMdodqiu57UbIbZHE25oPmTx1H3jUldeCKRw4kZpk6srlSL0m430DzQ/Jc18T+BDlbKuB0bdOdUwM8vpNwOk7BbXdUmc5YFmAjoFFYEFO0="
+    - # ^^ GPG_KEY_NAME
+    - secure: "LwvMgv5qUpv89p8s940STj6LTjih2dy5nRhrHnCnkCjwDNa/cgb7Fev5vE5WltGZX8lRmOZj0iaChmbab2L7PxIwYRXxrUwcZ223g2Z3iz/MBvAjyNdlzS33zvewhv+yK1sTox7KeIq4EYz+3/LuyrFM1PQ1XCAZoAlxwM7eDV9v/QAX2UFnPqY5Lwqx7wid8w842EP9PFscboJ6G9OVzT5zCGQ9W2EfzUQOzKaLhstrEkfNWeSkEfx6kG1/GAvDWGHEmz0qcQlg8NJ0OzjKqLSLAbSKmFolshALfoxpLmhSx+ambw97HSv4Qu3eTNht+EluVrIMbXHl76f9spCFSUEqqwHOhLShwYI6EWRBIW/BVzAwkgwSH7+vBH+ly5msY8ODeJG4NIwenLtvDty7uhRpGm/rpom5JfdUJm+FS+yvtZQPH0039tmm8gVPfyYIoaNgxS/NstNz4ylVL+irbZ8tL1jlMBsujG1IvReYg44Y9oaXMvfKchdMVf5y0sDfggq858OfbfHJLVYO/wmXJa02L9CJ/J7vMrFjBXeCv3TVWT5Q1WURdgE07MivCIzvR/JAv9/LTPCtSeRcvKWPLpZIWlFCwDo+4fqS31TmDkArUticrCp3QLxxEprjFe6+Sb3apuqdeDCsJHm5gkVgc/Ut2cgHgbQqHIDCbglRAd4="
+    - # ^^ GPG_PASSPHRASE
+after_success:
+  - chmod +x resources/travis/*.sh
+  - ./resources/travis/before-deploy.sh
+  - ./resources/travis/deploy.sh
