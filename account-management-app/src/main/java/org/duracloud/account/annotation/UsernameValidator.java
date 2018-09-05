@@ -28,7 +28,7 @@ public class UsernameValidator implements ConstraintValidator<UsernameConstraint
 
     private static final String INVALID_USERNAME_MESSAGE =
         "The username \"{0}\" is invalid. Usernames must contain only " +
-        "lowercase letters, numbers, '-','_','@', '.', and start and end " +
+        "lowercase letters, numbers, '-', '_', '.', and start and end " +
         "with a letter or number.";
     private static final String RESERVED_USERNAME_MESSAGE =
         "\"{0}\" is a reserved name. Please choose another username.";

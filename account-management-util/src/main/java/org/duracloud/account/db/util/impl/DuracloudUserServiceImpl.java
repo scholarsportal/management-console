@@ -98,7 +98,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
             return false;
         }
 
-        return username.matches("\\A(?![_.@\\-])[a-z0-9_.@\\-]+(?<![_.@\\-])\\Z");
+        return username.matches("\\A(?![_.\\-])[a-z0-9_.\\-]+(?<![_.\\-])\\Z");
     }
 
     private boolean isReservedName(String username) {
