@@ -109,8 +109,8 @@ public interface RootAccountManagerService {
      * @param id
      * @param username
      * @param password
-     * @param storageLimit
      * @parma properties
+     * @param storageLimit
      */
     @Secured({"role:ROLE_ROOT, scope:ANY"})
     public void setupStorageProvider(Long id, String username, String password, Map<String, String> properties,
