@@ -31,6 +31,7 @@
           <jsp:include page="/WEB-INF/jspx/includes/storage-provider-form.jspx">
             <jsp:param value="primaryStorageProviderSettings" name="storageProvider"/>
             <jsp:param value="Primary Storage Provider" name="storageProviderName"/>
+            <jsp:param value="primary" name="storageProviderRole"/>
             <jsp:param value="${setupAccountForm.primaryStorageProviderSettings.providerType}" name="storageProviderType"/>
           </jsp:include>
           
@@ -40,12 +41,13 @@
                var="s"
                varStatus="loop"
                items="${setupAccountForm.secondaryStorageProviderSettingsList}">
-		          <jsp:include page="/WEB-INF/jspx/includes/storage-provider-form.jspx">
-		            <jsp:param value="secondaryStorageProviderSettingsList[${loop.index}]" name="storageProvider"/>
-		            <jsp:param value="Secondary Storage Provider" name="storageProviderName"/>
-		            <jsp:param value="${setupAccountForm.secondaryStorageProviderSettingsList[loop.index].providerType}" name="storageProviderType"/>
-		          </jsp:include>
-              </c:forEach>
+              <jsp:include page="/WEB-INF/jspx/includes/storage-provider-form.jspx">
+                <jsp:param value="secondary" name="storageProviderRole"/>
+                <jsp:param value="secondaryStorageProviderSettingsList[${loop.index}]" name="storageProvider"/>
+                <jsp:param value="Secondary Storage Provider" name="storageProviderName"/>
+                <jsp:param value="${setupAccountForm.secondaryStorageProviderSettingsList[loop.index].providerType}" name="storageProviderType"/>
+              </jsp:include>
+            </c:forEach>
           </c:if>    
          <fieldset
          class="button-bar">

@@ -41,6 +41,29 @@ public interface RootAccountManagerService {
     public Set<DuracloudUser> listAllUsers(String filter);
 
     /**
+     * @param filter optional filter on username
+     * @return
+     */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
+    public Set<DuracloudUser> listAllRootUsers(String filter);
+
+    /**
+     * Add root to a user
+     *
+     * @param id
+     */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
+    public void setRootUser(Long id);
+
+    /**
+     * Remove root from a user
+     *
+     * @param id
+     */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
+    public void unsetRootUser(Long id);
+
+    /**
      * Delete a user from the system
      *
      * @param id
@@ -86,8 +109,8 @@ public interface RootAccountManagerService {
      * @param id
      * @param username
      * @param password
-     * @param storageLimit
      * @parma properties
+     * @param storageLimit
      */
     @Secured({"role:ROLE_ROOT, scope:ANY"})
     public void setupStorageProvider(Long id, String username, String password, Map<String, String> properties,

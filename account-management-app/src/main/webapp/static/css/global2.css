@@ -701,6 +701,10 @@ li.account:hover {
     padding-bottom:20px;
 }
 
+.rootuser-list {
+    padding-bottom:20px;
+}
+
 .entity-list td {
 	font-size: 13px;
 }
@@ -1008,4 +1012,8 @@ div.global-errors{
 	list-style-position: inside;
 	border-bottom:0 !important;
 	color:#515151 !important;
+}
+
+#emailTemplateForm input, #emailTemplateForm textarea {
+  width:500px;
 }
