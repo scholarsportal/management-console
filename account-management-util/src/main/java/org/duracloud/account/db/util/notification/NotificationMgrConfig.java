@@ -13,17 +13,24 @@ package org.duracloud.account.db.util.notification;
  */
 public class NotificationMgrConfig {
 
+
+    private String emailerType;
     private String fromAddress;
     private String username;
     private String password;
     private String adminAddress;
 
-    public NotificationMgrConfig(String fromAddress, String username,
+    public NotificationMgrConfig(String emailerType, String fromAddress, String username,
                                  String password, String adminAddress) {
+        this.emailerType = emailerType;
         this.fromAddress = fromAddress;
         this.username = username;
         this.password = password;
         this.adminAddress = adminAddress;
+    }
+
+    public String getEmailerType() {
+        return emailerType;
     }
 
     public String getFromAddress() {

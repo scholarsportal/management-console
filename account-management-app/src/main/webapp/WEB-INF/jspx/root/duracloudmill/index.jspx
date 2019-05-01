@@ -71,9 +71,35 @@
 						<td><c:out value="${duracloudMill.dbUsername}"/></td>
 					</tr>
 					<tr>
+						<td>Audit Queue Type</td>
+						<td><c:out value="${duracloudMill.auditQueueType}"/></td>
+					</tr>
+					<tr>
 						<td>Audit Queue Name</td>
 						<td><c:out value="${duracloudMill.auditQueue}"/></td>
 					</tr>
+					<c:if test="${duracloudMill.auditQueueType == 'RabbitMQ'}">
+						<tr>
+							<td>RabbitMQ Host</td>
+							<td><c:out value="${duracloudMill.rabbitmqHost}"/></td>
+						</tr>
+						<tr>
+							<td>RabbitMQ Port</td>
+							<td><c:out value="${duracloudMill.rabbitmqPort}"/></td>
+						</tr>
+						<tr>
+							<td>RabbitMQ Virtual Host</td>
+							<td><c:out value="${duracloudMill.rabbitmqVhost}"/></td>
+						</tr>
+						<tr>
+							<td>RabbitMQ Exchange</td>
+							<td><c:out value="${duracloudMill.rabbitmqExchange}"/></td>
+						</tr>
+						<tr>
+							<td>RabbitMQ Username</td>
+							<td><c:out value="${duracloudMill.rabbitmqUsername}"/></td>
+						</tr>
+					</c:if>
 					<tr>
 						<td>Audit Log Space Id</td>
 						<td><c:out value="${duracloudMill.auditLogSpaceId}"/></td>

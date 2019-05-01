@@ -23,7 +23,7 @@ import org.duracloud.account.db.repo.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.util.AccountService;
 import org.duracloud.account.db.util.EmailTemplateService;
 import org.duracloud.account.db.util.notification.NotificationMgr;
-import org.duracloud.common.sns.AccountChangeNotifier;
+import org.duracloud.common.changenotifier.AccountChangeNotifier;
 import org.duracloud.notification.Emailer;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.easymock.EasyMockRunner;

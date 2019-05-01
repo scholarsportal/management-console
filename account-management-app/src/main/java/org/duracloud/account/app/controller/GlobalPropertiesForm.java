@@ -7,23 +7,100 @@
  */
 package org.duracloud.account.app.controller;
 
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author Daniel Bernstein
  */
 public class GlobalPropertiesForm {
-    @NotBlank
+    @NotNull
+    private String notifierType;
+
+    @NotNull
+    private String rabbitmqHost;
+
+    @NotNull
+    private Integer rabbitmqPort = 5672;
+
+    @NotNull
+    private String rabbitmqVhost = "/";
+
+    @NotNull
+    private String rabbitmqExchange;
+
+    @NotNull
+    private String rabbitmqUsername;
+
+    @NotNull
+    private String rabbitmqPassword;
+
+    @NotNull
     private String instanceNotificationTopicArn;
 
-    @NotBlank(message = "You must specify a CloudFront Account Id")
+    @NotNull(message = "You must specify a CloudFront Account Id")
     private String cloudFrontAccountId;
 
-    @NotBlank(message = "You must specify a Cloud Key Id")
+    @NotNull(message = "You must specify a Cloud Key Id")
     private String cloudFrontKeyId;
 
-    @NotBlank(message = "You must specify a CloudFront Key Path")
+    @NotNull(message = "You must specify a CloudFront Key Path")
     private String cloudFrontKeyPath;
+
+    public String getNotifierType() {
+        return notifierType;
+    }
+
+    public void setNotifierType(String notifierType) {
+        this.notifierType = notifierType;
+    }
+
+    public String getRabbitmqHost() {
+        return rabbitmqHost;
+    }
+
+    public void setRabbitmqHost(String rabbitmqHost) {
+        this.rabbitmqHost = rabbitmqHost;
+    }
+
+    public Integer getRabbitmqPort() {
+        return rabbitmqPort;
+    }
+
+    public void setRabbitmqPort(Integer rabbitmqPort) {
+        this.rabbitmqPort = rabbitmqPort;
+    }
+
+    public String getRabbitmqVhost() {
+        return rabbitmqVhost;
+    }
+
+    public void setRabbitmqVhost(String rabbitmqVhost) {
+        this.rabbitmqVhost = rabbitmqVhost;
+    }
+
+    public String getRabbitmqExchange() {
+        return rabbitmqExchange;
+    }
+
+    public void setRabbitmqExchange(String rabbitmqExchange) {
+        this.rabbitmqExchange = rabbitmqExchange;
+    }
+
+    public String getRabbitmqUsername() {
+        return rabbitmqUsername;
+    }
+
+    public void setRabbitmqUsername(String rabbitmqUsername) {
+        this.rabbitmqUsername = rabbitmqUsername;
+    }
+
+    public String getRabbitmqPassword() {
+        return rabbitmqPassword;
+    }
+
+    public void setRabbitmqPassword(String rabbitmqPassword) {
+        this.rabbitmqPassword = rabbitmqPassword;
+    }
 
     public String getInstanceNotificationTopicArn() {
         return instanceNotificationTopicArn;

@@ -54,11 +54,39 @@
 				</thead>
 
 				<tbody>
-					<tr>
-						<td><spring:message
-             code="globalproperties.instancenotificationtopicarn" /></td>
-						<td><c:out value="${globalProperties.instanceNotificationTopicArn}"/></td>
-					</tr>
+                <tr>
+                    <td>Notifier Type</td>
+                    <td><c:out value="${globalProperties.notifierType}"/></td>
+                </tr>
+                <c:if test="${globalProperties.notifierType == 'RabbitMQ'}">
+                    <tr>
+                        <td>RabbitMQ Host</td>
+                        <td><c:out value="${globalProperties.rabbitmqHost}"/></td>
+                    </tr>
+                    <tr>
+                        <td>RabbitMQ Port</td>
+                        <td><c:out value="${globalProperties.rabbitmqPort}"/></td>
+                    </tr>
+                    <tr>
+                        <td>RabbitMQ Virtual Host</td>
+                        <td><c:out value="${globalProperties.rabbitmqVhost}"/></td>
+                    </tr>
+                    <tr>
+                        <td>RabbitMQ Exchange</td>
+                        <td><c:out value="${globalProperties.rabbitmqExchange}"/></td>
+                    </tr>
+                    <tr>
+                        <td>RabbitMQ Username</td>
+                        <td><c:out value="${globalProperties.rabbitmqUsername}"/></td>
+                    </tr>
+                </c:if>
+                <c:if test="${globalProperties.notifierType == 'AWS'}">
+                    <tr>
+                        <td><spring:message
+                                code="globalproperties.instancenotificationtopicarn" /></td>
+                        <td><c:out value="${globalProperties.instanceNotificationTopicArn}"/></td>
+                    </tr>
+                </c:if>
           <tr>
             <td><spring:message
              code="globalproperties.cloudfrontaccountid" /></td>

@@ -18,7 +18,7 @@ import org.duracloud.account.db.util.error.InvalidUsernameException;
 import org.duracloud.account.db.util.error.ReservedPrefixException;
 import org.duracloud.account.db.util.error.UserAlreadyExistsException;
 import org.duracloud.account.db.util.notification.NotificationMgr;
-import org.duracloud.common.sns.AccountChangeNotifier;
+import org.duracloud.common.changenotifier.AccountChangeNotifier;
 import org.easymock.EasyMockRunner;
 import org.easymock.EasyMockSupport;
 import org.easymock.Mock;

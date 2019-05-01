@@ -20,7 +20,7 @@ import org.duracloud.account.db.util.DuracloudGroupService;
 import org.duracloud.account.db.util.error.DuracloudGroupAlreadyExistsException;
 import org.duracloud.account.db.util.error.DuracloudGroupNotFoundException;
 import org.duracloud.account.db.util.error.InvalidGroupNameException;
-import org.duracloud.common.sns.AccountChangeNotifier;
+import org.duracloud.common.changenotifier.AccountChangeNotifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
