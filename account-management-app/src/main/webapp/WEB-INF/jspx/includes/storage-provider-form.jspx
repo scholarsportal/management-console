@@ -99,6 +99,38 @@
 	                 element="div" />
 	              </li>
 	            </c:if>
+                    <c:if test="${param.storageProviderType eq 'SWIFT_S3'}">
+                        <li>
+                            <form:label
+                                cssErrorClass="error"
+                                path="${param.storageProvider}.properties['SWIFT_S3_ENDPOINT']">
+                                <spring:message code="swift.s3.endpoint"/>
+                            </form:label>
+                            <form:input
+                                cssErrorClass="error"
+                                path="${param.storageProvider}.properties['SWIFT_S3_ENDPOINT']"
+                                onclick="same(this.form)"/>
+                            <form:errors
+                                path="${param.storageProvider}.properties['SWIFT_S3_ENDPOINT']"
+                                cssClass="error"
+                                element="div" />
+                        </li>
+                        <li>
+                            <form:label
+                                cssErrorClass="error"
+                                path="${param.storageProvider}.properties['SWIFT_S3_SIGNER_TYPE']">
+                                <spring:message code="swift.s3.signer.type"/>
+                            </form:label>
+                            <form:input
+                                cssErrorClass="error"
+                                path="${param.storageProvider}.properties['SWIFT_S3_SIGNER_TYPE']"
+                                onclick="same(this.form)"/>
+                            <form:errors
+                                path="${param.storageProvider}.properties['SWIFT_S3_SIGNER_TYPE']"
+                                cssClass="error"
+                                element="div" />
+                        </li>
+                    </c:if>
 
 	            <c:if test="${param.storageProviderType eq 'CHRONOPOLIS'}">
 	              <li>
