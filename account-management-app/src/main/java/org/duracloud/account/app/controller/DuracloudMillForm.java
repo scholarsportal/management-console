@@ -26,6 +26,8 @@ public class DuracloudMillForm {
     @NotNull
     private String auditQueue;
     @NotNull
+    private String s3Type;
+    @NotNull
     private String auditLogSpaceId;
     @NotNull
     private String auditQueueType = "AWS";
@@ -41,6 +43,13 @@ public class DuracloudMillForm {
     private String rabbitmqUsername = "N/A";
     @NotNull
     private String rabbitmqPassword = "N/A";
+    @NotNull
+    private String awsAccessKey;
+    @NotNull
+    private String awsSecretKey;
+    @NotNull
+    private String swiftEndpoint;
+    private String swiftSignerType;
 
     public String getDbHost() {
         return dbHost;
@@ -88,6 +97,14 @@ public class DuracloudMillForm {
 
     public void setAuditQueue(String auditQueue) {
         this.auditQueue = auditQueue;
+    }
+
+    public String getS3Type() {
+        return s3Type;
+    }
+
+    public void setS3Type(String s3Type) {
+        this.s3Type = s3Type;
     }
 
     public String getAuditLogSpaceId() {
@@ -152,5 +169,37 @@ public class DuracloudMillForm {
 
     public void setRabbitmqPassword(String rabbitmqPassword) {
         this.rabbitmqPassword = rabbitmqPassword;
+    }
+
+    public String getAwsAccessKey() {
+        return awsAccessKey;
+    }
+
+    public void setAwsAccessKey(String awsAccessKey) {
+        this.awsAccessKey = awsAccessKey;
+    }
+
+    public String getAwsSecretKey() {
+        return awsSecretKey;
+    }
+
+    public void setAwsSecretKey(String awsSecretKey) {
+        this.awsSecretKey = awsSecretKey;
+    }
+
+    public String getSwiftEndpoint() {
+        return swiftEndpoint;
+    }
+
+    public void setSwiftEndpoint(String swiftEndpoint) {
+        this.swiftEndpoint = swiftEndpoint;
+    }
+
+    public String getSwiftSignerType() {
+        return swiftSignerType;
+    }
+
+    public void setSwiftSignerType(String swiftSignerType) {
+        this.swiftSignerType = swiftSignerType;
     }
 }

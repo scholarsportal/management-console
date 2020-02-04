@@ -178,24 +178,6 @@
            cssClass="error"
            element="div" />
         </li>
-        
-        <li>
-          <form:label
-           cssErrorClass="error"
-           path="auditLogSpaceId">
-            <spring:message
-             code="duracloudmill.auditlogspaceid" />
-          </form:label>
-
-          <form:input
-           cssErrorClass="error"
-           path="auditLogSpaceId" />
-
-          <form:errors
-           path="auditLogSpaceId"
-           cssClass="error"
-           element="div" />
-        </li>
 
         <li class="rabbitmq-config">
           <form:label
@@ -310,6 +292,126 @@
 
           <form:errors
                   path="rabbitmqPassword"
+                  cssClass="error"
+                  element="div" />
+        </li>
+
+      </ol>
+    </fieldset>
+
+    <fieldset>
+      <legend>Audit Log</legend>
+
+      <ol>
+        <li>
+          <form:label cssErrorClass="error"
+                      path="s3Type">
+            <spring:message
+                    code="duracloudmill.s3type" />
+          </form:label>
+
+          <form:select id="logtype" cssErrorClass="error" path="s3Type">
+            <form:option value="AWS" label="AWS"/>
+            <form:option value="Swift" label="Swift" />
+          </form:select>
+
+          <form:errors
+                  path="s3Type"
+                  cssClass="error"
+                  element="div" />
+        </li>
+
+        <li>
+          <form:label
+                  cssErrorClass="error"
+                  path="auditLogSpaceId">
+            <spring:message
+                    code="duracloudmill.auditlogspaceid" />
+          </form:label>
+
+          <form:input
+                  cssErrorClass="error"
+                  path="auditLogSpaceId" />
+
+          <form:errors
+                  path="auditLogSpaceId"
+                  cssClass="error"
+                  element="div" />
+        </li>
+
+        <li class="swift-config">
+          <form:label
+                  cssErrorClass="error"
+                  path="awsAccessKey">
+            <spring:message
+                    code="duracloudmill.awsaccesskey" />
+          </form:label>
+
+          <form:input
+                  class="swift-input"
+                  cssErrorClass="error"
+                  path="awsAccessKey" />
+
+          <form:errors
+                  path="awsAccessKey"
+                  cssClass="error"
+                  element="div" />
+        </li>
+
+        <li class="swift-config">
+          <form:label
+                  cssErrorClass="error"
+                  path="awsSecretKey">
+            <spring:message
+                    code="duracloudmill.awssecretkey" />
+          </form:label>
+
+          <form:password
+                  class="swift-input"
+                  showPassword="true"
+                  cssErrorClass="error"
+                  path="awsSecretKey" />
+
+          <form:errors
+                  path="awsSecretKey"
+                  cssClass="error"
+                  element="div" />
+        </li>
+
+        <li class="swift-config">
+          <form:label
+                  cssErrorClass="error"
+                  path="swiftEndpoint">
+            <spring:message
+                    code="duracloudmill.swiftendpoint" />
+          </form:label>
+
+          <form:input
+                  class="swift-input"
+                  cssErrorClass="error"
+                  path="swiftEndpoint" />
+
+          <form:errors
+                  path="swiftEndpoint"
+                  cssClass="error"
+                  element="div" />
+        </li>
+
+        <li class="swift-config">
+          <form:label
+                  cssErrorClass="error"
+                  path="swiftSignerType">
+            <spring:message
+                    code="duracloudmill.swiftsignertype" />
+          </form:label>
+
+          <form:input
+                  class="swift-input"
+                  cssErrorClass="error"
+                  path="swiftSignerType" />
+
+          <form:errors
+                  path="swiftSignerType"
                   cssClass="error"
                   element="div" />
         </li>
