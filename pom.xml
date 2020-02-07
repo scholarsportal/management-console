@@ -8,7 +8,7 @@
   <version>5.2.0-SNAPSHOT</version>
   <name>DuraCloud Management Console</name>
   <description>Management console for the DuraCloud service</description>
-  <url>http://duracloud.org</url>
+  <url>https://duracloud.org</url>
 
   <prerequisites>
     <maven>3.0.0</maven>
@@ -33,13 +33,13 @@
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+      <url>https://www.apache.org/licenses/LICENSE-2.0</url>
     </license>
   </licenses>
 
   <organization>
-    <name>DuraSpace</name>
-    <url>http://www.duraspace.org</url>
+    <name>LYRASIS</name>
+    <url>https://lyrasis.org</url>
   </organization>
 
   <modules>
@@ -240,7 +240,7 @@
     <repository>
       <id>central</id>
       <name>Maven Repository Switchboard</name>
-      <url>http://repo1.maven.org/maven2</url>
+      <url>https://repo1.maven.org/maven2</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
