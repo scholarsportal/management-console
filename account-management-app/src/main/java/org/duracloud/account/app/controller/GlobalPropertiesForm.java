@@ -15,34 +15,18 @@ import javax.validation.constraints.NotNull;
 public class GlobalPropertiesForm {
     @NotNull
     private String notifierType;
-
-    @NotNull
     private String rabbitmqHost;
-
-    @NotNull
     private Integer rabbitmqPort = 5672;
-
-    @NotNull
-    private String rabbitmqVhost = "/";
-
-    @NotNull
+    private String rabbitmqVhost;
     private String rabbitmqExchange;
-
-    @NotNull
     private String rabbitmqUsername;
-
-    @NotNull
     private String rabbitmqPassword;
-
     @NotNull
     private String instanceNotificationTopicArn;
-
     @NotNull(message = "You must specify a CloudFront Account Id")
     private String cloudFrontAccountId;
-
     @NotNull(message = "You must specify a Cloud Key Id")
     private String cloudFrontKeyId;
-
     @NotNull(message = "You must specify a CloudFront Key Path")
     private String cloudFrontKeyPath;
 
@@ -133,5 +117,4 @@ public class GlobalPropertiesForm {
     public void setCloudFrontKeyPath(String cloudFrontKeyPath) {
         this.cloudFrontKeyPath = cloudFrontKeyPath;
     }
-
 }

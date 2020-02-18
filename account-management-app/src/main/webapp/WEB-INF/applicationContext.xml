@@ -29,6 +29,10 @@
     <constructor-arg value="${db.name}"/>
     <constructor-arg value="${db.user}"/>
     <constructor-arg value="${db.pass}"/>
+    <constructor-arg value="${swift.accessKey}"/>
+    <constructor-arg value="${swift.secretKey}"/>
+    <constructor-arg value="${swift.endpoint}"/>
+    <constructor-arg value="${swift.signerType}"/>
   </bean>
 
   <import resource="config/service-config.xml"/>

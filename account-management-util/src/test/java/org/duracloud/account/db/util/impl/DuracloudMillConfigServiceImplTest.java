@@ -40,7 +40,7 @@ public class DuracloudMillConfigServiceImplTest extends EasyMockSupport {
     private static final String username = "username";
     private static final String password = "password";
     private static final String auditQueue = "auditQueue";
-    private static final String s3Type = "s3Type";
+    private static final String auditStoreType = "auditStoreType";
     private static final String auditLogSpaceId = "auditLogSpaceId";
     private static final String auditQueueType = "AWS";
     private static final String rabbitmqHost = "rmqhost";
@@ -49,10 +49,6 @@ public class DuracloudMillConfigServiceImplTest extends EasyMockSupport {
     private static final String rabbitmqExhange = "rmqexchange";
     private static final String rabbitmqUsername = "rmqusername";
     private static final String rabbitmqPassword = "rmqpassword";
-    private static final String awsAccessKey = "awsaccesskey";
-    private static final String awsSecretKey = "awssecretkey";
-    private static final String swiftEndpoint = "swiftendpoint";
-    private static final String swiftSignerType = "swiftsignertype";
 
     @Mock
     private DuracloudMillRepo repo;
@@ -85,9 +81,8 @@ public class DuracloudMillConfigServiceImplTest extends EasyMockSupport {
         expect(repo.save(EasyMock.capture(saveCapture))).andReturn(null);
         replayAll();
 
-        subject.set(host, port, name, username, password, auditQueue, s3Type, auditLogSpaceId, auditQueueType,
-                    rabbitmqHost, rabbitmqPort, rabbitmqVhost, rabbitmqExhange, rabbitmqUsername, rabbitmqPassword,
-                    awsAccessKey, awsSecretKey, swiftEndpoint, swiftSignerType);
+        subject.set(host, port, name, username, password, auditQueue, auditLogSpaceId, auditQueueType,
+                    rabbitmqHost, rabbitmqPort, rabbitmqVhost, rabbitmqExhange, rabbitmqUsername, rabbitmqPassword);
         DuracloudMill savedMill = saveCapture.getValue();
         assertEquals(host, savedMill.getDbHost());
         assertEquals(port, savedMill.getDbPort());
@@ -95,7 +90,6 @@ public class DuracloudMillConfigServiceImplTest extends EasyMockSupport {
         assertEquals(username, savedMill.getDbUsername());
         assertEquals(password, savedMill.getDbPassword());
         assertEquals(auditQueue, savedMill.getAuditQueue());
-        assertEquals(s3Type, savedMill.getS3Type());
         assertEquals(auditLogSpaceId, savedMill.getAuditLogSpaceId());
         assertEquals(auditQueueType, savedMill.getAuditQueueType());
         assertEquals(rabbitmqHost, savedMill.getRabbitmqHost());
@@ -104,10 +98,6 @@ public class DuracloudMillConfigServiceImplTest extends EasyMockSupport {
         assertEquals(rabbitmqExhange, savedMill.getRabbitmqExchange());
         assertEquals(rabbitmqUsername, savedMill.getRabbitmqUsername());
         assertEquals(rabbitmqPassword, savedMill.getRabbitmqPassword());
-        assertEquals(awsAccessKey, savedMill.getAwsAccessKey());
-        assertEquals(awsSecretKey, savedMill.getAwsSecretKey());
-        assertEquals(swiftEndpoint, savedMill.getSwiftEndpoint());
-        assertEquals(swiftSignerType, savedMill.getSwiftSignerType());
     }
 
     @Test
@@ -129,8 +119,6 @@ public class DuracloudMillConfigServiceImplTest extends EasyMockSupport {
 
         entity.setAuditQueue(auditQueue);
         expectLastCall();
-        entity.setS3Type(s3Type);
-        expectLastCall();
         entity.setAuditLogSpaceId(auditLogSpaceId);
         expectLastCall();
         entity.setAuditQueueType(auditQueueType);
@@ -148,19 +136,10 @@ public class DuracloudMillConfigServiceImplTest extends EasyMockSupport {
         expectLastCall();
         entity.setRabbitmqPassword(rabbitmqPassword);
         expectLastCall();
-        entity.setAwsAccessKey(awsAccessKey);
-        expectLastCall();
-        entity.setAwsSecretKey(awsSecretKey);
-        expectLastCall();
-        entity.setSwiftEndpoint(swiftEndpoint);
-        expectLastCall();
-        entity.setSwiftSignerType(swiftSignerType);
-        expectLastCall();
         replayAll();
 
-        subject.set(host, port, name, username, password, auditQueue, s3Type, auditLogSpaceId, auditQueueType,
-                    rabbitmqHost, rabbitmqPort, rabbitmqVhost, rabbitmqExhange, rabbitmqUsername, rabbitmqPassword,
-                    awsAccessKey, awsSecretKey, swiftEndpoint, swiftSignerType);
+        subject.set(host, port, name, username, password, auditQueue, auditLogSpaceId, auditQueueType,
+                    rabbitmqHost, rabbitmqPort, rabbitmqVhost, rabbitmqExhange, rabbitmqUsername, rabbitmqPassword);
     }
 
     @After

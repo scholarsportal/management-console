@@ -24,7 +24,7 @@
     </tiles:putAttribute>
    <tiles:putAttribute
      name="header-extensions">
-      
+
    </tiles:putAttribute>
 
     <tiles:putAttribute
@@ -101,23 +101,9 @@
 						</tr>
 					</c:if>
 					<tr>
-						<td>Audit Log Type</td>
-						<td><c:out value="${duracloudMill.s3Type}"/></td>
-					</tr>
-					<tr>
 						<td>Audit Log Space Id</td>
 						<td><c:out value="${duracloudMill.auditLogSpaceId}"/></td>
 					</tr>
-					<c:if test="${duracloudMill.s3Type == 'Swift'}">
-						<tr>
-							<td>Swift Access Key</td>
-							<td><c:out value="${duracloudMill.awsAccessKey}"/></td>
-						</tr>
-						<tr>
-							<td>Swift Endpoint</td>
-							<td><c:out value="${duracloudMill.swiftEndpoint}"/></td>
-						</tr>
-					</c:if>
 				</tbody>
 			</table>
 
