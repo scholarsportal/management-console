@@ -34,11 +34,6 @@ public class McConfig {
     private String dbUser;
     private String dbPass;
 
-    private String swiftAccessKey;
-    private String swiftSecretKey;
-    private String swiftEndpoint;
-    private String swiftSignerType;
-
     public McConfig(String mcHost,
                     String mcPort,
                     String mcContext,
@@ -54,11 +49,7 @@ public class McConfig {
                     String dbPort,
                     String dbName,
                     String dbUser,
-                    String dbPass,
-                    String swiftAccessKey,
-                    String swiftSecretKey,
-                    String swiftEndpoint,
-                    String swiftSignerType) {
+                    String dbPass) {
         this.mcHost = mcHost;
         this.mcPort = mcPort;
         this.mcContext = mcContext;
@@ -75,10 +66,6 @@ public class McConfig {
         this.dbName = dbName;
         this.dbUser = dbUser;
         this.dbPass = dbPass;
-        this.swiftAccessKey = swiftAccessKey;
-        this.swiftSecretKey = swiftSecretKey;
-        this.swiftEndpoint = swiftEndpoint;
-        this.swiftSignerType = swiftSignerType;
     }
 
     public String getMcHost() {
@@ -143,21 +130,5 @@ public class McConfig {
 
     public String getDbPass() {
         return dbPass;
-    }
-
-    public String getSwiftAccessKey() {
-        return swiftAccessKey;
-    }
-
-    public String getSwiftSecretKey() {
-        return swiftSecretKey;
-    }
-
-    public String getSwiftEndpoint() {
-        return swiftEndpoint;
-    }
-
-    public String getSwiftSignerType() {
-        return swiftSignerType;
     }
 }
