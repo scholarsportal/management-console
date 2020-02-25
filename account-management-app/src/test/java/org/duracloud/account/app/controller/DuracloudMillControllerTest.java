@@ -47,7 +47,7 @@ public class DuracloudMillControllerTest extends EasyMockSupport {
     String auditQueue = "auditQueue";
     String auditStoreType = "auditStoreType";
     String auditLogSpaceId = "auditLogSpaceId";
-    String auditQueueType = "AWS";
+    String auditQueueType = "rabbitmq";
     String rabbitmqHost = "rmqhost";
     Integer rabbitmqPort = 5672;
     String rabbitmqVhost = "rmqvhost";

@@ -3,20 +3,17 @@ $(document).ready(function () {
         $(".rabbitmq-config").each(function() {
             $(this).hide();
         });
-        autofill(".rabbitmq-input", "", "N/A");
     }
     $("#queuetype").change(function () {
         if ($(this).val() == "AWS") {
             $(".rabbitmq-config").each(function() {
                 $(this).hide();
             });
-            autofill(".rabbitmq-input", "", "N/A");
         }
         else {
             $(".rabbitmq-config").each(function() {
                 $(this).show();
             });
-            autofill(".rabbitmq-input", "N/A", "");
         }
     });
 
@@ -24,20 +21,17 @@ $(document).ready(function () {
         $(".swift-config").each(function() {
             $(this).hide();
         });
-        autofill(".swift-input", "", "N/A");
     }
     $("#logtype").change(function () {
         if ($(this).val() == "AWS") {
             $(".swift-config").each(function() {
                 $(this).hide();
             });
-            autofill(".swift-input", "", "N/A");
         }
         else {
             $(".swift-config").each(function() {
                 $(this).show();
             });
-            autofill(".swift-input", "N/A", "");
         }
     });
 
