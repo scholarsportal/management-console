@@ -29,8 +29,9 @@ public class NotificationMgrImpl implements NotificationMgr {
 
     public NotificationMgrImpl(McConfig mcConfig) {
         this.mcConfig = mcConfig;
-        log.info(mcConfig.getNotificationType());
-        if ( mcConfig.getNotificationType().trim().equalsIgnoreCase("spring") ) {
+        String notificationType = mcConfig.getNotificationType();
+        log.info("Setting Notification Type to " + notificationType);
+        if (notificationType.trim().equalsIgnoreCase("spring")) {
             //Spring Email
             this.factory = new SpringNotificationFactory(mcConfig.getNotificationHost(), Integer.parseInt(mcConfig.getNotificationPort()));
         } else {
