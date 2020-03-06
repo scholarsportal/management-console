@@ -54,11 +54,21 @@ public class McConfig {
         this.mcPort = mcPort;
         this.mcContext = mcContext;
         this.mcDomain = mcDomain;
-        this.notificationType = notificationType;
+        // Always assume SES unless this is set to "smtp"
+        if (notificationType.equalsIgnoreCase("smtp")) {
+            this.notificationType = "SMTP";
+        } else {
+            this.notificationType = "SES";
+        }
         this.notificationUser = notificationUser;
         this.notificationPass = notificationPass;
         this.notificationHost = notificationHost;
-        this.notificationPort = notificationPort;
+        // Initialise a default port if non specified
+        if (notificationPort.isEmpty()) {
+            this.notificationPort = "25";
+        } else {
+            this.notificationPort = notificationPort;
+        }
         this.notificationFromAddress = notificationFromAddress;
         this.notificationAdminAddress = notificationAdminAddress;
         this.dbHost = dbHost;

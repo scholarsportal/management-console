@@ -11,7 +11,7 @@ import org.duracloud.account.config.McConfig;
 import org.duracloud.notification.AmazonNotificationFactory;
 import org.duracloud.notification.Emailer;
 import org.duracloud.notification.NotificationFactory;
-import org.duracloud.notification.SpringNotificationFactory;
+import org.duracloud.notification.SMTPNotificationFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,11 +31,11 @@ public class NotificationMgrImpl implements NotificationMgr {
         this.mcConfig = mcConfig;
         String notificationType = mcConfig.getNotificationType();
         log.info("Setting Notification Type to " + notificationType);
-        if (notificationType.trim().equalsIgnoreCase("spring")) {
-            //Spring Email
-            this.factory = new SpringNotificationFactory(mcConfig.getNotificationHost(), Integer.parseInt(mcConfig.getNotificationPort()));
+        if (notificationType.trim().equalsIgnoreCase("smtp")) {
+            // SMTP Email
+            this.factory = new SMTPNotificationFactory(mcConfig.getNotificationHost(), Integer.parseInt(mcConfig.getNotificationPort()));
         } else {
-            //SES Email
+            // SES Email
             this.factory = new AmazonNotificationFactory();
         }
 

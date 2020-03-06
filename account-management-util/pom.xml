@@ -62,7 +62,7 @@
 
     <dependency>
       <groupId>org.duracloud</groupId>
-      <artifactId>notification-spring</artifactId>
+      <artifactId>notification-smtp</artifactId>
     </dependency>
 
     <dependency>
