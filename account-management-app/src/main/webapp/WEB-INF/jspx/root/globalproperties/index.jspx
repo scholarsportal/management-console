@@ -24,7 +24,7 @@
     </tiles:putAttribute>
    <tiles:putAttribute
      name="header-extensions">
-      
+
    </tiles:putAttribute>
 
     <tiles:putAttribute
@@ -55,28 +55,28 @@
 
 				<tbody>
                 <tr>
-                    <td>Notifier Type</td>
+                    <td><spring:message code="globalproperties.notifiertype" /></td>
                     <td><c:out value="${globalProperties.notifierType}"/></td>
                 </tr>
                 <c:if test="${globalProperties.notifierType == 'RabbitMQ'}">
                     <tr>
-                        <td>RabbitMQ Host</td>
+                        <td><spring:message code="globalproperties.rabbitmqhost" /></td>
                         <td><c:out value="${globalProperties.rabbitmqHost}"/></td>
                     </tr>
                     <tr>
-                        <td>RabbitMQ Port</td>
+                        <td><spring:message code="globalproperties.rabbitmqport" /></td>
                         <td><c:out value="${globalProperties.rabbitmqPort}"/></td>
                     </tr>
                     <tr>
-                        <td>RabbitMQ Virtual Host</td>
+                        <td><spring:message code="globalproperties.rabbitmqvhost" /></td>
                         <td><c:out value="${globalProperties.rabbitmqVhost}"/></td>
                     </tr>
                     <tr>
-                        <td>RabbitMQ Exchange</td>
+                        <td><spring:message code="globalproperties.rabbitmqexchange" /></td>
                         <td><c:out value="${globalProperties.rabbitmqExchange}"/></td>
                     </tr>
                     <tr>
-                        <td>RabbitMQ Username</td>
+                        <td><spring:message code="globalproperties.rabbitmqusername" /></td>
                         <td><c:out value="${globalProperties.rabbitmqUsername}"/></td>
                     </tr>
                 </c:if>

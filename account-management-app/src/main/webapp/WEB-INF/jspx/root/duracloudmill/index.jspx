@@ -55,53 +55,53 @@
 
 				<tbody>
 					<tr>
-						<td>Database Host</td>
+						<td><spring:message code="duracloudmill.dbhost" /></td>
 						<td><c:out value="${duracloudMill.dbHost}"/></td>
 					</tr>
 					<tr>
-						<td>Database Name</td>
+						<td><spring:message code="duracloudmill.dbname" /></td>
 						<td><c:out value="${duracloudMill.dbName}"/></td>
 					</tr>
 					<tr>
-						<td>Database Port</td>
+						<td><spring:message code="duracloudmill.dbport" /></td>
 						<td><c:out value="${duracloudMill.dbPort}"/></td>
 					</tr>
 					<tr>
-						<td>Database Username</td>
+						<td><spring:message code="duracloudmill.dbusername" /></td>
 						<td><c:out value="${duracloudMill.dbUsername}"/></td>
 					</tr>
 					<tr>
-						<td>Audit Queue Type</td>
+						<td><spring:message code="duracloudmill.auditqueuetype" /></td>
 						<td><c:out value="${duracloudMill.auditQueueType}"/></td>
 					</tr>
 					<tr>
-						<td>Audit Queue Name</td>
+						<td><spring:message code="duracloudmill.auditqueue" /></td>
 						<td><c:out value="${duracloudMill.auditQueue}"/></td>
 					</tr>
 					<c:if test="${duracloudMill.auditQueueType == 'RabbitMQ'}">
 						<tr>
-							<td>RabbitMQ Host</td>
+							<td><spring:message code="duracloudmill.rabbitmqhost" /></td>
 							<td><c:out value="${duracloudMill.rabbitmqHost}"/></td>
 						</tr>
 						<tr>
-							<td>RabbitMQ Port</td>
+							<td><spring:message code="duracloudmill.rabbitmqport" /></td>
 							<td><c:out value="${duracloudMill.rabbitmqPort}"/></td>
 						</tr>
 						<tr>
-							<td>RabbitMQ Virtual Host</td>
+							<td><spring:message code="duracloudmill.rabbitmqvhost" /></td>
 							<td><c:out value="${duracloudMill.rabbitmqVhost}"/></td>
 						</tr>
 						<tr>
-							<td>RabbitMQ Exchange</td>
+							<td><spring:message code="duracloudmill.rabbitmqexchange" /></td>
 							<td><c:out value="${duracloudMill.rabbitmqExchange}"/></td>
 						</tr>
 						<tr>
-							<td>RabbitMQ Username</td>
+							<td><spring:message code="duracloudmill.rabbitmqusername" /></td>
 							<td><c:out value="${duracloudMill.rabbitmqUsername}"/></td>
 						</tr>
 					</c:if>
 					<tr>
-						<td>Audit Log Space Id</td>
+						<td><spring:message code="duracloudmill.auditlogspaceid" /></td>
 						<td><c:out value="${duracloudMill.auditLogSpaceId}"/></td>
 					</tr>
 				</tbody>

@@ -105,7 +105,7 @@
            cssErrorClass="error"
            path="dbUsername">
             <spring:message
-             code="username" />
+             code="duracloudmill.dbusername" />
           </form:label>
 
           <form:input
@@ -122,7 +122,7 @@
            cssErrorClass="error"
            path="dbPassword">
             <spring:message
-             code="password" />
+             code="duracloudmill.dbpassword" />
           </form:label>
 
           <form:password
@@ -184,7 +184,7 @@
                   cssErrorClass="error"
                   path="rabbitmqHost">
             <spring:message
-                    code="duracloudmill.rabbitmqHost" />
+                    code="duracloudmill.rabbitmqhost" />
           </form:label>
 
           <form:input
@@ -203,7 +203,7 @@
                   cssErrorClass="error"
                   path="rabbitmqPort">
             <spring:message
-                    code="duracloudmill.rabbitmqPort" />
+                    code="duracloudmill.rabbitmqport" />
           </form:label>
 
           <form:input
@@ -222,7 +222,7 @@
                   cssErrorClass="error"
                   path="rabbitmqVhost">
             <spring:message
-                    code="duracloudmill.rabbitmqVhost" />
+                    code="duracloudmill.rabbitmqvhost" />
           </form:label>
 
           <form:input
@@ -241,7 +241,7 @@
                   cssErrorClass="error"
                   path="rabbitmqExchange">
             <spring:message
-                    code="duracloudmill.rabbitmqExchange" />
+                    code="duracloudmill.rabbitmqexchange" />
           </form:label>
 
           <form:input
@@ -261,7 +261,7 @@
                   cssErrorClass="error"
                   path="rabbitmqUsername">
             <spring:message
-                    code="duracloudmill.rabbitmqUsername" />
+                    code="duracloudmill.rabbitmqusername" />
           </form:label>
 
           <form:input
@@ -281,7 +281,7 @@
                   cssErrorClass="error"
                   path="rabbitmqPassword">
             <spring:message
-                    code="duracloudmill.rabbitmqPassword" />
+                    code="duracloudmill.rabbitmqpassword" />
           </form:label>
 
           <form:password

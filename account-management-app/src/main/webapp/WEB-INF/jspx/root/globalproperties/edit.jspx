@@ -32,7 +32,6 @@
     <tiles:putAttribute
      name="mainContent"
      cascade="true">
-     
 
   <form:form
    modelAttribute="globalProperties"
@@ -68,7 +67,7 @@
                         cssErrorClass="error"
                         path="rabbitmqHost">
                     <spring:message
-                            code="globalproperties.rabbitmqHost" />
+                            code="globalproperties.rabbitmqhost" />
                 </form:label>
 
                 <form:input id="rabbitmq-host"
@@ -87,7 +86,7 @@
                         cssErrorClass="error"
                         path="rabbitmqPort">
                     <spring:message
-                            code="globalproperties.rabbitmqPort" />
+                            code="globalproperties.rabbitmqport" />
                 </form:label>
 
                 <form:input id="rabbitmq-port"
@@ -106,7 +105,7 @@
                         cssErrorClass="error"
                         path="rabbitmqVhost">
                     <spring:message
-                            code="globalproperties.rabbitmqVhost" />
+                            code="globalproperties.rabbitmqvhost" />
                 </form:label>
 
                 <form:input id="rabbitmq-vhost"
@@ -125,7 +124,7 @@
                         cssErrorClass="error"
                         path="rabbitmqExchange">
                     <spring:message
-                            code="globalproperties.rabbitmqExchange" />
+                            code="globalproperties.rabbitmqexchange" />
                 </form:label>
 
                 <form:input id="rabbitmq-exhange"
@@ -145,7 +144,7 @@
                         cssErrorClass="error"
                         path="rabbitmqUsername">
                     <spring:message
-                            code="globalproperties.rabbitmqUsername" />
+                            code="globalproperties.rabbitmqusername" />
                 </form:label>
 
                 <form:input id="rabbitmq-username"
@@ -165,7 +164,7 @@
                         cssErrorClass="error"
                         path="rabbitmqPassword">
                     <spring:message
-                            code="globalproperties.rabbitmqPassword" />
+                            code="globalproperties.rabbitmqpassword" />
                 </form:label>
 
                 <form:password id="rabbitmq-pw"
@@ -227,7 +226,7 @@
            cssClass="error"
            element="div" />
         </li>
-        
+
        <li>
           <form:label
            cssErrorClass="error"
@@ -245,8 +244,8 @@
            path="cloudFrontKeyId"
            cssClass="error"
            element="div" />
-        </li>        
-        
+        </li>
+
        <li>
           <form:label
            cssErrorClass="error"
@@ -264,11 +263,11 @@
            path="cloudFrontKeyPath"
            cssClass="error"
            element="div" />
-        </li>                  
+        </li>
       </ol>
     </fieldset>
-  
-  
+
+
     <fieldset
      class="button-bar">
       <button
@@ -289,8 +288,8 @@
       </a>
     </fieldset>
   </form:form>
-     
-     
+
+
     </tiles:putAttribute>
   </tiles:insertDefinition>
 </jsp:root>
