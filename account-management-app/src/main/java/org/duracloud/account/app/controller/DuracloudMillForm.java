@@ -10,6 +10,8 @@ package org.duracloud.account.app.controller;
 import javax.validation.ConstraintViolationException;
 import javax.validation.constraints.NotNull;
 
+import org.duracloud.common.constant.Constants;
+
 /**
  * @author Daniel Bernstein
  */
@@ -42,7 +44,7 @@ public class DuracloudMillForm {
     }
 
     private Boolean settingRabbitMQ() {
-        return this.auditQueueType.equalsIgnoreCase("RabbitMQ");
+        return this.auditQueueType.equalsIgnoreCase(Constants.RABBITMQ);
     }
 
     public String getDbHost() {

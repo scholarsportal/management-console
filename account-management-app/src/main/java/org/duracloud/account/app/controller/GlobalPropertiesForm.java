@@ -10,6 +10,8 @@ package org.duracloud.account.app.controller;
 import javax.validation.ConstraintViolationException;
 import javax.validation.constraints.NotNull;
 
+import org.duracloud.common.constant.Constants;
+
 /**
  * @author Daniel Bernstein
  */
@@ -35,13 +37,12 @@ public class GlobalPropertiesForm {
     }
 
     private Boolean settingRabbitMQ() {
-        Boolean rmqStatus = this.notifierType.equalsIgnoreCase("RabbitMQ");
-        return rmqStatus;
+        return this.notifierType.equalsIgnoreCase(Constants.RABBITMQ);
     }
 
     public void setNotifierType(String notifierType) {
         this.notifierType = notifierType;
-        if (notifierType.equalsIgnoreCase("RabbitMQ")) {
+        if (settingRabbitMQ()) {
             setInstanceNotificationTopicArn(null);
         }
     }

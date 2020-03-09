@@ -7,6 +7,8 @@
  */
 package org.duracloud.account.config;
 
+import org.duracloud.common.constant.Constants;
+
 /**
  * Configuration properties for the Management Console
  *
@@ -55,10 +57,10 @@ public class McConfig {
         this.mcContext = mcContext;
         this.mcDomain = mcDomain;
         // Always assume SES unless this is set to "smtp"
-        if (notificationType.equalsIgnoreCase("smtp")) {
-            this.notificationType = "SMTP";
+        if (notificationType.equalsIgnoreCase(Constants.SMTP)) {
+            this.notificationType = Constants.SMTP;
         } else {
-            this.notificationType = "SES";
+            this.notificationType = Constants.SES;
         }
         this.notificationUser = notificationUser;
         this.notificationPass = notificationPass;
