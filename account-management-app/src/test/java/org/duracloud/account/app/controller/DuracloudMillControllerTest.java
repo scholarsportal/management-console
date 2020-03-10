@@ -45,7 +45,6 @@ public class DuracloudMillControllerTest extends EasyMockSupport {
     String dbUsername = "user";
     String dbPassword = "password";
     String auditQueue = "auditQueue";
-    String auditStoreType = "auditStoreType";
     String auditLogSpaceId = "auditLogSpaceId";
     String auditQueueType = "rabbitmq";
     String rabbitmqHost = "rmqhost";

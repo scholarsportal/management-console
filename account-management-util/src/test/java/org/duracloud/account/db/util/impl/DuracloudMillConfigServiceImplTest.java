@@ -40,7 +40,6 @@ public class DuracloudMillConfigServiceImplTest extends EasyMockSupport {
     private static final String username = "username";
     private static final String password = "password";
     private static final String auditQueue = "auditQueue";
-    private static final String auditStoreType = "auditStoreType";
     private static final String auditLogSpaceId = "auditLogSpaceId";
     private static final String auditQueueType = "AWS";
     private static final String rabbitmqHost = "rmqhost";

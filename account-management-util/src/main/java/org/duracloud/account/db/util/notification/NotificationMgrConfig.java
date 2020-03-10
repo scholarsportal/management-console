@@ -13,7 +13,6 @@ package org.duracloud.account.db.util.notification;
  */
 public class NotificationMgrConfig {
 
-
     private String emailerType;
     private String fromAddress;
     private String username;
