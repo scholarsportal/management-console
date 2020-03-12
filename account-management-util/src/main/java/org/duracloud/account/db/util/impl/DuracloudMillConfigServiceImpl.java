@@ -52,7 +52,7 @@ public class DuracloudMillConfigServiceImpl implements DuracloudMillConfigServic
                     String dbPassword,
                     String auditQueue,
                     String auditLogSpaceId,
-                    String auditQueueType,
+                    String queueType,
                     String rabbitmqHost,
                     Integer rabbitmqPort,
                     String rabbitmqVhost,
@@ -71,7 +71,7 @@ public class DuracloudMillConfigServiceImpl implements DuracloudMillConfigServic
         dm.setDbPassword(dbPassword);
         dm.setAuditQueue(auditQueue);
         dm.setAuditLogSpaceId(auditLogSpaceId);
-        dm.setAuditQueueType(auditQueueType);
+        dm.setQueueType(queueType);
         dm.setRabbitmqHost(rabbitmqHost);
         dm.setRabbitmqPort(rabbitmqPort);
         dm.setRabbitmqVhost(rabbitmqVhost);

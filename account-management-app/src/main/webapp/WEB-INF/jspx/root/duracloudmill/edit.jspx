@@ -145,18 +145,18 @@
         <li>
           <form:label
                   cssErrorClass="error"
-                  path="auditQueueType">
+                  path="queueType">
             <spring:message
-                    code="duracloudmill.auditqueuetype" />
+                    code="duracloudmill.queuetype" />
           </form:label>
 
-          <form:select id="queuetype" cssErrorClass="error" path="auditQueueType">
-            <form:option value="AWS" label="AWS"/>
+          <form:select id="queuetype" cssErrorClass="error" path="queueType">
+            <form:option value="SQS" label="SQS"/>
             <form:option value="RabbitMQ" label="RabbitMQ" />
           </form:select>
 
           <form:errors
-                  path="auditQueueType"
+                  path="queueType"
                   cssClass="error"
                   element="div" />
         </li>

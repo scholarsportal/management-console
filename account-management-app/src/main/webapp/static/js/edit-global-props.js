@@ -9,7 +9,7 @@ function autofill(elemClass, before, after) {
     });
 }
 
-function validateAWSform() {
+function validateSNSform() {
     $("input#instanceNotificationTopicArn").on("input", function(e) {
         if ($(this).val() === "" || $(this).val() === null) {
             $("input#instanceNotificationTopicArn").addClass("error");
@@ -23,29 +23,29 @@ function validateAWSform() {
 }
 
 $(document).ready(function () {
-    if ($("#notifiertype").val() === "AWS") {
-        validateAWSform();
+    if ($("#notifiertype").val() === "SNS") {
+        validateSNSform();
         $(".rabbitmq-config").each(function() {
             $(this).hide();
         });
     } else {
-        $(".aws-config").each(function() {
+        $(".sns-config").each(function() {
             $(this).hide();
         });
     }
 
     $("#notifiertype").change(function () {
-        if ($(this).val() == "AWS") {
-            validateAWSform();
+        if ($(this).val() == "SNS") {
+            validateSNSform();
             $(".rabbitmq-config").each(function() {
                 $(this).hide();
             });
 
-            $(".aws-config").each(function() {
+            $(".sns-config").each(function() {
                 $(this).show();
             });
         } else {
-            $(".aws-config").each(function() {
+            $(".sns-config").each(function() {
                 $(this).hide();
             });
             $(".rabbitmq-config").each(function() {
@@ -55,7 +55,7 @@ $(document).ready(function () {
     });
 
     $("form#globalProperties").submit(function(e) {
-        if ( $("#notifiertype").val() === "AWS" ) {
+        if ( $("#notifiertype").val() === "SNS" ) {
             if ($("input#instanceNotificationTopicArn").val() === "" ||
                 $("input#instanceNotificationTopicArn").val() === null) {
                 $("input#instanceNotificationTopicArn").addClass("error");

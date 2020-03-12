@@ -80,7 +80,7 @@
                         <td><c:out value="${globalProperties.rabbitmqUsername}"/></td>
                     </tr>
                 </c:if>
-                <c:if test="${globalProperties.notifierType == 'AWS'}">
+                <c:if test="${globalProperties.notifierType == 'SNS'}">
                     <tr>
                         <td><spring:message
                                 code="globalproperties.instancenotificationtopicarn" /></td>

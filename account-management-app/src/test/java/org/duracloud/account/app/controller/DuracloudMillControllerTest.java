@@ -46,7 +46,7 @@ public class DuracloudMillControllerTest extends EasyMockSupport {
     String dbPassword = "password";
     String auditQueue = "auditQueue";
     String auditLogSpaceId = "auditLogSpaceId";
-    String auditQueueType = "rabbitmq";
+    String queueType = "rabbitmq";
     String rabbitmqHost = "rmqhost";
     Integer rabbitmqPort = 5672;
     String rabbitmqVhost = "rmqvhost";
@@ -76,7 +76,7 @@ public class DuracloudMillControllerTest extends EasyMockSupport {
         expect(mill.getDbPassword()).andReturn(dbPassword);
         expect(mill.getAuditQueue()).andReturn(auditQueue);
         expect(mill.getAuditLogSpaceId()).andReturn(auditLogSpaceId);
-        expect(mill.getAuditQueueType()).andReturn(auditQueueType);
+        expect(mill.getQueueType()).andReturn(queueType);
         expect(mill.getRabbitmqHost()).andReturn(rabbitmqHost);
         expect(mill.getRabbitmqPort()).andReturn(rabbitmqPort);
         expect(mill.getRabbitmqVhost()).andReturn(rabbitmqVhost);
@@ -95,7 +95,7 @@ public class DuracloudMillControllerTest extends EasyMockSupport {
         assertEquals(form.getDbPassword(), dbPassword);
         assertEquals(form.getAuditQueue(), auditQueue);
         assertEquals(form.getAuditLogSpaceId(), auditLogSpaceId);
-        assertEquals(form.getAuditQueueType(), auditQueueType);
+        assertEquals(form.getQueueType(), queueType);
         assertEquals(form.getRabbitmqHost(), rabbitmqHost);
         assertEquals(form.getRabbitmqPort(), rabbitmqPort);
         assertEquals(form.getRabbitmqVhost(), rabbitmqVhost);
@@ -127,7 +127,7 @@ public class DuracloudMillControllerTest extends EasyMockSupport {
         expect(form.getDbPassword()).andReturn(dbPassword);
         expect(form.getAuditQueue()).andReturn(auditQueue);
         expect(form.getAuditLogSpaceId()).andReturn(auditLogSpaceId);
-        expect(form.getAuditQueueType()).andReturn(auditQueueType);
+        expect(form.getQueueType()).andReturn(queueType);
         expect(form.getRabbitmqHost()).andReturn(rabbitmqHost);
         expect(form.getRabbitmqPort()).andReturn(rabbitmqPort);
         expect(form.getRabbitmqVhost()).andReturn(rabbitmqVhost);
@@ -135,7 +135,7 @@ public class DuracloudMillControllerTest extends EasyMockSupport {
         expect(form.getRabbitmqUsername()).andReturn(rabbitmqUsername);
         expect(form.getRabbitmqPassword()).andReturn(rabbitmqPassword);
         this.service.set(dbHost, dbPort, dbName, dbUsername, dbPassword,
-                         auditQueue, auditLogSpaceId, auditQueueType,
+                         auditQueue, auditLogSpaceId, queueType,
                          rabbitmqHost, rabbitmqPort, rabbitmqVhost,
                          rabbitmqExchange, rabbitmqUsername, rabbitmqPassword);
         expectLastCall();

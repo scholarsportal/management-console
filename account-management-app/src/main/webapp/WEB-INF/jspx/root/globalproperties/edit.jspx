@@ -52,7 +52,7 @@
                 </form:label>
 
                 <form:select id="notifiertype" cssErrorClass="error" path="notifierType">
-                    <form:option value="AWS" label="AWS"/>
+                    <form:option value="SNS" label="SNS"/>
                     <form:option value="RabbitMQ" label="RabbitMQ" />
                 </form:select>
 
@@ -180,7 +180,7 @@
             </li>
 
 
-        <li class="aws-config">
+        <li class="sns-config">
           <form:label
            cssErrorClass="error"
            path="instanceNotificationTopicArn">
@@ -189,7 +189,7 @@
           </form:label>
 
           <form:input
-                  class="aws-input"
+                  class="sns-input"
                   cssErrorClass="error"
                   path="instanceNotificationTopicArn" />
 

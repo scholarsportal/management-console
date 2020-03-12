@@ -71,14 +71,14 @@
 						<td><c:out value="${duracloudMill.dbUsername}"/></td>
 					</tr>
 					<tr>
-						<td><spring:message code="duracloudmill.auditqueuetype" /></td>
-						<td><c:out value="${duracloudMill.auditQueueType}"/></td>
+						<td><spring:message code="duracloudmill.queuetype" /></td>
+						<td><c:out value="${duracloudMill.queueType}"/></td>
 					</tr>
 					<tr>
 						<td><spring:message code="duracloudmill.auditqueue" /></td>
 						<td><c:out value="${duracloudMill.auditQueue}"/></td>
 					</tr>
-					<c:if test="${duracloudMill.auditQueueType == 'RabbitMQ'}">
+					<c:if test="${duracloudMill.queueType == 'RabbitMQ'}">
 						<tr>
 							<td><spring:message code="duracloudmill.rabbitmqhost" /></td>
 							<td><c:out value="${duracloudMill.rabbitmqHost}"/></td>

@@ -10,7 +10,7 @@ package org.duracloud.account.app.controller;
 import javax.validation.ConstraintViolationException;
 import javax.validation.constraints.NotNull;
 
-import org.duracloud.common.constant.Constants;
+import org.duracloud.common.queue.QueueType;
 
 /**
  * @author Daniel Bernstein
@@ -31,7 +31,7 @@ public class DuracloudMillForm {
     @NotNull
     private String auditLogSpaceId;
     @NotNull
-    private String auditQueueType;
+    private String queueType;
     private String rabbitmqHost;
     private Integer rabbitmqPort = 5672;
     private String rabbitmqVhost;
@@ -44,7 +44,7 @@ public class DuracloudMillForm {
     }
 
     private Boolean settingRabbitMQ() {
-        return this.auditQueueType.equalsIgnoreCase(Constants.RABBITMQ);
+        return this.queueType.equalsIgnoreCase(QueueType.RABBITMQ.toString());
     }
 
     public String getDbHost() {
@@ -103,12 +103,12 @@ public class DuracloudMillForm {
         this.auditLogSpaceId = auditLogSpaceId;
     }
 
-    public String getAuditQueueType() {
-        return auditQueueType;
+    public String getQueueType() {
+        return queueType;
     }
 
-    public void setAuditQueueType(String auditQueueType) {
-        this.auditQueueType = auditQueueType;
+    public void setQueueType(String queueType) {
+        this.queueType = queueType;
     }
 
     public String getRabbitmqHost() {

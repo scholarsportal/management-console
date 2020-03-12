@@ -10,14 +10,14 @@ package org.duracloud.account.app.controller;
 import javax.validation.ConstraintViolationException;
 import javax.validation.constraints.NotNull;
 
-import org.duracloud.common.constant.Constants;
+import org.duracloud.common.changenotifier.NotifierType;
 
 /**
  * @author Daniel Bernstein
  */
 public class GlobalPropertiesForm {
     @NotNull
-    private String notifierType = "AWS";
+    private String notifierType = NotifierType.SNS.toString();
     private String rabbitmqHost;
     private Integer rabbitmqPort = 5672;
     private String rabbitmqVhost = "/";
@@ -37,7 +37,7 @@ public class GlobalPropertiesForm {
     }
 
     private Boolean settingRabbitMQ() {
-        return this.notifierType.equalsIgnoreCase(Constants.RABBITMQ);
+        return this.notifierType.equalsIgnoreCase(NotifierType.RABBITMQ.toString());
     }
 
     public void setNotifierType(String notifierType) {

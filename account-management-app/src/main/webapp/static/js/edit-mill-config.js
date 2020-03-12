@@ -1,11 +1,11 @@
 $(document).ready(function () {
-    if($("#queuetype").val() === "AWS"){
+    if($("#queuetype").val() === "SQS"){
         $(".rabbitmq-config").each(function() {
             $(this).hide();
         });
     }
     $("#queuetype").change(function () {
-        if ($(this).val() == "AWS") {
+        if ($(this).val() == "SQS") {
             $(".rabbitmq-config").each(function() {
                 $(this).hide();
             });
@@ -17,13 +17,13 @@ $(document).ready(function () {
         }
     });
 
-    if($("#logtype").val() === "AWS"){
+    if($("#auditqueuetype").val() === "SQS"){
         $(".swift-config").each(function() {
             $(this).hide();
         });
     }
     $("#logtype").change(function () {
-        if ($(this).val() == "AWS") {
+        if ($(this).val() == "SQS") {
             $(".swift-config").each(function() {
                 $(this).hide();
             });

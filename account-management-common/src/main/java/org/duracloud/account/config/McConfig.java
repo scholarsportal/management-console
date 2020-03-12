@@ -7,7 +7,7 @@
  */
 package org.duracloud.account.config;
 
-import org.duracloud.common.constant.Constants;
+import org.duracloud.common.model.EmailerType;
 
 /**
  * Configuration properties for the Management Console
@@ -22,7 +22,7 @@ public class McConfig {
     private String mcContext;
     private String mcDomain;
 
-    private String notificationType;
+    private EmailerType emailerType;
     private String notificationUser;
     private String notificationPass;
     private String notificationHost;
@@ -40,7 +40,7 @@ public class McConfig {
                     String mcPort,
                     String mcContext,
                     String mcDomain,
-                    String notificationType,
+                    String emailerType,
                     String notificationUser,
                     String notificationPass,
                     String notificationHost,
@@ -56,12 +56,7 @@ public class McConfig {
         this.mcPort = mcPort;
         this.mcContext = mcContext;
         this.mcDomain = mcDomain;
-        // Always assume SES unless this is set to "smtp"
-        if (notificationType.equalsIgnoreCase(Constants.SMTP)) {
-            this.notificationType = Constants.SMTP;
-        } else {
-            this.notificationType = Constants.SES;
-        }
+        this.emailerType = EmailerType.fromString(emailerType.trim());
         this.notificationUser = notificationUser;
         this.notificationPass = notificationPass;
         this.notificationHost = notificationHost;
@@ -96,8 +91,8 @@ public class McConfig {
         return mcDomain;
     }
 
-    public String getNotificationType() {
-        return notificationType;
+    public EmailerType getEmailerType() {
+        return emailerType;
     }
 
     public String getNotificationUser() {
