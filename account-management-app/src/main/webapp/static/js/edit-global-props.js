@@ -1,13 +1,6 @@
 var errMsg = "may not be null";
 var divErr = "<div id='instanceNotificationTopicArn.errors' class='error'>" + errMsg + "</div>";
-
-function autofill(elemClass, before, after) {
-    $(elemClass).each(function() {
-        if($(this).val() == before){
-            $(this).val(after);
-        }
-    });
-}
+const notifierType = Object.freeze({RABBITMQ:"RabbitMQ", SNS:"SNS"});
 
 function validateSNSform() {
     $("input#instanceNotificationTopicArn").on("input", function(e) {
@@ -23,7 +16,7 @@ function validateSNSform() {
 }
 
 $(document).ready(function () {
-    if ($("#notifiertype").val() === "SNS") {
+    if ($("#notifiertype").val() === notifierType.SNS) {
         validateSNSform();
         $(".rabbitmq-config").each(function() {
             $(this).hide();
@@ -35,7 +28,7 @@ $(document).ready(function () {
     }
 
     $("#notifiertype").change(function () {
-        if ($(this).val() == "SNS") {
+        if ($(this).val() == notifierType.SNS) {
             validateSNSform();
             $(".rabbitmq-config").each(function() {
                 $(this).hide();
@@ -55,7 +48,7 @@ $(document).ready(function () {
     });
 
     $("form#globalProperties").submit(function(e) {
-        if ( $("#notifiertype").val() === "SNS" ) {
+        if ( $("#notifiertype").val() === notifierType.SNS ) {
             if ($("input#instanceNotificationTopicArn").val() === "" ||
                 $("input#instanceNotificationTopicArn").val() === null) {
                 $("input#instanceNotificationTopicArn").addClass("error");
@@ -66,7 +59,6 @@ $(document).ready(function () {
                 e.preventDefault();
                 return false;
             } else {
-                console.log("ARN _NOT_ empty or null: " + $("input#instanceNotificationTopicArn").val());
                 $("input#instanceNotificationTopicArn").removeClass("error");
                 $("input#instanceNotificationTopicArn").siblings("div#instanceNotificationTopicArn.errors").remove();
             }
