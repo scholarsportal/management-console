@@ -6,7 +6,7 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.0.xsd">
   <context:annotation-config/>
-  <context:component-scan base-package="org.duracloud.account,org.duracloud.common.sns.impl"/>
+  <context:component-scan base-package="org.duracloud.account,org.duracloud.common.changenotifier.impl"/>
 
   <bean id="amaEndpoint" class="org.duracloud.account.config.AmaEndpoint">
     <constructor-arg ref="mcConfig"/>
@@ -17,8 +17,11 @@
     <constructor-arg value="${mc.port}"/>
     <constructor-arg value="${mc.context}"/>
     <constructor-arg value="${mc.domain}"/>
+    <constructor-arg value="${emailer.type:}"/>
     <constructor-arg value="${notification.user:}"/>
     <constructor-arg value="${notification.pass:}"/>
+    <constructor-arg value="${notification.host:}"/>
+    <constructor-arg value="${notification.port:}"/>
     <constructor-arg value="${notification.from-address}"/>
     <constructor-arg value="${notification.admin-address}"/>
     <constructor-arg value="${db.host}"/>

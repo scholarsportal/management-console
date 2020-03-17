@@ -41,6 +41,13 @@ public class DuracloudMillConfigServiceImplTest extends EasyMockSupport {
     private static final String password = "password";
     private static final String auditQueue = "auditQueue";
     private static final String auditLogSpaceId = "auditLogSpaceId";
+    private static final String queueType = "SQS";
+    private static final String rabbitmqHost = "rmqhost";
+    private static final Integer rabbitmqPort = 5672;
+    private static final String rabbitmqVhost = "rmqvhost";
+    private static final String rabbitmqExhange = "rmqexchange";
+    private static final String rabbitmqUsername = "rmqusername";
+    private static final String rabbitmqPassword = "rmqpassword";
 
     @Mock
     private DuracloudMillRepo repo;
@@ -73,7 +80,8 @@ public class DuracloudMillConfigServiceImplTest extends EasyMockSupport {
         expect(repo.save(EasyMock.capture(saveCapture))).andReturn(null);
         replayAll();
 
-        subject.set(host, port, name, username, password, auditQueue, auditLogSpaceId);
+        subject.set(host, port, name, username, password, auditQueue, auditLogSpaceId, queueType,
+                    rabbitmqHost, rabbitmqPort, rabbitmqVhost, rabbitmqExhange, rabbitmqUsername, rabbitmqPassword);
         DuracloudMill savedMill = saveCapture.getValue();
         assertEquals(host, savedMill.getDbHost());
         assertEquals(port, savedMill.getDbPort());
@@ -82,6 +90,13 @@ public class DuracloudMillConfigServiceImplTest extends EasyMockSupport {
         assertEquals(password, savedMill.getDbPassword());
         assertEquals(auditQueue, savedMill.getAuditQueue());
         assertEquals(auditLogSpaceId, savedMill.getAuditLogSpaceId());
+        assertEquals(queueType, savedMill.getQueueType());
+        assertEquals(rabbitmqHost, savedMill.getRabbitmqHost());
+        assertEquals(rabbitmqPort, savedMill.getRabbitmqPort());
+        assertEquals(rabbitmqVhost, savedMill.getRabbitmqVhost());
+        assertEquals(rabbitmqExhange, savedMill.getRabbitmqExchange());
+        assertEquals(rabbitmqUsername, savedMill.getRabbitmqUsername());
+        assertEquals(rabbitmqPassword, savedMill.getRabbitmqPassword());
     }
 
     @Test
@@ -105,9 +120,25 @@ public class DuracloudMillConfigServiceImplTest extends EasyMockSupport {
         expectLastCall();
         entity.setAuditLogSpaceId(auditLogSpaceId);
         expectLastCall();
+        entity.setQueueType(queueType);
+        expectLastCall();
+
+        entity.setRabbitmqHost(rabbitmqHost);
+        expectLastCall();
+        entity.setRabbitmqPort(rabbitmqPort);
+        expectLastCall();
+        entity.setRabbitmqVhost(rabbitmqVhost);
+        expectLastCall();
+        entity.setRabbitmqExchange(rabbitmqExhange);
+        expectLastCall();
+        entity.setRabbitmqUsername(rabbitmqUsername);
+        expectLastCall();
+        entity.setRabbitmqPassword(rabbitmqPassword);
+        expectLastCall();
         replayAll();
 
-        subject.set(host, port, name, username, password, auditQueue, auditLogSpaceId);
+        subject.set(host, port, name, username, password, auditQueue, auditLogSpaceId, queueType,
+                    rabbitmqHost, rabbitmqPort, rabbitmqVhost, rabbitmqExhange, rabbitmqUsername, rabbitmqPassword);
     }
 
     @After

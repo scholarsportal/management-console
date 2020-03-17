@@ -24,7 +24,7 @@
     </tiles:putAttribute>
    <tiles:putAttribute
      name="header-extensions">
-      
+
    </tiles:putAttribute>
 
     <tiles:putAttribute
@@ -54,11 +54,39 @@
 				</thead>
 
 				<tbody>
-					<tr>
-						<td><spring:message
-             code="globalproperties.instancenotificationtopicarn" /></td>
-						<td><c:out value="${globalProperties.instanceNotificationTopicArn}"/></td>
-					</tr>
+                <tr>
+                    <td><spring:message code="globalproperties.notifiertype" /></td>
+                    <td><c:out value="${globalProperties.notifierType}"/></td>
+                </tr>
+                <c:if test="${globalProperties.notifierType == 'RabbitMQ'}">
+                    <tr>
+                        <td><spring:message code="globalproperties.rabbitmqhost" /></td>
+                        <td><c:out value="${globalProperties.rabbitmqHost}"/></td>
+                    </tr>
+                    <tr>
+                        <td><spring:message code="globalproperties.rabbitmqport" /></td>
+                        <td><c:out value="${globalProperties.rabbitmqPort}"/></td>
+                    </tr>
+                    <tr>
+                        <td><spring:message code="globalproperties.rabbitmqvhost" /></td>
+                        <td><c:out value="${globalProperties.rabbitmqVhost}"/></td>
+                    </tr>
+                    <tr>
+                        <td><spring:message code="globalproperties.rabbitmqexchange" /></td>
+                        <td><c:out value="${globalProperties.rabbitmqExchange}"/></td>
+                    </tr>
+                    <tr>
+                        <td><spring:message code="globalproperties.rabbitmqusername" /></td>
+                        <td><c:out value="${globalProperties.rabbitmqUsername}"/></td>
+                    </tr>
+                </c:if>
+                <c:if test="${globalProperties.notifierType == 'SNS'}">
+                    <tr>
+                        <td><spring:message
+                                code="globalproperties.instancenotificationtopicarn" /></td>
+                        <td><c:out value="${globalProperties.instanceNotificationTopicArn}"/></td>
+                    </tr>
+                </c:if>
           <tr>
             <td><spring:message
              code="globalproperties.cloudfrontaccountid" /></td>

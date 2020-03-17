@@ -7,23 +7,145 @@
  */
 package org.duracloud.account.app.controller;
 
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.ConstraintViolationException;
+import javax.validation.constraints.NotNull;
+
+import org.duracloud.common.changenotifier.NotifierType;
 
 /**
  * @author Daniel Bernstein
  */
 public class GlobalPropertiesForm {
-    @NotBlank
+    @NotNull
+    private String notifierType = NotifierType.SNS.toString();
+    private String rabbitmqHost;
+    private Integer rabbitmqPort = 5672;
+    private String rabbitmqVhost = "/";
+    private String rabbitmqExchange;
+    private String rabbitmqUsername;
+    private String rabbitmqPassword;
     private String instanceNotificationTopicArn;
-
-    @NotBlank(message = "You must specify a CloudFront Account Id")
+    @NotNull(message = "You must specify a CloudFront Account Id")
     private String cloudFrontAccountId;
-
-    @NotBlank(message = "You must specify a Cloud Key Id")
+    @NotNull(message = "You must specify a Cloud Key Id")
     private String cloudFrontKeyId;
-
-    @NotBlank(message = "You must specify a CloudFront Key Path")
+    @NotNull(message = "You must specify a CloudFront Key Path")
     private String cloudFrontKeyPath;
+
+    private ConstraintViolationException nullConstraintViolationException() {
+        return new ConstraintViolationException("may not be null", null);
+    }
+
+    private Boolean settingRabbitMQ() {
+        return this.notifierType.equalsIgnoreCase(NotifierType.RABBITMQ.toString());
+    }
+
+    public void setNotifierType(String notifierType) {
+        this.notifierType = notifierType;
+        if (settingRabbitMQ()) {
+            setInstanceNotificationTopicArn(null);
+        }
+    }
+
+    public String getNotifierType() {
+        return notifierType;
+    }
+
+    public String getRabbitmqHost() {
+        return rabbitmqHost;
+    }
+
+    public void setRabbitmqHost(String rabbitmqHost) {
+        if (settingRabbitMQ()) {
+            if (rabbitmqHost == null) {
+                throw nullConstraintViolationException();
+            } else {
+                this.rabbitmqHost = rabbitmqHost;
+            }
+        } else {
+            this.rabbitmqHost = null;
+        }
+    }
+
+    public Integer getRabbitmqPort() {
+        return rabbitmqPort;
+    }
+
+    public void setRabbitmqPort(Integer rabbitmqPort) {
+        if (settingRabbitMQ()) {
+            if (rabbitmqPort == null) {
+                throw nullConstraintViolationException();
+            } else {
+                this.rabbitmqPort = rabbitmqPort;
+            }
+        } else {
+            this.rabbitmqPort = 5672;
+        }
+    }
+
+    public String getRabbitmqVhost() {
+        return rabbitmqVhost;
+    }
+
+    public void setRabbitmqVhost(String rabbitmqVhost) {
+        if (settingRabbitMQ()) {
+            if (rabbitmqVhost == null) {
+                throw nullConstraintViolationException();
+            } else {
+                this.rabbitmqVhost = rabbitmqVhost;
+            }
+        } else {
+            this.rabbitmqVhost = "/";
+        }
+    }
+
+    public String getRabbitmqExchange() {
+        return rabbitmqExchange;
+    }
+
+    public void setRabbitmqExchange(String rabbitmqExchange) {
+        if (settingRabbitMQ()) {
+            if (rabbitmqExchange == null) {
+                throw nullConstraintViolationException();
+            } else {
+                this.rabbitmqExchange = rabbitmqExchange;
+            }
+        } else {
+            this.rabbitmqExchange = null;
+        }
+    }
+
+    public String getRabbitmqUsername() {
+        return rabbitmqUsername;
+    }
+
+    public void setRabbitmqUsername(String rabbitmqUsername) {
+        if (settingRabbitMQ()) {
+            if (rabbitmqUsername == null) {
+                throw nullConstraintViolationException();
+            } else {
+                this.rabbitmqUsername = rabbitmqUsername;
+            }
+        } else {
+            this.rabbitmqUsername = null;
+        }
+    }
+
+    public String getRabbitmqPassword() {
+        return rabbitmqPassword;
+    }
+
+    public void setRabbitmqPassword(String rabbitmqPassword) {
+        if (settingRabbitMQ()) {
+            if (rabbitmqPassword == null) {
+                throw nullConstraintViolationException();
+            } else {
+                this.rabbitmqPassword = rabbitmqPassword;
+            }
+        } else {
+            this.rabbitmqPassword = null;
+        }
+    }
 
     public String getInstanceNotificationTopicArn() {
         return instanceNotificationTopicArn;
@@ -56,5 +178,4 @@ public class GlobalPropertiesForm {
     public void setCloudFrontKeyPath(String cloudFrontKeyPath) {
         this.cloudFrontKeyPath = cloudFrontKeyPath;
     }
-
 }

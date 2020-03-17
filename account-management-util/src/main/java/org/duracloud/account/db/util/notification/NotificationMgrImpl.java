@@ -8,8 +8,11 @@
 package org.duracloud.account.db.util.notification;
 
 import org.duracloud.account.config.McConfig;
+import org.duracloud.common.model.EmailerType;
+import org.duracloud.notification.AmazonNotificationFactory;
 import org.duracloud.notification.Emailer;
 import org.duracloud.notification.NotificationFactory;
+import org.duracloud.notification.SMTPNotificationFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,13 +28,21 @@ public class NotificationMgrImpl implements NotificationMgr {
     private McConfig mcConfig;
     private NotificationMgrConfig mgrConfig;
 
-    public NotificationMgrImpl(NotificationFactory factory,
-                               McConfig mcConfig) {
-        this.factory = factory;
+    public NotificationMgrImpl(McConfig mcConfig) {
         this.mcConfig = mcConfig;
+        EmailerType emailerType = mcConfig.getEmailerType();
+        log.info("Setting Emailer Type to " + emailerType.toString());
+        if (emailerType == EmailerType.SMTP) {
+            // SMTP Email
+            this.factory = new SMTPNotificationFactory(mcConfig.getNotificationHost(), Integer.parseInt(mcConfig.getNotificationPort()));
+        } else {
+            // SES Email
+            this.factory = new AmazonNotificationFactory();
+        }
 
         mgrConfig =
-            new NotificationMgrConfig(mcConfig.getNotificationFromAddress(),
+            new NotificationMgrConfig(mcConfig.getEmailerType(),
+                                      mcConfig.getNotificationFromAddress(),
                                       mcConfig.getNotificationUser(),
                                       mcConfig.getNotificationPass(),
                                       mcConfig.getNotificationAdminAddress());

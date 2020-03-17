@@ -7,23 +7,31 @@
  */
 package org.duracloud.account.db.util.notification;
 
+import org.duracloud.common.model.EmailerType;
+
 /**
  * @author: Bill Branan
  * Date: 12/8/11
  */
 public class NotificationMgrConfig {
 
+    private EmailerType emailerType;
     private String fromAddress;
     private String username;
     private String password;
     private String adminAddress;
 
-    public NotificationMgrConfig(String fromAddress, String username,
+    public NotificationMgrConfig(EmailerType emailerType, String fromAddress, String username,
                                  String password, String adminAddress) {
+        this.emailerType = emailerType;
         this.fromAddress = fromAddress;
         this.username = username;
         this.password = password;
         this.adminAddress = adminAddress;
+    }
+
+    public EmailerType getEmailerType() {
+        return emailerType;
     }
 
     public String getFromAddress() {

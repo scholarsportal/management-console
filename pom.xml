@@ -8,7 +8,7 @@
   <version>5.2.0-SNAPSHOT</version>
   <name>DuraCloud Management Console</name>
   <description>Management console for the DuraCloud service</description>
-  <url>http://duracloud.org</url>
+  <url>https://duracloud.org</url>
 
   <prerequisites>
     <maven>3.0.0</maven>
@@ -33,13 +33,13 @@
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+      <url>https://www.apache.org/licenses/LICENSE-2.0</url>
     </license>
   </licenses>
 
   <organization>
-    <name>DuraSpace</name>
-    <url>http://www.duraspace.org</url>
+    <name>LYRASIS</name>
+    <url>https://lyrasis.org</url>
   </organization>
 
   <modules>
@@ -207,9 +207,9 @@
     <log.level.default>INFO</log.level.default>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <duracloud.artifact.version>6.1.0</duracloud.artifact.version>
+    <duracloud.artifact.version>6.2.0-SNAPSHOT</duracloud.artifact.version>
     <aws.version>1.11.155</aws.version>
-    <duracloud.db.version>6.1.0</duracloud.db.version>
+    <duracloud.db.version>6.2.0-SNAPSHOT</duracloud.db.version>
     <duraspace-codestyle.version>1.0.0</duraspace-codestyle.version>
     <org.springframework.version>4.2.5.RELEASE</org.springframework.version>
     <org.springframework.security.version>4.0.4.RELEASE</org.springframework.security.version>
@@ -240,7 +240,7 @@
     <repository>
       <id>central</id>
       <name>Maven Repository Switchboard</name>
-      <url>http://repo1.maven.org/maven2</url>
+      <url>https://repo1.maven.org/maven2</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
@@ -454,7 +454,7 @@
         <executions>
           <execution>
             <id>verify-style</id>
-             <!-- Bind to verify so it runs after package & unit tests, but before install --> 
+             <!-- Bind to verify so it runs after package & unit tests, but before install -->
             <phase>verify</phase>
             <goals>
               <goal>check</goal>
@@ -549,7 +549,7 @@
 
       <dependency>
         <groupId>org.duracloud</groupId>
-        <artifactId>common-sns</artifactId>
+        <artifactId>common-changenotifier</artifactId>
         <version>${duracloud.artifact.version}</version>
       </dependency>
 
@@ -578,6 +578,11 @@
         <version>${duracloud.artifact.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>org.duracloud</groupId>
+        <artifactId>notification-smtp</artifactId>
+        <version>${duracloud.artifact.version}</version>
+      </dependency>
 
       <dependency>
         <groupId>org.duracloud</groupId>

@@ -212,7 +212,7 @@
 
     <dependency>
       <groupId>org.duracloud</groupId>
-      <artifactId>common-sns</artifactId>
+      <artifactId>common-changenotifier</artifactId>
     </dependency>
 
     <dependency>

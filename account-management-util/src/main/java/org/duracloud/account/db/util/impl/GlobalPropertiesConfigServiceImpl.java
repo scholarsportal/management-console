@@ -45,14 +45,29 @@ public class GlobalPropertiesConfigServiceImpl implements GlobalPropertiesConfig
     }
 
     @Override
-    public void set(String instanceNotificationTopicArn,
-                    String cloudFrontAccountId, String cloudFrontKeyId,
+    public void set(String notifierType,
+                    String rabbitmqHost,
+                    Integer rabbitmqPort,
+                    String rabbitmqVhost,
+                    String rabbitmqExchange,
+                    String rabbitmqUsername,
+                    String rabbitmqPassword,
+                    String instanceNotificationTopicArn,
+                    String cloudFrontAccountId,
+                    String cloudFrontKeyId,
                     String cloudFrontKeyPath) {
         GlobalProperties gp = get();
         if (null == gp) {
             gp = new GlobalProperties();
         }
 
+        gp.setNotifierType(notifierType);
+        gp.setRabbitmqHost(rabbitmqHost);
+        gp.setRabbitmqPort(rabbitmqPort);
+        gp.setRabbitmqVhost(rabbitmqVhost);
+        gp.setRabbitmqExchange(rabbitmqExchange);
+        gp.setRabbitmqUsername(rabbitmqUsername);
+        gp.setRabbitmqPassword(rabbitmqPassword);
         gp.setInstanceNotificationTopicArn(instanceNotificationTopicArn);
         gp.setCloudFrontAccountId(cloudFrontAccountId);
         gp.setCloudFrontKeyId(cloudFrontKeyId);

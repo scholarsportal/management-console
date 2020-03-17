@@ -36,7 +36,7 @@ import org.duracloud.account.db.util.error.UnsentEmailException;
 import org.duracloud.account.db.util.error.UserAlreadyExistsException;
 import org.duracloud.account.db.util.notification.NotificationMgr;
 import org.duracloud.account.db.util.notification.Notifier;
-import org.duracloud.common.sns.AccountChangeNotifier;
+import org.duracloud.common.changenotifier.AccountChangeNotifier;
 import org.duracloud.common.util.ChecksumUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

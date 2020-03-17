@@ -25,7 +25,7 @@ import org.duracloud.account.db.util.EmailTemplateService;
 import org.duracloud.account.db.util.error.DuracloudProviderAccountNotAvailableException;
 import org.duracloud.account.db.util.notification.NotificationMgr;
 import org.duracloud.account.db.util.notification.Notifier;
-import org.duracloud.common.sns.AccountChangeNotifier;
+import org.duracloud.common.changenotifier.AccountChangeNotifier;
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.slf4j.Logger;
