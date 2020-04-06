@@ -25,19 +25,20 @@
     </tiles:putAttribute>
    <tiles:putAttribute
      name="header-extensions">
-      
+     <script type="text/javascript"
+             src="${pageContext.request.contextPath}/static/js/edit-mill-config.js"><!-- --></script>
    </tiles:putAttribute>
 
     <tiles:putAttribute
      name="mainContent"
      cascade="true">
-     
+
 
   <form:form
    modelAttribute="duracloudMill"
    method="POST">
    <jsp:include page="/WEB-INF/jspx/includes/csrf.jspx"/>
-                            
+
     <fieldset>
       <legend>
         Database
@@ -104,7 +105,7 @@
            cssErrorClass="error"
            path="dbUsername">
             <spring:message
-             code="username" />
+             code="duracloudmill.dbusername" />
           </form:label>
 
           <form:input
@@ -121,7 +122,7 @@
            cssErrorClass="error"
            path="dbPassword">
             <spring:message
-             code="password" />
+             code="duracloudmill.dbpassword" />
           </form:label>
 
           <form:password
@@ -143,6 +144,25 @@
       <ol>
         <li>
           <form:label
+                  cssErrorClass="error"
+                  path="queueType">
+            <spring:message
+                    code="duracloudmill.queuetype" />
+          </form:label>
+
+          <form:select id="queuetype" cssErrorClass="error" path="queueType">
+            <form:option value="SQS" label="SQS"/>
+            <form:option value="RabbitMQ" label="RabbitMQ" />
+          </form:select>
+
+          <form:errors
+                  path="queueType"
+                  cssClass="error"
+                  element="div" />
+        </li>
+
+        <li>
+          <form:label
            cssErrorClass="error"
            path="auditQueue">
             <spring:message
@@ -158,23 +178,147 @@
            cssClass="error"
            element="div" />
         </li>
-        
-        <li>
+
+        <li class="rabbitmq-config">
           <form:label
-           cssErrorClass="error"
-           path="auditLogSpaceId">
+                  cssErrorClass="error"
+                  path="rabbitmqHost">
             <spring:message
-             code="duracloudmill.auditlogspaceid" />
+                    code="duracloudmill.rabbitmqhost" />
           </form:label>
 
           <form:input
-           cssErrorClass="error"
-           path="auditLogSpaceId" />
+                  class="rabbitmq-input"
+                  cssErrorClass="error"
+                  path="rabbitmqHost" />
 
           <form:errors
-           path="auditLogSpaceId"
-           cssClass="error"
-           element="div" />
+                  path="rabbitmqHost"
+                  cssClass="error"
+                  element="div" />
+        </li>
+
+        <li class="rabbitmq-config">
+          <form:label
+                  cssErrorClass="error"
+                  path="rabbitmqPort">
+            <spring:message
+                    code="duracloudmill.rabbitmqport" />
+          </form:label>
+
+          <form:input
+                  class="rabbitmq-input"
+                  cssErrorClass="error"
+                  path="rabbitmqPort" />
+
+          <form:errors
+                  path="rabbitmqPort"
+                  cssClass="error"
+                  element="div" />
+        </li>
+
+        <li class="rabbitmq-config">
+          <form:label
+                  cssErrorClass="error"
+                  path="rabbitmqVhost">
+            <spring:message
+                    code="duracloudmill.rabbitmqvhost" />
+          </form:label>
+
+          <form:input
+                  class="rabbitmq-input"
+                  cssErrorClass="error"
+                  path="rabbitmqVhost" />
+
+          <form:errors
+                  path="rabbitmqVhost"
+                  cssClass="error"
+                  element="div" />
+        </li>
+
+        <li class="rabbitmq-config">
+          <form:label
+                  cssErrorClass="error"
+                  path="rabbitmqExchange">
+            <spring:message
+                    code="duracloudmill.rabbitmqexchange" />
+          </form:label>
+
+          <form:input
+                  class="rabbitmq-input"
+                  cssErrorClass="error"
+                  path="rabbitmqExchange" />
+
+          <form:errors
+                  path="rabbitmqExchange"
+                  cssClass="error"
+                  element="div" />
+        </li>
+
+
+        <li class="rabbitmq-config">
+          <form:label
+                  cssErrorClass="error"
+                  path="rabbitmqUsername">
+            <spring:message
+                    code="duracloudmill.rabbitmqusername" />
+          </form:label>
+
+          <form:input
+                  class="rabbitmq-input"
+                  cssErrorClass="error"
+                  path="rabbitmqUsername" />
+
+          <form:errors
+                  path="rabbitmqUsername"
+                  cssClass="error"
+                  element="div" />
+        </li>
+
+
+        <li class="rabbitmq-config">
+          <form:label
+                  cssErrorClass="error"
+                  path="rabbitmqPassword">
+            <spring:message
+                    code="duracloudmill.rabbitmqpassword" />
+          </form:label>
+
+          <form:password
+                  class="rabbitmq-input"
+                  showPassword="true"
+                  cssErrorClass="error"
+                  path="rabbitmqPassword" />
+
+          <form:errors
+                  path="rabbitmqPassword"
+                  cssClass="error"
+                  element="div" />
+        </li>
+
+      </ol>
+    </fieldset>
+
+    <fieldset>
+      <legend>Audit Log</legend>
+
+      <ol>
+        <li>
+          <form:label
+                  cssErrorClass="error"
+                  path="auditLogSpaceId">
+            <spring:message
+                    code="duracloudmill.auditlogspaceid" />
+          </form:label>
+
+          <form:input
+                  cssErrorClass="error"
+                  path="auditLogSpaceId" />
+
+          <form:errors
+                  path="auditLogSpaceId"
+                  cssClass="error"
+                  element="div" />
         </li>
 
       </ol>
@@ -200,8 +344,8 @@
       </a>
     </fieldset>
   </form:form>
-     
-     
+
+
     </tiles:putAttribute>
   </tiles:insertDefinition>
 </jsp:root>

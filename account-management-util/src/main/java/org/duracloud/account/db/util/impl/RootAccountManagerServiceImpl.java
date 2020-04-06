@@ -30,7 +30,7 @@ import org.duracloud.account.db.util.RootAccountManagerService;
 import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.duracloud.account.db.util.error.InvalidPasswordException;
 import org.duracloud.account.db.util.error.UnsentEmailException;
-import org.duracloud.common.sns.AccountChangeNotifier;
+import org.duracloud.common.changenotifier.AccountChangeNotifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

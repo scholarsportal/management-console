@@ -27,6 +27,13 @@ public interface DuracloudMillConfigService {
                     String dbUsername,
                     String dbPassword,
                     String auditQueue,
-                    String auditLogId);
+                    String auditLogId,
+                    String queueType,
+                    String rabbitmqHost,
+                    Integer rabbitmqPort,
+                    String rabbitmqVhost,
+                    String rabbitmqExchange,
+                    String rabbitmqUsername,
+                    String rabbitmqPassword);
 
 }

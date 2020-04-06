@@ -7,6 +7,8 @@
  */
 package org.duracloud.account.config;
 
+import org.duracloud.common.model.EmailerType;
+
 /**
  * Configuration properties for the Management Console
  *
@@ -20,8 +22,11 @@ public class McConfig {
     private String mcContext;
     private String mcDomain;
 
+    private EmailerType emailerType;
     private String notificationUser;
     private String notificationPass;
+    private String notificationHost;
+    private String notificationPort;
     private String notificationFromAddress;
     private String notificationAdminAddress;
 
@@ -35,8 +40,11 @@ public class McConfig {
                     String mcPort,
                     String mcContext,
                     String mcDomain,
+                    String emailerType,
                     String notificationUser,
                     String notificationPass,
+                    String notificationHost,
+                    String notificationPort,
                     String notificationFromAddress,
                     String notificationAdminAddress,
                     String dbHost,
@@ -48,8 +56,16 @@ public class McConfig {
         this.mcPort = mcPort;
         this.mcContext = mcContext;
         this.mcDomain = mcDomain;
+        this.emailerType = EmailerType.fromString(emailerType.trim());
         this.notificationUser = notificationUser;
         this.notificationPass = notificationPass;
+        this.notificationHost = notificationHost;
+        // Initialise a default port if non specified
+        if (notificationPort.isEmpty()) {
+            this.notificationPort = "25";
+        } else {
+            this.notificationPort = notificationPort;
+        }
         this.notificationFromAddress = notificationFromAddress;
         this.notificationAdminAddress = notificationAdminAddress;
         this.dbHost = dbHost;
@@ -75,12 +91,24 @@ public class McConfig {
         return mcDomain;
     }
 
+    public EmailerType getEmailerType() {
+        return emailerType;
+    }
+
     public String getNotificationUser() {
         return notificationUser;
     }
 
     public String getNotificationPass() {
         return notificationPass;
+    }
+
+    public String getNotificationHost() {
+        return notificationHost;
+    }
+
+    public String getNotificationPort() {
+        return notificationPort;
     }
 
     public String getNotificationFromAddress() {
@@ -110,5 +138,4 @@ public class McConfig {
     public String getDbPass() {
         return dbPass;
     }
-
 }

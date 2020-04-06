@@ -4,15 +4,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
 
-
-  <!--<bean id="repoMgr" class="org.duracloud.account.db.repo.DuracloudRepoMgr" />-->
-
-  <bean id="notificationFactory"
-        class="org.duracloud.notification.AmazonNotificationFactory"/>
-
   <bean id="notificationMgr"
         class="org.duracloud.account.db.util.notification.NotificationMgrImpl">
-    <constructor-arg ref="notificationFactory"/>
     <constructor-arg ref="mcConfig"/>
   </bean>
 

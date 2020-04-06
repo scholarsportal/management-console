@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.duracloud</groupId>
     <artifactId>duracloud-mc</artifactId>
-    <version>5.1.0</version>
+    <version>6.0.0</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -12,7 +12,7 @@
   <groupId>org.duracloud</groupId>
   <artifactId>ama</artifactId>
   <packaging>war</packaging>
-  <version>5.1.0</version>
+  <version>6.0.0</version>
   <name>Account Management App</name>
   <url>http://duraspace.org</url>
 
@@ -212,7 +212,7 @@
 
     <dependency>
       <groupId>org.duracloud</groupId>
-      <artifactId>common-sns</artifactId>
+      <artifactId>common-changenotifier</artifactId>
     </dependency>
 
     <dependency>
