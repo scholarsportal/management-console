@@ -1,14 +1,14 @@
-dist: trusty
+dist: focal
 language: java
 jdk:
-  - oraclejdk8
+  - openjdk11
 notifications:
   email:
     recipients:
       - cibuilds@duracloud.org
     on_success: change
     on_failure: always
-  slack: duraspace:vOBySuKUwM95j2kfbwh0SNxq
+  slack: lyrasis:ctcQAEKjVcDFe9bTyMfH6PtI
 install:
   - mvn install -DskipTests -DskipDeploy --batch-mode
 script:
@@ -47,7 +47,7 @@ deploy:
       branch: develop
   - provider: releases
     api_key:
-      secure: "KWP+zbZQ1LawKxW0XuUVxKUhf9ewVkhKdb5y8FsTAY0dKCNIbLvtv8+xnSZPGwOL1LfIBJvWCipTjetWJs2Ujmq2jXM8rbJhIhWpLi5VAi/Rh3+hbyCY3HVXluTHd4CgfBoa7v1IPVpdlLKbe12yKDyPZ6SDOC/hYTZ7lSR3B8RIdIjIXFcBmAnFhr9HVYImVljyI6mYgHN5F9HL8dbafo5MBPmKczxRXVkRplj9wG9COxbftXDr84AFLGhGpLmT62YkYUuOU9oxSitpfwhK72th+fGAMkV71OmxZeaKK5HuJq2nfI8TEG0AvefQVcKiZh5er5JsKutDtVhsGW1CgwHIAYp6bJvxEOfjZ8hgmEO5RT11PO77aSt7jvVfnneY1OY1MXr6LDePlrXstrWICiuiYPlqD08/JhoWSWkLpnfgRJTre9jMm+kDHJauQwqsgmdIMTLgwkrF0+pqAzzgzkpnVwRs3w1hdexG0XrHszpqERY8inBg0/36LMT1LJPJb9DobAP5tQ9x7RYowIRCfuBZyNMg0rxpmK6y1uyHp0LqpYtzs8gqfgXk5iIVFulY9GUnRqcOg0Z2aWvwhpP9GojXoxo9EDAUBHxPbnTYcMiWarJZ4yvDYPIQpLJOeK3J147tFO/uRySZskUk3oOcWUBTqUx+3WMoLx30F/sQOmc="
+      secure: KWP+zbZQ1LawKxW0XuUVxKUhf9ewVkhKdb5y8FsTAY0dKCNIbLvtv8+xnSZPGwOL1LfIBJvWCipTjetWJs2Ujmq2jXM8rbJhIhWpLi5VAi/Rh3+hbyCY3HVXluTHd4CgfBoa7v1IPVpdlLKbe12yKDyPZ6SDOC/hYTZ7lSR3B8RIdIjIXFcBmAnFhr9HVYImVljyI6mYgHN5F9HL8dbafo5MBPmKczxRXVkRplj9wG9COxbftXDr84AFLGhGpLmT62YkYUuOU9oxSitpfwhK72th+fGAMkV71OmxZeaKK5HuJq2nfI8TEG0AvefQVcKiZh5er5JsKutDtVhsGW1CgwHIAYp6bJvxEOfjZ8hgmEO5RT11PO77aSt7jvVfnneY1OY1MXr6LDePlrXstrWICiuiYPlqD08/JhoWSWkLpnfgRJTre9jMm+kDHJauQwqsgmdIMTLgwkrF0+pqAzzgzkpnVwRs3w1hdexG0XrHszpqERY8inBg0/36LMT1LJPJb9DobAP5tQ9x7RYowIRCfuBZyNMg0rxpmK6y1uyHp0LqpYtzs8gqfgXk5iIVFulY9GUnRqcOg0Z2aWvwhpP9GojXoxo9EDAUBHxPbnTYcMiWarJZ4yvDYPIQpLJOeK3J147tFO/uRySZskUk3oOcWUBTqUx+3WMoLx30F/sQOmc=
     skip_cleanup: true
     file-glob: true
     file:

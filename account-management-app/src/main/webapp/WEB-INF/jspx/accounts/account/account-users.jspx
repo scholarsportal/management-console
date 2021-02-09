@@ -32,7 +32,7 @@
           <div
            id="account-list"
            class="account-record user-list">
-            <table border="0" cellspacing="0" cellpadding="0">
+            <table border="0" cellspacing="0" cellpadding="0" role="presentation">
               <tr>
                 <td class="accountlabel"> Active Users</td>
               </tr>
@@ -41,7 +41,7 @@
            
             <c:choose>
               <c:when test="${not empty users}">
-                <table class="datatablesimple">
+                <table class="datatablesimple" role="presentation">
                 <tr>
                   <th align="left">Username</th>
 
@@ -53,7 +53,7 @@
 
                   <th align="left">Role</th>
 
-                  <th align="left">Change Role</th>
+                  <th align="left" id="changeRole">Change Role</th>
 
                   <th align="left">
                   </th>
@@ -90,6 +90,7 @@
                               <td align="left">
                                 <select
                                  id="role"
+                                 aria-labelledby="changeRole"
                                  cssErrorClass="error"
                                  name="role" >
                                     <jsp:include 
@@ -176,7 +177,7 @@
 
           <div id="invite-list" class="section account-record"
             style="min-height: 150px !important">
-            <table border="0" cellspacing="0" cellpadding="0">
+            <table border="0" cellspacing="0" cellpadding="0" role="presentation">
               <tr>
                 <td class="accountlabel">Add Users</td>
               </tr>
@@ -209,7 +210,7 @@
           </div>
           <div
            class="account-record user-list">
-            <table border="0" cellspacing="0" cellpadding="0">
+            <table border="0" cellspacing="0" cellpadding="0" role="presentation">
               <tr>
                 <td class="accountlabel"> Pending Users</td>
               </tr>
@@ -219,7 +220,7 @@
            <c:choose>
              <c:when
                test="${not empty pendingUserInvitations}">
-              <table width="90%" class="datatablesimple">
+              <table width="90%" class="datatablesimple" role="presentation">
                 <tr>
                   <th align="left" valign="middle">Email</th>
 
@@ -230,6 +231,7 @@
                 </tr>
                 <c:forEach
                  var="up"
+
                  items="${pendingUserInvitations}">
                   <tr>
                     <td align="left" valign="middle"><c:out value="${up.email}"/></td>
@@ -273,10 +275,10 @@
                 </c:otherwise>
               </c:choose>   
             </div>
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0"  role="presentation">
                <tr>
              <td align="right"><a
-                   class="button featured"
+                   class="button featured back"
                    id="cancel-button"
                    href="${pageContext.request.contextPath}/users/byid/${user.username}">
                   Back</a></td></tr></table>

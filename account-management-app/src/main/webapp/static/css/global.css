@@ -113,10 +113,11 @@ h2, h3
 {
 	font-family:Helvetica, Sans-Serif;
 }
-h1 {
+h1, h5 {
 	font-size:1.0em;
 	font-weight:bold;
-	color: #999;
+	color: #DDD !important;
+	background-color: transparent !important;
 	
 }
 
@@ -131,12 +132,6 @@ h4 {
 	font-size:1em;
 	color: #FFF;
 }
-h5{
-	font-size:1.0em;
-	font-weight:bold;
-	color: #999;
-}
-
 
 li a{
 	text-decoration: none;
@@ -161,7 +156,6 @@ li a:hover{
 }
 
 #footer-content {
-	font-size: 11px;
 	color: #4A4A4A;
 	text-align: left;
 	margin-top: 5px;
@@ -174,9 +168,12 @@ li a:hover{
 }
 
 #footer-content a {
-	font-size: 11px;
 	color: #4A4A4A;
 	text-decoration: underline;
+}
+
+#footer-content, #footer-links {
+   font-size: 14px;
 }
 
 .required:before {
@@ -290,7 +287,7 @@ div.global-errors{
 .outer a
 {
 	color:#4c4c4c;
-	font-size:11px;
+	font-size:14px;
 }
 
 .outer .icon-link:hover
@@ -347,6 +344,7 @@ div.global-errors{
 {
 		width:531px;
 		background-image: url(../img/logo_top_mc_lg.png);
+		color: transparent;
 }
 
 #dc-app-title
@@ -457,7 +455,7 @@ ing-right:10px;
 
 .dc-main-content {
 	padding:5px;
-	color: #ccc;
+	color: #333;
 	margin:10px;
 }
 
@@ -484,16 +482,12 @@ ing-right:10px;
 
 
 .dc-subgroup, .dc-subgroup a{
-	color:#555;
+	color:#222;
 }
 
 .dc-subgroup a:hover 
 {
-	color:#444;
-} 
-
-.dc-subgroup .button {
-	color:#bbb;	
+	color:#000;
 }
 
 .dc-subgroup > h2 > span:last-child{
@@ -552,9 +546,9 @@ li.account:hover {
 }
 
 .instructions {
-	font-size: 11px;
+	font-size: 14px;
 	margin-bottom: 20px;
-	color: #515151 !important;	
+	color: #212121 !important;
 }
 
 .indent {
@@ -690,12 +684,13 @@ li.account:hover {
 	color: #515151;
 	margin-left: 25px;
 	width: 95%;
+	color: #333;
 }
 
 
 .datatablesimple tr {
 	margin-left: 25px;
-	font-size:11px !important;
+	font-size:12px !important;
 }
 
 
