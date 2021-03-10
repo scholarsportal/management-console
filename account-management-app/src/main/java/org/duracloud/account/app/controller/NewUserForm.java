@@ -7,6 +7,9 @@
  */
 package org.duracloud.account.app.controller;
 
+import javax.validation.constraints.AssertTrue;
+import javax.validation.constraints.NotNull;
+
 import org.duracloud.account.annotation.UsernameConstraint;
 import org.duracloud.common.annotation.FieldMatch;
 import org.hibernate.validator.constraints.Email;
@@ -44,6 +47,10 @@ public class NewUserForm {
 
     @NotBlank(message = "Security answer is empty.")
     private String securityAnswer;
+
+    @NotNull
+    @AssertTrue(message = "Please check the box to indicate your acceptance of the General Terms of Use.")
+    private boolean termsOfUse;
 
     private String redemptionCode;
 
@@ -117,5 +124,13 @@ public class NewUserForm {
 
     public void setSecurityAnswer(String securityAnswer) {
         this.securityAnswer = securityAnswer;
+    }
+
+    public boolean getTermsOfUse() {
+        return termsOfUse;
+    }
+
+    public void setTermsOfUse(boolean termsOfUse) {
+        this.termsOfUse = termsOfUse;
     }
 }

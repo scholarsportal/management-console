@@ -195,6 +195,23 @@
                        path="securityAnswer" />
                     </td>
                   </tr>
+
+                  <tr>
+                    <td align="right">
+                      <form:checkbox
+                       cssErrorClass="error"
+                       id="termsOfUse-box"
+                       path="termsOfUse"/>
+                     </td>
+
+                    <td class="required">
+                      <form:label
+                       cssErrorClass="error"
+                       title="Check this box if you have read and agree to the DuraCloud General Terms of Use."
+                       for="termsOfUse-box"
+                       path="termsOfUse">I have read and accept the <a href="#" target="_blank">DuraCloud General Terms of Use</a>.</form:label>
+                      </td>
+                  </tr>
                 </table>
             <div style="height:20px"><!--  --></div>
             <div>

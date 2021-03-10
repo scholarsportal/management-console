@@ -247,7 +247,7 @@ table.standard-form{
 }
 
 
-label.error, span.error{
+label.error, span.error, label.error a {
 	color:red;
 }
 
@@ -670,6 +670,10 @@ li.account:hover {
 	-moz-border-radius:8px;	
 	-webkit-border-radius:8px;
 	border-radius:8px;
+}
+
+.account-record a {
+	color: #515151;
 }
 
 .section .section-body{
