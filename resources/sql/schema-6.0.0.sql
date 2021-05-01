@@ -169,13 +169,11 @@ CREATE TABLE `global_properties` (
   `cloud_front_key_id` varchar(255) NOT NULL DEFAULT 'cloud front key id',
   `cloud_front_key_path` varchar(255) NOT NULL DEFAULT 'cloud front key path',
   `notifier_type` varchar(255) NOT NULL DEFAULT 'SNS',
-  `rabbitmq_host` varchar(255) DEFAULT NULL,
-  `rabbitmq_port` int(11) DEFAULT NULL,
-  `rabbitmq_vhost` varchar(255) DEFAULT NULL,
+  `rabbitmq_config_id` bigint(20) DEFAULT NULL,
   `rabbitmq_exchange` varchar(255) DEFAULT NULL,
-  `rabbitmq_username` varchar(255) DEFAULT NULL,
-  `rabbitmq_password` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `FK_GLOBAL_PROPERTIES_RABBITMQ_CONFIG` (`rabbitmq_config_id`),
+  CONSTRAINT `FK_GLOBAL_PROPERTIES_RABBITMQ_CONFIG` FOREIGN KEY (`rabbitmq_config_id`) REFERENCES `rabbitmq_config` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -195,6 +193,25 @@ CREATE TABLE `group_user` (
   CONSTRAINT `FK_dx4jv6mpv63ufnjl3a7pec1vo` FOREIGN KEY (`group_id`) REFERENCES `duracloud_group` (`id`),
   CONSTRAINT `FK_ns02np32pqhrbm8cwpifjerp9` FOREIGN KEY (`user_id`) REFERENCES `duracloud_user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `rabbitmq_config`
+--
+
+DROP TABLE IF EXISTS `rabbitmq_config`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `rabbitmq_config` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `modified` datetime DEFAULT NULL,
+  `host` varchar(255) DEFAULT NULL,
+  `port` int(11) DEFAULT NULL,
+  `vhost` varchar(255) DEFAULT NULL,
+  `username` varchar(255) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

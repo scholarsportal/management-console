@@ -10,6 +10,7 @@ package org.duracloud.account.db.util.impl;
 import java.util.List;
 
 import org.duracloud.account.db.model.GlobalProperties;
+import org.duracloud.account.db.model.RabbitMQConfig;
 import org.duracloud.account.db.repo.GlobalPropertiesRepo;
 import org.duracloud.account.db.util.GlobalPropertiesConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,12 +47,8 @@ public class GlobalPropertiesConfigServiceImpl implements GlobalPropertiesConfig
 
     @Override
     public void set(String notifierType,
-                    String rabbitmqHost,
-                    Integer rabbitmqPort,
-                    String rabbitmqVhost,
+                    RabbitMQConfig rabbitMQConfig,
                     String rabbitmqExchange,
-                    String rabbitmqUsername,
-                    String rabbitmqPassword,
                     String instanceNotificationTopicArn,
                     String cloudFrontAccountId,
                     String cloudFrontKeyId,
@@ -62,12 +59,8 @@ public class GlobalPropertiesConfigServiceImpl implements GlobalPropertiesConfig
         }
 
         gp.setNotifierType(notifierType);
-        gp.setRabbitmqHost(rabbitmqHost);
-        gp.setRabbitmqPort(rabbitmqPort);
-        gp.setRabbitmqVhost(rabbitmqVhost);
+        gp.setRabbitmqConfig(rabbitMQConfig);
         gp.setRabbitmqExchange(rabbitmqExchange);
-        gp.setRabbitmqUsername(rabbitmqUsername);
-        gp.setRabbitmqPassword(rabbitmqPassword);
         gp.setInstanceNotificationTopicArn(instanceNotificationTopicArn);
         gp.setCloudFrontAccountId(cloudFrontAccountId);
         gp.setCloudFrontKeyId(cloudFrontKeyId);

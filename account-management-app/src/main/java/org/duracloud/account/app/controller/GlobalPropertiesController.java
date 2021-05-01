@@ -10,6 +10,7 @@ package org.duracloud.account.app.controller;
 import javax.validation.Valid;
 
 import org.duracloud.account.db.model.GlobalProperties;
+import org.duracloud.account.db.model.RabbitMQConfig;
 import org.duracloud.account.db.util.GlobalPropertiesConfigService;
 import org.duracloud.account.util.UserFeedbackUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,13 +61,14 @@ public class GlobalPropertiesController {
         if (entity == null) {
             return new GlobalPropertiesForm();
         } else {
+            RabbitMQConfig rabbitMQConfig = entity.getRabbitmqConfig();
             form.setNotifierType(entity.getNotifierType());
-            form.setRabbitmqHost(entity.getRabbitmqHost());
-            form.setRabbitmqPort(entity.getRabbitmqPort());
-            form.setRabbitmqVhost(entity.getRabbitmqVhost());
+            form.setRabbitmqHost(rabbitMQConfig.getHost());
+            form.setRabbitmqPort(rabbitMQConfig.getPort());
+            form.setRabbitmqVhost(rabbitMQConfig.getVhost());
+            form.setRabbitmqUsername(rabbitMQConfig.getUsername());
+            form.setRabbitmqPassword(rabbitMQConfig.getPassword());
             form.setRabbitmqExchange(entity.getRabbitmqExchange());
-            form.setRabbitmqUsername(entity.getRabbitmqUsername());
-            form.setRabbitmqPassword(entity.getRabbitmqPassword());
             form.setInstanceNotificationTopicArn(entity.getInstanceNotificationTopicArn());
             form.setCloudFrontAccountId(entity.getCloudFrontAccountId());
             form.setCloudFrontKeyId(entity.getCloudFrontKeyId());
@@ -90,13 +92,22 @@ public class GlobalPropertiesController {
         if (hasErrors) {
             return new ModelAndView(BASE_MAPPING + "/edit");
         }
+
+        RabbitMQConfig rabbitmqConfig;
+        try {
+            rabbitmqConfig = this.globalPropertiesConfigService.get().getRabbitmqConfig();
+        } catch (NullPointerException e) {
+            rabbitmqConfig = new RabbitMQConfig();
+        }
+        rabbitmqConfig.setHost(form.getRabbitmqHost());
+        rabbitmqConfig.setPort(form.getRabbitmqPort());
+        rabbitmqConfig.setVhost(form.getRabbitmqVhost());
+        rabbitmqConfig.setUsername(form.getRabbitmqUsername());
+        rabbitmqConfig.setPassword(form.getRabbitmqPassword());
+
         this.globalPropertiesConfigService.set(form.getNotifierType(),
-                                               form.getRabbitmqHost(),
-                                               form.getRabbitmqPort(),
-                                               form.getRabbitmqVhost(),
+                                               rabbitmqConfig,
                                                form.getRabbitmqExchange(),
-                                               form.getRabbitmqUsername(),
-                                               form.getRabbitmqPassword(),
                                                form.getInstanceNotificationTopicArn(),
                                                form.getCloudFrontAccountId(),
                                                form.getCloudFrontKeyId(),

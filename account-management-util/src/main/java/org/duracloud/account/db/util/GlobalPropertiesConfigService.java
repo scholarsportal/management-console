@@ -8,6 +8,7 @@
 package org.duracloud.account.db.util;
 
 import org.duracloud.account.db.model.GlobalProperties;
+import org.duracloud.account.db.model.RabbitMQConfig;
 import org.springframework.security.access.annotation.Secured;
 
 /**
@@ -22,12 +23,8 @@ public interface GlobalPropertiesConfigService {
 
     @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
     public void set(String notifierType,
-                    String rabbitmqHost,
-                    Integer rabbitmqPort,
-                    String rabbitmqVhost,
+                    RabbitMQConfig rabbitMQConfig,
                     String rabbitmqExchange,
-                    String rabbitmqUsername,
-                    String rabbitmqPassword,
                     String instanceNotificationTopicArn,
                     String cloudFrontAccountId,
                     String cloudFrontKeyId,

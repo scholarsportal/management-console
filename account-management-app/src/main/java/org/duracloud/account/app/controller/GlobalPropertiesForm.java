@@ -21,9 +21,9 @@ public class GlobalPropertiesForm {
     private String rabbitmqHost;
     private Integer rabbitmqPort = 5672;
     private String rabbitmqVhost = "/";
-    private String rabbitmqExchange;
     private String rabbitmqUsername;
     private String rabbitmqPassword;
+    private String rabbitmqExchange;
     private String instanceNotificationTopicArn;
     @NotNull(message = "You must specify a CloudFront Account Id")
     private String cloudFrontAccountId;
