@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.duracloud.account.db.model.DuracloudMill;
+import org.duracloud.account.db.model.RabbitMQConfig;
 import org.duracloud.account.db.util.DuracloudMillConfigService;
 import org.easymock.EasyMockRunner;
 import org.easymock.EasyMockSupport;
@@ -53,6 +54,7 @@ public class DuracloudMillControllerTest extends EasyMockSupport {
     String rabbitmqExchange = "rmqexchange";
     String rabbitmqUsername = "rmqusername";
     String rabbitmqPassword = "rmqpassword";
+    RabbitMQConfig rmqConf = new RabbitMQConfig();
 
     @After
     public void tearDown() {
@@ -68,6 +70,13 @@ public class DuracloudMillControllerTest extends EasyMockSupport {
     @Test
     public void testForm() {
 
+        rmqConf.setId(1L);
+        rmqConf.setHost(rabbitmqHost);
+        rmqConf.setPort(rabbitmqPort);
+        rmqConf.setVhost(rabbitmqVhost);
+        rmqConf.setUsername(rabbitmqUsername);
+        rmqConf.setPassword(rabbitmqPassword);
+
         DuracloudMill mill = createMock(DuracloudMill.class);
         expect(mill.getDbHost()).andReturn(dbHost);
         expect(mill.getDbPort()).andReturn(dbPort);
@@ -77,12 +86,8 @@ public class DuracloudMillControllerTest extends EasyMockSupport {
         expect(mill.getAuditQueue()).andReturn(auditQueue);
         expect(mill.getAuditLogSpaceId()).andReturn(auditLogSpaceId);
         expect(mill.getQueueType()).andReturn(queueType);
-        expect(mill.getRabbitmqHost()).andReturn(rabbitmqHost);
-        expect(mill.getRabbitmqPort()).andReturn(rabbitmqPort);
-        expect(mill.getRabbitmqVhost()).andReturn(rabbitmqVhost);
+        expect(mill.getRabbitmqConfig()).andReturn(rmqConf);
         expect(mill.getRabbitmqExchange()).andReturn(rabbitmqExchange);
-        expect(mill.getRabbitmqUsername()).andReturn(rabbitmqUsername);
-        expect(mill.getRabbitmqPassword()).andReturn(rabbitmqPassword);
 
         expect(this.service.get()).andReturn(mill);
         replayAll();
@@ -136,8 +141,7 @@ public class DuracloudMillControllerTest extends EasyMockSupport {
         expect(form.getRabbitmqPassword()).andReturn(rabbitmqPassword);
         this.service.set(dbHost, dbPort, dbName, dbUsername, dbPassword,
                          auditQueue, auditLogSpaceId, queueType,
-                         rabbitmqHost, rabbitmqPort, rabbitmqVhost,
-                         rabbitmqExchange, rabbitmqUsername, rabbitmqPassword);
+                         1L, rabbitmqExchange);
         expectLastCall();
 
         expect(

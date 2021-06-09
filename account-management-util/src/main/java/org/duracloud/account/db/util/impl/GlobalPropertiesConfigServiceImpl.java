@@ -12,6 +12,7 @@ import java.util.List;
 import org.duracloud.account.db.model.GlobalProperties;
 import org.duracloud.account.db.model.RabbitMQConfig;
 import org.duracloud.account.db.repo.GlobalPropertiesRepo;
+import org.duracloud.account.db.repo.RabbitMQConfigRepo;
 import org.duracloud.account.db.util.GlobalPropertiesConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -35,6 +36,9 @@ public class GlobalPropertiesConfigServiceImpl implements GlobalPropertiesConfig
         return repo;
     }
 
+    @Autowired
+    private RabbitMQConfigRepo rmqRepo;
+
     @Override
     public GlobalProperties get() {
         List<GlobalProperties> globalProperties = repo.findAll();
@@ -47,7 +51,7 @@ public class GlobalPropertiesConfigServiceImpl implements GlobalPropertiesConfig
 
     @Override
     public void set(String notifierType,
-                    RabbitMQConfig rabbitMQConfig,
+                    Long rabbitMQConfigId,
                     String rabbitmqExchange,
                     String instanceNotificationTopicArn,
                     String cloudFrontAccountId,
@@ -56,6 +60,17 @@ public class GlobalPropertiesConfigServiceImpl implements GlobalPropertiesConfig
         GlobalProperties gp = get();
         if (null == gp) {
             gp = new GlobalProperties();
+        }
+
+        RabbitMQConfig rabbitMQConfig = null;
+        if (null != rabbitMQConfigId) {
+            rabbitMQConfig = rmqRepo.findOne(rabbitMQConfigId);
+            if (null == rabbitMQConfig) {
+                rabbitMQConfig = new RabbitMQConfig();
+            }
+            instanceNotificationTopicArn = null;
+        } else {
+            rabbitmqExchange = null;
         }
 
         gp.setNotifierType(notifierType);
