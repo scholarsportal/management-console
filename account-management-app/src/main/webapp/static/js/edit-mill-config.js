@@ -14,6 +14,12 @@ function showRabbitMQHost(show) {
     });
 }
 
+function hideGlobalPropsCheckbox() {
+    if($("#globalPropsAvailable").val() === "false") {
+        $("#globalPropsRmqConfCheckbox").hide();
+    }
+}
+
 $(document).ready(function () {
     $("input").on("input", function(e) {
         if ($(this).val() === "" || $(this).val() === null) {
@@ -29,16 +35,19 @@ $(document).ready(function () {
     if($("#queuetype").val() === queueType.SQS){
         showRabbitMQ(false);
     } else {
-        if($("#globalPropsRmqConf").checked){
+        if($("#globalPropsRmqConf").is(":checked")){
             showRabbitMQHost(false);
         }
     }
+
+    hideGlobalPropsCheckbox();
 
     $("#queuetype").change(function () {
         if ($(this).val() === queueType.SQS) {
             showRabbitMQ(false);
         } else {
             showRabbitMQ(true);
+            hideGlobalPropsCheckbox();
         }
     });
 
@@ -61,7 +70,6 @@ $(document).ready(function () {
                 $(this).siblings(".error").remove();
             }
         });
-        console.log($("#globalPropsRmqConf"));
         return allgood;
     });
 });

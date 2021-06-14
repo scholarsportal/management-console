@@ -198,7 +198,10 @@
                   element="div" />
         </li>
 
-        <li class="rabbitmq-config">
+        <!-- Hidden value to help determine whether the following checkbox should be displayed-->
+        <form:hidden id="globalPropsAvailable" path="globalPropsAvailable" />
+
+        <li id="globalPropsRmqConfCheckbox" class="rabbitmq-config">
           <form:label
                   cssErrorClass="error"
                   path="globalPropsRmqConf">
@@ -219,6 +222,7 @@
         </li>
 
         <!--Ensure browser sends false if checkbox is unchecked-->
+        <!--Spring should handle this for us, but it doesn't work-->
         <input type="hidden" value="on" name="_globalPropsRmqConf"/>
 
         <li class="rabbitmq-config rabbitmq-host-config">

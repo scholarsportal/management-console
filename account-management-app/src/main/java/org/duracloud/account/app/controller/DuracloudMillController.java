@@ -88,6 +88,10 @@ public class DuracloudMillController {
                 form.setGlobalPropsRmqConf(rabbitMQConfig.getId() == 1L);
             }
 
+            // Hidden value to ensure we can't use global props rmq conf
+            // if there is no gloabl props rmq conf available
+            form.setGlobalPropsAvailable(rabbitMQConfigService.get(1L) != null);
+
             return form;
         }
     }
@@ -112,7 +116,6 @@ public class DuracloudMillController {
         Long rabbitMQConfigId = null;
 
         if (form.getQueueType().equalsIgnoreCase(QueueType.RABBITMQ.toString())) {
-            System.out.println("It was: " + form.getGlobalPropsRmqConf());
             if (form.getGlobalPropsRmqConf()) {
                 // ID of rmq conf for global properties is always 1
                 rabbitMQConfigId = 1L;
