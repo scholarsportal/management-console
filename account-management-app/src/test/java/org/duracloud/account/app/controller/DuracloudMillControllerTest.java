@@ -14,8 +14,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.duracloud.account.db.model.DuracloudMill;
-import org.duracloud.account.db.model.RabbitMQConfig;
+import org.duracloud.account.db.model.RabbitmqConfig;
 import org.duracloud.account.db.util.DuracloudMillConfigService;
+import org.duracloud.account.db.util.RabbitmqConfigService;
 import org.easymock.EasyMockRunner;
 import org.easymock.EasyMockSupport;
 import org.easymock.Mock;
@@ -37,6 +38,9 @@ public class DuracloudMillControllerTest extends EasyMockSupport {
     @Mock
     private DuracloudMillConfigService service;
 
+    @Mock
+    private RabbitmqConfigService rmqService;
+
     @TestSubject
     private DuracloudMillController controller = new DuracloudMillController();
 
@@ -54,7 +58,7 @@ public class DuracloudMillControllerTest extends EasyMockSupport {
     String rabbitmqExchange = "rmqexchange";
     String rabbitmqUsername = "rmqusername";
     String rabbitmqPassword = "rmqpassword";
-    RabbitMQConfig rmqConf = new RabbitMQConfig();
+    RabbitmqConfig rmqConf = new RabbitmqConfig();
 
     @After
     public void tearDown() {
@@ -89,6 +93,7 @@ public class DuracloudMillControllerTest extends EasyMockSupport {
         expect(mill.getRabbitmqConfig()).andReturn(rmqConf);
         expect(mill.getRabbitmqExchange()).andReturn(rabbitmqExchange);
 
+        expect(this.rmqService.get(1L)).andReturn(rmqConf);
         expect(this.service.get()).andReturn(mill);
         replayAll();
         DuracloudMillForm form = this.controller.form();
@@ -117,7 +122,7 @@ public class DuracloudMillControllerTest extends EasyMockSupport {
     }
 
     @Test
-    public void testUpdate() {
+    public void testUpdateUsingGlobalPropertiesRmqConf() {
         DuracloudMillForm form = createMock(DuracloudMillForm.class);
         BindingResult result = createMock(BindingResult.class);
         Model model = createMock(Model.class);
@@ -125,6 +130,7 @@ public class DuracloudMillControllerTest extends EasyMockSupport {
 
         expect(result.hasErrors()).andReturn(false);
 
+        expect(form.getGlobalPropsRmqConf()).andReturn(true);
         expect(form.getDbHost()).andReturn(dbHost);
         expect(form.getDbPort()).andReturn(dbPort);
         expect(form.getDbName()).andReturn(dbName);
@@ -132,13 +138,9 @@ public class DuracloudMillControllerTest extends EasyMockSupport {
         expect(form.getDbPassword()).andReturn(dbPassword);
         expect(form.getAuditQueue()).andReturn(auditQueue);
         expect(form.getAuditLogSpaceId()).andReturn(auditLogSpaceId);
-        expect(form.getQueueType()).andReturn(queueType);
-        expect(form.getRabbitmqHost()).andReturn(rabbitmqHost);
-        expect(form.getRabbitmqPort()).andReturn(rabbitmqPort);
-        expect(form.getRabbitmqVhost()).andReturn(rabbitmqVhost);
+        expect(form.getQueueType()).andReturn(queueType).times(2);
         expect(form.getRabbitmqExchange()).andReturn(rabbitmqExchange);
-        expect(form.getRabbitmqUsername()).andReturn(rabbitmqUsername);
-        expect(form.getRabbitmqPassword()).andReturn(rabbitmqPassword);
+
         this.service.set(dbHost, dbPort, dbName, dbUsername, dbPassword,
                          auditQueue, auditLogSpaceId, queueType,
                          1L, rabbitmqExchange);
@@ -152,4 +154,46 @@ public class DuracloudMillControllerTest extends EasyMockSupport {
         this.controller.update(form, result, model, redirectAttributes);
     }
 
+    @Test
+    public void testUpdateUniqueRmqConf() {
+        DuracloudMillForm form = createMock(DuracloudMillForm.class);
+        BindingResult result = createMock(BindingResult.class);
+        Model model = createMock(Model.class);
+        RedirectAttributes redirectAttributes = createMock(RedirectAttributes.class);
+
+        expect(result.hasErrors()).andReturn(false);
+
+        expect(form.getGlobalPropsRmqConf()).andReturn(false);
+        expect(form.getDbHost()).andReturn(dbHost);
+        expect(form.getDbPort()).andReturn(dbPort);
+        expect(form.getDbName()).andReturn(dbName);
+        expect(form.getDbUsername()).andReturn(dbUsername);
+        expect(form.getDbPassword()).andReturn(dbPassword);
+        expect(form.getAuditQueue()).andReturn(auditQueue);
+        expect(form.getAuditLogSpaceId()).andReturn(auditLogSpaceId);
+        expect(form.getQueueType()).andReturn(queueType).times(2);
+        expect(form.getRabbitmqExchange()).andReturn(rabbitmqExchange);
+        expect(form.getRabbitmqHost()).andReturn(rabbitmqHost);
+        expect(form.getRabbitmqPort()).andReturn(rabbitmqPort);
+        expect(form.getRabbitmqVhost()).andReturn(rabbitmqVhost);
+        expect(form.getRabbitmqUsername()).andReturn(rabbitmqUsername);
+        expect(form.getRabbitmqPassword()).andReturn(rabbitmqPassword);
+
+        this.rmqService.set(2L, rabbitmqHost,
+                            rabbitmqPort, rabbitmqVhost,
+                            rabbitmqUsername, rabbitmqPassword);
+        expectLastCall();
+
+        this.service.set(dbHost, dbPort, dbName, dbUsername, dbPassword,
+                         auditQueue, auditLogSpaceId, queueType,
+                         2L, rabbitmqExchange);
+        expectLastCall();
+
+        expect(
+            redirectAttributes.addFlashAttribute(isA(String.class),
+                                                 isA(Message.class))).andReturn(redirectAttributes);
+        expectLastCall();
+        replayAll();
+        this.controller.update(form, result, model, redirectAttributes);
+    }
 }

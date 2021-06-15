@@ -2,13 +2,13 @@ var errMsg = "may not be null";
 var divErr = "<div class='error'>" + errMsg + "</div>";
 const queueType = Object.freeze({RABBITMQ:"RabbitMQ", SQS:"SQS"});
 
-function showRabbitMQ(show) {
+function showRabbitmq(show) {
     $(".rabbitmq-config").each(function() {
         show ? $(this).show() : $(this).hide();
     });
 }
 
-function showRabbitMQHost(show) {
+function showRabbitmqHost(show) {
     $(".rabbitmq-host-config").each(function() {
         show ? $(this).show() : $(this).hide();
     });
@@ -33,10 +33,10 @@ $(document).ready(function () {
     });
 
     if($("#queuetype").val() === queueType.SQS){
-        showRabbitMQ(false);
+        showRabbitmq(false);
     } else {
         if($("#globalPropsRmqConf").is(":checked")){
-            showRabbitMQHost(false);
+            showRabbitmqHost(false);
         }
     }
 
@@ -44,9 +44,9 @@ $(document).ready(function () {
 
     $("#queuetype").change(function () {
         if ($(this).val() === queueType.SQS) {
-            showRabbitMQ(false);
+            showRabbitmq(false);
         } else {
-            showRabbitMQ(true);
+            showRabbitmq(true);
             hideGlobalPropsCheckbox();
         }
     });

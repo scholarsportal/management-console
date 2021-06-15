@@ -17,8 +17,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.duracloud.account.db.model.DuracloudMill;
-import org.duracloud.account.db.model.RabbitMQConfig;
+import org.duracloud.account.db.model.RabbitmqConfig;
 import org.duracloud.account.db.repo.DuracloudMillRepo;
+import org.duracloud.account.db.repo.RabbitmqConfigRepo;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.easymock.EasyMockRunner;
@@ -51,10 +52,13 @@ public class DuracloudMillConfigServiceImplTest extends EasyMockSupport {
     private static final String rabbitmqPassword = "rmqpassword";
     private static final Long rabbitmqConfigId = 1L;
 
-    private static final RabbitMQConfig rmqConf = new RabbitMQConfig();
+    private static final RabbitmqConfig rmqConf = new RabbitmqConfig();
 
     @Mock
     private DuracloudMillRepo repo;
+
+    @Mock
+    private RabbitmqConfigRepo rmqRepo;
 
     @TestSubject
     private DuracloudMillConfigServiceImpl subject = new DuracloudMillConfigServiceImpl();
@@ -80,6 +84,7 @@ public class DuracloudMillConfigServiceImplTest extends EasyMockSupport {
     @Test
     public void testSetNoPreviousSettings() {
         expect(repo.findAll()).andReturn(new ArrayList<DuracloudMill>());
+        expect(rmqRepo.findOne(rabbitmqConfigId)).andReturn(rmqConf);
         Capture<DuracloudMill> saveCapture = Capture.newInstance();
         expect(repo.save(EasyMock.capture(saveCapture))).andReturn(null);
         replayAll();
@@ -95,7 +100,7 @@ public class DuracloudMillConfigServiceImplTest extends EasyMockSupport {
         assertEquals(auditQueue, savedMill.getAuditQueue());
         assertEquals(auditLogSpaceId, savedMill.getAuditLogSpaceId());
         assertEquals(queueType, savedMill.getQueueType());
-        assertEquals(rabbitmqConfigId, savedMill.getRabbitmqConfig().getId());
+        assertEquals(rmqConf, savedMill.getRabbitmqConfig());
         assertEquals(rabbitmqExhange, savedMill.getRabbitmqExchange());
     }
 
@@ -103,6 +108,8 @@ public class DuracloudMillConfigServiceImplTest extends EasyMockSupport {
     public void testSet() {
         DuracloudMill entity = createMock(DuracloudMill.class);
         expect(repo.findAll()).andReturn(Arrays.asList(entity));
+        RabbitmqConfig rmqEntity = createMock(RabbitmqConfig.class);
+        expect(rmqRepo.findOne(rabbitmqConfigId)).andReturn(rmqEntity);
         expect(repo.save(entity)).andReturn(entity);
 
         entity.setDbHost(host);
@@ -123,7 +130,7 @@ public class DuracloudMillConfigServiceImplTest extends EasyMockSupport {
         entity.setQueueType(queueType);
         expectLastCall();
 
-        entity.setRabbitmqConfig(new RabbitMQConfig());
+        entity.setRabbitmqConfig(rmqEntity);
         expectLastCall();
         entity.setRabbitmqExchange(rabbitmqExhange);
         expectLastCall();

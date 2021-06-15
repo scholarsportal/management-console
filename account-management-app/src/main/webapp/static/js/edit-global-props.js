@@ -2,7 +2,7 @@ var errMsg = "may not be null";
 var divErr = "<div class='error'>" + errMsg + "</div>";
 const notifierType = Object.freeze({RABBITMQ:"RabbitMQ", SNS:"SNS"});
 
-function showRabbitMQ(show) {
+function showRabbitmq(show) {
     $(".rabbitmq-config").each(function() {
         show ? $(this).show() : $(this).hide();
     });
@@ -27,18 +27,18 @@ $(document).ready(function () {
     });
 
     if ($("#notifiertype").val() === notifierType.SNS) {
-        showRabbitMQ(false);
+        showRabbitmq(false);
     } else {
         showSNS(false);
     }
 
     $("#notifiertype").change(function () {
         if ($(this).val() === notifierType.SNS) {
-            showRabbitMQ(false);
+            showRabbitmq(false);
             showSNS(true);
         } else {
             showSNS(false);
-            showRabbitMQ(true);
+            showRabbitmq(true);
         }
     });
 

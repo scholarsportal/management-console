@@ -10,9 +10,9 @@ package org.duracloud.account.app.controller;
 import javax.validation.Valid;
 
 import org.duracloud.account.db.model.GlobalProperties;
-import org.duracloud.account.db.model.RabbitMQConfig;
+import org.duracloud.account.db.model.RabbitmqConfig;
 import org.duracloud.account.db.util.GlobalPropertiesConfigService;
-import org.duracloud.account.db.util.RabbitMQConfigService;
+import org.duracloud.account.db.util.RabbitmqConfigService;
 import org.duracloud.account.util.UserFeedbackUtil;
 import org.duracloud.common.changenotifier.NotifierType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,11 +48,11 @@ public class GlobalPropertiesController {
     }
 
     @Autowired
-    private RabbitMQConfigService rabbitMQConfigService;
+    private RabbitmqConfigService rabbitmqConfigService;
 
-    public void setRabbitMQConfigService(
-        RabbitMQConfigService rabbitMQConfigService) {
-        this.rabbitMQConfigService = rabbitMQConfigService;
+    public void setRabbitmqConfigService(
+        RabbitmqConfigService rabbitmqConfigService) {
+        this.rabbitmqConfigService = rabbitmqConfigService;
     }
 
     /**
@@ -78,13 +78,13 @@ public class GlobalPropertiesController {
             form.setCloudFrontKeyId(entity.getCloudFrontKeyId());
             form.setCloudFrontKeyPath(entity.getCloudFrontKeyPath());
 
-            RabbitMQConfig rabbitMQConfig = entity.getRabbitmqConfig();
-            if (rabbitMQConfig != null) {
-                form.setRabbitmqHost(rabbitMQConfig.getHost());
-                form.setRabbitmqPort(rabbitMQConfig.getPort());
-                form.setRabbitmqVhost(rabbitMQConfig.getVhost());
-                form.setRabbitmqUsername(rabbitMQConfig.getUsername());
-                form.setRabbitmqPassword(rabbitMQConfig.getPassword());
+            RabbitmqConfig rabbitmqConfig = entity.getRabbitmqConfig();
+            if (rabbitmqConfig != null) {
+                form.setRabbitmqHost(rabbitmqConfig.getHost());
+                form.setRabbitmqPort(rabbitmqConfig.getPort());
+                form.setRabbitmqVhost(rabbitmqConfig.getVhost());
+                form.setRabbitmqUsername(rabbitmqConfig.getUsername());
+                form.setRabbitmqPassword(rabbitmqConfig.getPassword());
             }
 
             return form;
@@ -107,12 +107,12 @@ public class GlobalPropertiesController {
             return new ModelAndView(BASE_MAPPING + "/edit");
         }
 
-        // GlobalProperties RabbitMQConfig id is always 1
-        // We make it null if we are not setting any RabbitMQ params
-        Long rabbitMQConfigId = null;
+        // GlobalProperties RabbitmqConfig id is always 1
+        // We make it null if we are not setting any RMQ params
+        Long rabbitmqConfigId = null;
         if (form.getNotifierType().equalsIgnoreCase(NotifierType.RABBITMQ.toString())) {
-            rabbitMQConfigId = 1L;
-            this.rabbitMQConfigService.set(rabbitMQConfigId,
+            rabbitmqConfigId = 1L;
+            this.rabbitmqConfigService.set(rabbitmqConfigId,
                                            form.getRabbitmqHost(),
                                            form.getRabbitmqPort(),
                                            form.getRabbitmqVhost(),
@@ -121,7 +121,7 @@ public class GlobalPropertiesController {
         }
 
         this.globalPropertiesConfigService.set(form.getNotifierType(),
-                                               rabbitMQConfigId,
+                                               rabbitmqConfigId,
                                                form.getRabbitmqExchange(),
                                                form.getInstanceNotificationTopicArn(),
                                                form.getCloudFrontAccountId(),

@@ -7,9 +7,9 @@
  */
 package org.duracloud.account.db.util.impl;
 
-import org.duracloud.account.db.model.RabbitMQConfig;
-import org.duracloud.account.db.repo.RabbitMQConfigRepo;
-import org.duracloud.account.db.util.RabbitMQConfigService;
+import org.duracloud.account.db.model.RabbitmqConfig;
+import org.duracloud.account.db.repo.RabbitmqConfigRepo;
+import org.duracloud.account.db.util.RabbitmqConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,23 +19,23 @@ import org.springframework.stereotype.Component;
  * @author Andy Foster
  * Date: 2021/05/06
  */
-@Component("rabbitMQConfigService")
-public class RabbitMQConfigServiceImpl implements RabbitMQConfigService {
+@Component("rabbitmqConfigService")
+public class RabbitmqConfigServiceImpl implements RabbitmqConfigService {
 
     @Autowired
-    private RabbitMQConfigRepo repo;
+    private RabbitmqConfigRepo repo;
 
-    public void setRepo(RabbitMQConfigRepo repo) {
+    public void setRepo(RabbitmqConfigRepo repo) {
         this.repo = repo;
     }
 
-    public RabbitMQConfigRepo getRepo() {
+    public RabbitmqConfigRepo getRepo() {
         return repo;
     }
 
     @Override
-    public RabbitMQConfig get(Long id) {
-        RabbitMQConfig entity = repo.findOne(id);
+    public RabbitmqConfig get(Long id) {
+        RabbitmqConfig entity = repo.findOne(id);
         return entity;
     }
 
@@ -46,9 +46,9 @@ public class RabbitMQConfigServiceImpl implements RabbitMQConfigService {
                     String vhost,
                     String username,
                     String password) {
-        RabbitMQConfig rmqc = get(id);
+        RabbitmqConfig rmqc = get(id);
         if (null == rmqc) {
-            rmqc = new RabbitMQConfig();
+            rmqc = new RabbitmqConfig();
         }
 
         rmqc.setId(id);

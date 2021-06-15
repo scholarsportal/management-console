@@ -29,7 +29,7 @@ public interface DuracloudMillConfigService {
                     String auditQueue,
                     String auditLogId,
                     String queueType,
-                    Long rabbitMQConfigId,
+                    Long rabbitmqConfigId,
                     String rabbitmqExchange);
 
 }

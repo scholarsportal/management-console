@@ -10,9 +10,9 @@ package org.duracloud.account.db.util.impl;
 import java.util.List;
 
 import org.duracloud.account.db.model.DuracloudMill;
-import org.duracloud.account.db.model.RabbitMQConfig;
+import org.duracloud.account.db.model.RabbitmqConfig;
 import org.duracloud.account.db.repo.DuracloudMillRepo;
-import org.duracloud.account.db.repo.RabbitMQConfigRepo;
+import org.duracloud.account.db.repo.RabbitmqConfigRepo;
 import org.duracloud.account.db.util.DuracloudMillConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,7 +37,7 @@ public class DuracloudMillConfigServiceImpl implements DuracloudMillConfigServic
     }
 
     @Autowired
-    private RabbitMQConfigRepo rmqRepo;
+    private RabbitmqConfigRepo rmqRepo;
 
     @Override
     public DuracloudMill get() {
@@ -58,18 +58,18 @@ public class DuracloudMillConfigServiceImpl implements DuracloudMillConfigServic
                     String auditQueue,
                     String auditLogSpaceId,
                     String queueType,
-                    Long rabbitMQConfigId,
+                    Long rabbitmqConfigId,
                     String rabbitmqExchange) {
         DuracloudMill dm = get();
         if (null == dm) {
             dm = new DuracloudMill();
         }
 
-        RabbitMQConfig rabbitMQConfig = null;
-        if (null != rabbitMQConfigId) {
-            rabbitMQConfig = rmqRepo.findOne(rabbitMQConfigId);
-            if (null == rabbitMQConfig) {
-                rabbitMQConfig = new RabbitMQConfig();
+        RabbitmqConfig rabbitmqConfig = null;
+        if (null != rabbitmqConfigId) {
+            rabbitmqConfig = rmqRepo.findOne(rabbitmqConfigId);
+            if (null == rabbitmqConfig) {
+                rabbitmqConfig = new RabbitmqConfig();
             }
         }
 
@@ -82,7 +82,7 @@ public class DuracloudMillConfigServiceImpl implements DuracloudMillConfigServic
         dm.setAuditLogSpaceId(auditLogSpaceId);
         dm.setQueueType(queueType);
         dm.setRabbitmqExchange(rabbitmqExchange);
-        dm.setRabbitmqConfig(rabbitMQConfig);
+        dm.setRabbitmqConfig(rabbitmqConfig);
         repo.save(dm);
 
     }

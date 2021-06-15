@@ -7,7 +7,7 @@
  */
 package org.duracloud.account.db.util;
 
-import org.duracloud.account.db.model.RabbitMQConfig;
+import org.duracloud.account.db.model.RabbitmqConfig;
 import org.springframework.security.access.annotation.Secured;
 
 /**
@@ -16,10 +16,10 @@ import org.springframework.security.access.annotation.Secured;
  * @author Andy Foster
  * Date: 2021/05/06
  */
-public interface RabbitMQConfigService {
+public interface RabbitmqConfigService {
 
     @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
-    public RabbitMQConfig get(Long id);
+    public RabbitmqConfig get(Long id);
 
     @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
     public void set(Long id,

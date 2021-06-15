@@ -10,9 +10,9 @@ package org.duracloud.account.db.util.impl;
 import java.util.List;
 
 import org.duracloud.account.db.model.GlobalProperties;
-import org.duracloud.account.db.model.RabbitMQConfig;
+import org.duracloud.account.db.model.RabbitmqConfig;
 import org.duracloud.account.db.repo.GlobalPropertiesRepo;
-import org.duracloud.account.db.repo.RabbitMQConfigRepo;
+import org.duracloud.account.db.repo.RabbitmqConfigRepo;
 import org.duracloud.account.db.util.GlobalPropertiesConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,7 +37,7 @@ public class GlobalPropertiesConfigServiceImpl implements GlobalPropertiesConfig
     }
 
     @Autowired
-    private RabbitMQConfigRepo rmqRepo;
+    private RabbitmqConfigRepo rmqRepo;
 
     @Override
     public GlobalProperties get() {
@@ -51,7 +51,7 @@ public class GlobalPropertiesConfigServiceImpl implements GlobalPropertiesConfig
 
     @Override
     public void set(String notifierType,
-                    Long rabbitMQConfigId,
+                    Long rabbitmqConfigId,
                     String rabbitmqExchange,
                     String instanceNotificationTopicArn,
                     String cloudFrontAccountId,
@@ -62,11 +62,11 @@ public class GlobalPropertiesConfigServiceImpl implements GlobalPropertiesConfig
             gp = new GlobalProperties();
         }
 
-        RabbitMQConfig rabbitMQConfig = null;
-        if (null != rabbitMQConfigId) {
-            rabbitMQConfig = rmqRepo.findOne(rabbitMQConfigId);
-            if (null == rabbitMQConfig) {
-                rabbitMQConfig = new RabbitMQConfig();
+        RabbitmqConfig rabbitmqConfig = null;
+        if (null != rabbitmqConfigId) {
+            rabbitmqConfig = rmqRepo.findOne(rabbitmqConfigId);
+            if (null == rabbitmqConfig) {
+                rabbitmqConfig = new RabbitmqConfig();
             }
             instanceNotificationTopicArn = null;
         } else {
@@ -74,7 +74,7 @@ public class GlobalPropertiesConfigServiceImpl implements GlobalPropertiesConfig
         }
 
         gp.setNotifierType(notifierType);
-        gp.setRabbitmqConfig(rabbitMQConfig);
+        gp.setRabbitmqConfig(rabbitmqConfig);
         gp.setRabbitmqExchange(rabbitmqExchange);
         gp.setInstanceNotificationTopicArn(instanceNotificationTopicArn);
         gp.setCloudFrontAccountId(cloudFrontAccountId);
