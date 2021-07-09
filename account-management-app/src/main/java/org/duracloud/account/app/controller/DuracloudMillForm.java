@@ -29,7 +29,7 @@ public class DuracloudMillForm {
     private String auditLogSpaceId;
     @NotNull
     private String queueType;
-    private Boolean globalPropsAvailable;
+    private Boolean globalPropsRmqConfAvailable;
     private Boolean globalPropsRmqConf;
     private String rabbitmqHost;
     private Integer rabbitmqPort = 5672;
@@ -38,12 +38,12 @@ public class DuracloudMillForm {
     private String rabbitmqUsername;
     private String rabbitmqPassword;
 
-    public Boolean getGlobalPropsAvailable() {
-        return globalPropsAvailable;
+    public Boolean getGlobalPropsRmqConfAvailable() {
+        return globalPropsRmqConfAvailable;
     }
 
-    public void setGlobalPropsAvailable(Boolean globalPropsAvailable) {
-        this.globalPropsAvailable = globalPropsAvailable;
+    public void setGlobalPropsRmqConfAvailable(Boolean globalPropsRmqConfAvailable) {
+        this.globalPropsRmqConfAvailable = globalPropsRmqConfAvailable;
     }
 
     public Boolean getGlobalPropsRmqConf() {

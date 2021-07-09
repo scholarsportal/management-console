@@ -199,7 +199,7 @@
         </li>
 
         <!-- Hidden value to help determine whether the following checkbox should be displayed-->
-        <form:hidden id="globalPropsAvailable" path="globalPropsAvailable" />
+        <form:hidden id="globalPropsRmqConfAvailable" path="globalPropsRmqConfAvailable" />
 
         <li id="globalPropsRmqConfCheckbox" class="rabbitmq-config">
           <form:label

@@ -15,7 +15,7 @@ function showRabbitmqHost(show) {
 }
 
 function hideGlobalPropsCheckbox() {
-    if($("#globalPropsAvailable").val() === "false") {
+    if($("#globalPropsRmqConfAvailable").val() === "false") {
         $("#globalPropsRmqConfCheckbox").hide();
     }
 }
